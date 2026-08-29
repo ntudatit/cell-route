@@ -1,0 +1,58 @@
+name: FiberPay CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  portal:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: portal/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+        env:
+          VITE_API_URL: /api
+          VITE_CKB_NETWORK: testnet
+          VITE_FIBER_NETWORK: testnet
+          VITE_FIBER_CONFIG_PATH: /fiber-config/testnet.yml
+          VITE_FIBER_EXPECTED_VERSION: 0.9.0
+
+  rust-service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rust-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.89.0"
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust-service
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+      - run: cargo test --all
+
+  deployment-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose --env-file .env.deploy.example config --quiet
+      - run: docker build --tag fiberpay-api:ci rust-service
+      - run: docker build --tag fiberpay-portal:ci --build-arg VITE_API_URL=/api portal

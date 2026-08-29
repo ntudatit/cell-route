@@ -1,0 +1,79 @@
+name: fiberpay
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-fiberpay}
+      POSTGRES_USER: ${POSTGRES_USER:-fiberpay}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.deploy}
+    volumes:
+      - fiberpay_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [backend]
+
+  api:
+    build:
+      context: ./rust-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgresql://${POSTGRES_USER:-fiberpay}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-fiberpay}
+      CORS_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:8088}
+      CKB_NETWORK: ${CKB_NETWORK:-testnet}
+      CKB_RPC_URL: ${CKB_RPC_URL:-https://testnet.ckbapp.dev/}
+      CKB_INDEXER_URL: ${CKB_INDEXER_URL:-https://testnet.ckbapp.dev/}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env.deploy}
+      JWT_TTL_SECONDS: ${JWT_TTL_SECONDS:-3600}
+      AUTH_CHALLENGE_TTL_SECONDS: ${AUTH_CHALLENGE_TTL_SECONDS:-300}
+      RPC_TIMEOUT_SECONDS: ${RPC_TIMEOUT_SECONDS:-12}
+      SSE_POLL_INTERVAL_MS: ${SSE_POLL_INTERVAL_MS:-2000}
+      SSE_MAX_POLLS: ${SSE_MAX_POLLS:-300}
+      RUST_LOG: ${RUST_LOG:-rust_service=info,tower_http=info}
+      LOG_JSON: ${LOG_JSON:-true}
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME:-fiberpay-api}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      FIBER_RUNTIME: ${FIBER_RUNTIME:-wasm}
+      FIBER_RPC_URL: ${FIBER_RPC_URL:-http://host.docker.internal:8227}
+      FIBER_EXPECTED_VERSION: ${FIBER_EXPECTED_VERSION:-0.9.0}
+      FIBER_BISCUIT_TOKEN: ${FIBER_BISCUIT_TOKEN:-}
+      AI_PROVIDER: ${AI_PROVIDER:-disabled}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-}
+      MCP_API_KEY: ${MCP_API_KEY:-}
+    expose: ["8080"]
+    networks: [backend]
+
+  portal:
+    build:
+      context: ./portal
+      args:
+        VITE_API_URL: /api
+        VITE_CKB_NETWORK: ${CKB_NETWORK:-testnet}
+        VITE_FIBER_NETWORK: ${CKB_NETWORK:-testnet}
+        VITE_FIBER_CONFIG_PATH: ${FIBER_CONFIG_PATH:-/fiber-config/testnet.yml}
+        VITE_FIBER_EXPECTED_VERSION: ${FIBER_EXPECTED_VERSION:-0.9.0}
+        VITE_FIBER_DATABASE_PREFIX: fiberpay:${CKB_NETWORK:-testnet}:browser-node-v1
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${PORTAL_PORT:-8088}:80"
+    networks: [backend]
+
+volumes:
+  fiberpay_postgres:
+
+networks:
+  backend:
+    driver: bridge

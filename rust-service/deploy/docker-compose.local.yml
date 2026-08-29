@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ckb_asset_studio
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ckb_asset_studio"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+  api:
+    build: ..
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/ckb_asset_studio
+      CORS_ORIGIN: http://localhost:5173
+      CKB_NETWORK: testnet
+      CKB_RPC_URL: https://testnet.ckb.dev
+      CKB_INDEXER_URL: https://testnet.ckb.dev
+      JWT_SECRET: local-development-only-change-me
+      LOG_JSON: "true"
+    ports: ["8080:8080"]
+volumes:
+  pgdata:

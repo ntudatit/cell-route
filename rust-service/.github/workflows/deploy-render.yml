@@ -1,0 +1,62 @@
+name: Deploy Render
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-production
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.89.0"
+          components: rustfmt, clippy
+
+      - name: Cache Cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Check
+        run: cargo check
+
+      - name: Test
+        run: cargo test
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          test -n "$RENDER_DEPLOY_HOOK"
+          curl --fail --show-error --silent --request POST "$RENDER_DEPLOY_HOOK"
+
+      - name: Wait for health
+        if: ${{ vars.BACKEND_HEALTH_URL != '' }}
+        env:
+          HEALTH_URL: ${{ vars.BACKEND_HEALTH_URL }}
+        run: |
+          for attempt in $(seq 1 40); do
+            if curl --fail --silent "$HEALTH_URL" >/dev/null; then
+              echo "Backend is healthy."
+              exit 0
+            fi
+            echo "Waiting for backend ($attempt/40)..."
+            sleep 15
+          done
+          exit 1

@@ -1,0 +1,10 @@
+import { RefreshCw } from "lucide-react";
+import { AppLayout, PageHero } from "../../components/layout/AppLayout";
+import { useFiberRuntime } from "../../fiber-wasm/FiberRuntimeContext";
+
+function short(v?: string|null){return !v?"—":v.length>20?`${v.slice(0,10)}…${v.slice(-7)}`:v}
+export function ChannelHealthPage(){const runtime=useFiberRuntime();const data=runtime.channelHealth;return <AppLayout>
+ <PageHero eyebrow="Fiber Operations" title="Channel Health" description="Diagnose non-ready channels, disabled forwarding, low outbound liquidity and TLC pressure." actions={<button className="btn secondary" disabled={runtime.loading} onClick={()=>void runtime.refresh()}><RefreshCw className={runtime.loading?"spin":""} size={16}/> {runtime.loading?"Scanning...":"Scan channels"}</button>}/>{runtime.error&&<div className="ops-alert critical">{runtime.error}</div>}
+ <section className="ops-kpi-grid"><article><span>Scanned</span><strong>{data?.scanned??"—"}</strong></article><article><span>Healthy</span><strong>{data?.healthy??"—"}</strong></article><article><span>Warning</span><strong>{data?.warning??"—"}</strong></article><article className={(data?.critical??0)>0?"danger":""}><span>Critical</span><strong>{data?.critical??"—"}</strong></article></section>
+ <section className="panel ops-panel ops-table-wrap"><table className="ops-table"><thead><tr><th>Channel</th><th>State</th><th>Outbound</th><th>Pending TLC</th><th>Health</th><th>Diagnosis</th></tr></thead><tbody>{data?.channels.map(c=><tr key={c.channelId}><td><b>{short(c.channelId)}</b><small>{short(c.peerPubkey)}</small></td><td>{c.state}{!c.enabled&&<small>Disabled</small>}</td><td>{(c.outboundRatio*100).toFixed(1)}%</td><td>{c.pendingTlcs}</td><td><span className={`ops-badge ${c.health.toLowerCase()}`}>{c.health}</span></td><td><ul>{c.diagnosis.map((x: string)=><li key={x}>{x}</li>)}</ul>{c.recommendations[0]&&<small>→ {c.recommendations[0]}</small>}</td></tr>)}</tbody></table>{data?.channels.length===0&&<div className="empty-state">No open channels returned by FNN.</div>}</section>
+ </AppLayout>}

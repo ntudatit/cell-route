@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: fiberpay-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CKB_NETWORK
+        value: testnet
+      - key: CKB_RPC_URL
+        value: https://testnet.ckbapp.dev/
+      - key: CKB_INDEXER_URL
+        value: https://testnet.ckbapp.dev/
+      - key: FIBER_RUNTIME
+        value: wasm
+      - key: FIBER_EXPECTED_VERSION
+        value: 0.9.0
+      - key: LOG_JSON
+        value: "true"
+      - key: OTEL_SERVICE_NAME
+        value: fiberpay-api
+      - key: AI_PROVIDER
+        value: disabled
+      - key: MCP_API_KEY
+        generateValue: true

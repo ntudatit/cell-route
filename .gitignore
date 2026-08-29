@@ -1,0 +1,10 @@
+.env
+.env.deploy
+.env.*.local
+*.log
+portal/node_modules/
+portal/dist/
+portal/playwright-report/
+portal/test-results/
+portal/*.tsbuildinfo
+rust-service/target/

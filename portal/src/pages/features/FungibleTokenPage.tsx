@@ -1,0 +1,151 @@
+import { FormEvent, useMemo, useState } from "react";
+import { ccc } from "@ckb-ccc/connector-react";
+import { AppLayout, PageHero } from "../../components/layout/AppLayout";
+import { assetApi } from "../../api/backend";
+import { TransactionLifecycle } from "../../components/transactions/TransactionLifecycle";
+import { parseUnits } from "../../utils/units";
+
+const safeJson = (value: unknown) =>
+ JSON.stringify(value, (_, item) => typeof item === "bigint" ? item.toString() : item, 2);
+
+async function buildXudtType(signer: ccc.Signer, args: string) {
+ return ccc.Script.fromKnownScript(signer.client, ccc.KnownScript.XUdt, args);
+}
+
+export function FungibleTokenPage() {
+ const signer = ccc.useSigner();
+ const [name, setName] = useState("CKBuilder Token");
+ const [symbol, setSymbol] = useState("CKBT");
+ const [decimals, setDecimals] = useState(8);
+ const [tokenArgs, setTokenArgs] = useState("");
+ const [receiver, setReceiver] = useState("");
+ const [amount, setAmount] = useState("1000");
+ const [status, setStatus] = useState("");
+ const [txHash, setTxHash] = useState("");
+ const [preview, setPreview] = useState("");
+ const [busy, setBusy] = useState(false);
+
+ const rawAmount = useMemo(() => {
+  try { return parseUnits(amount, decimals).toString(); } catch { return "—"; }
+ }, [amount, decimals]);
+
+ async function useMyLockAsIssuer() {
+  if (!signer) return;
+  const owner = await signer.getRecommendedAddressObj();
+  // The official CKB xUDT tutorial uses issuer lock hash + 4-byte extension placeholder.
+  setTokenArgs(`${owner.script.hash()}00000000`);
+  if (!receiver) setReceiver(await signer.getRecommendedAddress());
+ }
+
+ async function issueOrMint(event: FormEvent) {
+  event.preventDefault();
+  if (!signer) return setStatus("Connect a wallet first.");
+  setBusy(true);
+  try {
+   setStatus("Building xUDT mint transaction...");
+   const owner = await signer.getRecommendedAddressObj();
+   const ownerAddress = await signer.getRecommendedAddress();
+   const args = tokenArgs.trim() || `${owner.script.hash()}00000000`;
+   setTokenArgs(args);
+   const destination = receiver.trim() || ownerAddress;
+   setReceiver(destination);
+   const { script: to } = await ccc.Address.fromString(destination, signer.client);
+   const xUdtType = await buildXudtType(signer, args);
+   const raw = parseUnits(amount, decimals);
+
+   const tx = ccc.Transaction.from({
+    outputs: [{ lock: to, type: xUdtType }],
+    outputsData: [ccc.numLeToBytes(raw, 16)],
+   });
+   await tx.addCellDepsOfKnownScripts(signer.client, ccc.KnownScript.XUdt);
+   await tx.completeInputsByCapacity(signer);
+   await tx.completeFeeBy(signer, 1000);
+   setPreview(safeJson(tx));
+
+   const hash = await signer.sendTransaction(tx);
+   setTxHash(hash);
+   setStatus("xUDT mint submitted. Recording asset audit event...");
+   await Promise.allSettled([
+    assetApi.record({
+     assetKind: "XUDT", action: "MINT", assetId: args, ownerAddress,
+     displayName: name.trim(), symbol: symbol.trim().toUpperCase(), amount,
+     txHash: hash,
+     metadataJson: JSON.stringify({ decimals, receiver: destination, rawAmount: raw.toString() }),
+    }),
+    signer.client.waitTransaction(hash),
+   ]);
+   setStatus("xUDT minted. Transaction is committed or being finalized by the connected network.");
+  } catch (error) {
+   setStatus(error instanceof Error ? error.message : String(error));
+  } finally { setBusy(false); }
+ }
+
+ async function transfer() {
+  if (!signer) return setStatus("Connect a wallet first.");
+  if (!tokenArgs.trim()) return setStatus("Token Args are required for transfer.");
+  setBusy(true);
+  try {
+   setStatus("Building xUDT transfer transaction...");
+   const ownerAddress = await signer.getRecommendedAddress();
+   const { script: to } = await ccc.Address.fromString(receiver.trim(), signer.client);
+   const { script: change } = await signer.getRecommendedAddressObj();
+   const xUdtType = await buildXudtType(signer, tokenArgs.trim());
+   const raw = parseUnits(amount, decimals);
+   const tx = ccc.Transaction.from({
+    outputs: [{ lock: to, type: xUdtType }],
+    outputsData: [ccc.numLeToBytes(raw, 16)],
+   });
+   await tx.completeInputsByUdt(signer, xUdtType);
+   const balanceDiff = (await tx.getInputsUdtBalance(signer.client, xUdtType)) - tx.getOutputsUdtBalance(xUdtType);
+   if (balanceDiff > ccc.Zero) tx.addOutput({ lock: change, type: xUdtType }, ccc.numLeToBytes(balanceDiff, 16));
+   await tx.addCellDepsOfKnownScripts(signer.client, ccc.KnownScript.XUdt);
+   await tx.completeInputsByCapacity(signer);
+   await tx.completeFeeBy(signer, 2000);
+   setPreview(safeJson(tx));
+   const hash = await signer.sendTransaction(tx);
+   setTxHash(hash);
+   await assetApi.record({
+    assetKind: "XUDT", action: "TRANSFER", assetId: tokenArgs.trim(), ownerAddress,
+    displayName: name.trim(), symbol: symbol.trim().toUpperCase(), amount, txHash: hash,
+    metadataJson: JSON.stringify({ decimals, receiver: receiver.trim(), rawAmount: raw.toString() }),
+   }).catch(() => undefined);
+   setStatus("xUDT transfer submitted.");
+  } catch (error) {
+   setStatus(error instanceof Error ? error.message : String(error));
+  } finally { setBusy(false); }
+ }
+
+ return <AppLayout>
+  <PageHero eyebrow="Asset Studio · CCC · xUDT" title="Token Studio" description="Issue, mint and transfer xUDT assets with wallet signing, exact u128 token amounts and backend audit history." />
+  <div className="asset-pro-banner"><strong>Production-style flow</strong><span>Wallet signs client-side → CKB validates xUDT → Rust API stores searchable asset audit metadata.</span></div>
+  <div className="token-product-grid">
+   <section className="panel">
+    <form className="product-form" onSubmit={issueOrMint}>
+     <div className="form-grid-2">
+      <label>Token Name<input value={name} maxLength={128} onChange={e=>setName(e.target.value)} required /></label>
+      <label>Symbol<input value={symbol} maxLength={16} onChange={e=>setSymbol(e.target.value.toUpperCase())} required /></label>
+     </div>
+     <label>Decimals<input type="number" min="0" max="18" value={decimals} onChange={e=>setDecimals(Number(e.target.value))}/></label>
+     <label>Token Args / xUDT ID<input value={tokenArgs} onChange={e=>setTokenArgs(e.target.value)} placeholder="issuer lock hash + 00000000" /></label>
+     <button className="btn secondary action-wide" type="button" onClick={()=>void useMyLockAsIssuer()}>Generate xUDT ID From My Wallet</button>
+     <label>Receiver<input value={receiver} onChange={e=>setReceiver(e.target.value)} placeholder="ckt1..." required /></label>
+     <label>Human Amount<input value={amount} onChange={e=>setAmount(e.target.value)} inputMode="decimal" required /></label>
+     <div className="result-field"><span>Raw u128 amount</span><code>{rawAmount}</code></div>
+     <div className="buttonRow">
+      <button className="primary" disabled={busy} type="submit">{busy ? "Processing..." : "Create / Mint xUDT"}</button>
+      <button className="secondary" type="button" disabled={busy || !tokenArgs} onClick={()=>void transfer()}>Transfer</button>
+     </div>
+    </form>
+    {status && <p className="status-line">{status}</p>}
+   </section>
+   <section className="panel token-result-panel">
+    <span className="page-eyebrow">Asset Identity</span>
+    <div className="asset-title-row"><div><strong>{name || "Unnamed Token"}</strong><span>{symbol || "—"} · {decimals} decimals</span></div><span className="asset-kind-pill">xUDT</span></div>
+    <div className="result-field"><span>xUDT Args</span><code>{tokenArgs || "—"}</code></div>
+    <div className="result-field"><span>Transaction Hash</span><code>{txHash || "—"}</code></div>
+    {txHash && <TransactionLifecycle txHash={txHash}/>}
+    {preview && <details><summary>Transaction JSON</summary><pre>{preview}</pre></details>}
+   </section>
+  </div>
+ </AppLayout>;
+}
