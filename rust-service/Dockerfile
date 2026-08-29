@@ -2,7 +2,7 @@ FROM rust:1.89-bookworm AS builder
 
 WORKDIR /app
 
-COPY Cargo.toml rust-toolchain.toml ./
+COPY Cargo.toml Cargo.lock rust-toolchain.toml ./
 COPY src ./src
 COPY migrations ./migrations
 
