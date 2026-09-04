@@ -5,6 +5,12 @@ import { assetApi } from "../../api/backend";
 import { TransactionLifecycle } from "../../components/transactions/TransactionLifecycle";
 import { parseUnits } from "../../utils/units";
 
+type TokenCell = {
+ outPoint: string;
+ ownerLockHash: string;
+ rawAmount: string;
+};
+
 const safeJson = (value: unknown) =>
  JSON.stringify(value, (_, item) => typeof item === "bigint" ? item.toString() : item, 2);
 
@@ -23,6 +29,7 @@ export function FungibleTokenPage() {
  const [status, setStatus] = useState("");
  const [txHash, setTxHash] = useState("");
  const [preview, setPreview] = useState("");
+ const [tokenCells, setTokenCells] = useState<TokenCell[]>([]);
  const [busy, setBusy] = useState(false);
 
  const rawAmount = useMemo(() => {
@@ -115,6 +122,28 @@ export function FungibleTokenPage() {
   } finally { setBusy(false); }
  }
 
+ async function queryTokenCells() {
+  if (!signer) return setStatus("Connect a wallet first.");
+  if (!tokenArgs.trim()) return setStatus("Token Args are required to query holders.");
+  setBusy(true);
+  try {
+   setStatus("Querying live xUDT Cells from the connected network...");
+   const xUdtType = await buildXudtType(signer, tokenArgs.trim());
+   const cells: TokenCell[] = [];
+   for await (const cell of signer.client.findCellsByType(xUdtType, true, "desc", 100)) {
+    cells.push({
+     outPoint: `${cell.outPoint.txHash}:${cell.outPoint.index}`,
+     ownerLockHash: cell.cellOutput.lock.hash(),
+     rawAmount: ccc.udtBalanceFrom(cell.outputData).toString(),
+    });
+   }
+   setTokenCells(cells);
+   setStatus(`Found ${cells.length} live xUDT Cell${cells.length === 1 ? "" : "s"}.`);
+  } catch (error) {
+   setStatus(error instanceof Error ? error.message : String(error));
+  } finally { setBusy(false); }
+ }
+
  return <AppLayout>
   <PageHero eyebrow="Asset Studio · CCC · xUDT" title="Token Studio" description="Issue, mint and transfer xUDT assets with wallet signing, exact u128 token amounts and backend audit history." />
   <div className="asset-pro-banner"><strong>Production-style flow</strong><span>Wallet signs client-side → CKB validates xUDT → Rust API stores searchable asset audit metadata.</span></div>
@@ -143,6 +172,10 @@ export function FungibleTokenPage() {
     <div className="asset-title-row"><div><strong>{name || "Unnamed Token"}</strong><span>{symbol || "—"} · {decimals} decimals</span></div><span className="asset-kind-pill">xUDT</span></div>
     <div className="result-field"><span>xUDT Args</span><code>{tokenArgs || "—"}</code></div>
     <div className="result-field"><span>Transaction Hash</span><code>{txHash || "—"}</code></div>
+    <button className="btn secondary action-wide" type="button" disabled={busy || !tokenArgs} onClick={()=>void queryTokenCells()}>Query Live Token Cells</button>
+    {tokenCells.length > 0 && <div className="token-cell-list">
+     {tokenCells.map(cell => <details key={cell.outPoint}><summary>{cell.rawAmount} raw units</summary><div className="result-field"><span>Owner lock hash</span><code>{cell.ownerLockHash}</code></div><div className="result-field"><span>OutPoint</span><code>{cell.outPoint}</code></div></details>)}
+    </div>}
     {txHash && <TransactionLifecycle txHash={txHash}/>}
     {preview && <details><summary>Transaction JSON</summary><pre>{preview}</pre></details>}
    </section>

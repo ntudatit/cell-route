@@ -37,13 +37,9 @@ export function StoreDataPage() {
    setStatus("Creating Cell with data...");
    const owner = await signer.getRecommendedAddressObj();
    const data = utf8ToHex(message);
-   const byteLength = new TextEncoder().encode(message).length;
-   const capacity = Math.max(61 + byteLength, 61).toString();
-
    const tx = ccc.Transaction.from({
     outputs: [{
      lock: owner.script,
-     capacity: ccc.fixedPointFrom(capacity),
     }],
     outputsData: [data],
    });
@@ -59,7 +55,7 @@ export function StoreDataPage() {
    await backendApi.trackTransaction({
     txHash: hash,
     walletAddress: await signer.getRecommendedAddress(),
-    amountCkb: capacity,
+    amountCkb: ccc.fixedPointToString(tx.outputs[0].capacity),
     direction: "SEND",
    });
   } catch (error) {

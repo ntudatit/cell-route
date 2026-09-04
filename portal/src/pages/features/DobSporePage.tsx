@@ -1,6 +1,6 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
-import { createSpore, meltSpore, transferSpore } from "@ckb-ccc/spore";
+import { createSpore, findSpore, meltSpore, transferSpore } from "@ckb-ccc/spore";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
 import { assetApi } from "../../api/backend";
 import { TransactionLifecycle } from "../../components/transactions/TransactionLifecycle";
@@ -16,6 +16,7 @@ export function DobSporePage() {
  const [status, setStatus] = useState("");
  const [txHash, setTxHash] = useState("");
  const [busy, setBusy] = useState(false);
+ const [onChainContent, setOnChainContent] = useState<{ contentType: string; bytes: Uint8Array; clusterId?: string } | null>(null);
  const previewUrl = useMemo(() => file && file.type.startsWith("image/") ? URL.createObjectURL(file) : "", [file]);
 
  async function mint(event: FormEvent) {
@@ -81,6 +82,34 @@ export function DobSporePage() {
   finally { setBusy(false); }
  }
 
+ async function readFromChain() {
+  if (!signer) return setStatus("Connect a wallet first.");
+  if (!sporeId.trim()) return setStatus("Enter a Spore ID first.");
+  setBusy(true);
+  try {
+   setStatus("Finding the live Spore Cell and decoding its on-chain data...");
+   const found = await findSpore(signer.client, sporeId.trim());
+   if (!found) throw new Error("No live Spore Cell was found. It may be pending, transferred on another network, or melted.");
+   const bytes = ccc.bytesFrom(found.sporeData.content);
+   setOnChainContent({
+    contentType: found.sporeData.contentType,
+    bytes,
+    clusterId: found.sporeData.clusterId ? ccc.hexFrom(found.sporeData.clusterId) : undefined,
+   });
+   setStatus(`Decoded ${bytes.length.toLocaleString()} bytes from the live Spore Cell.`);
+  } catch (error) { setStatus(error instanceof Error ? error.message : String(error)); }
+  finally { setBusy(false); }
+ }
+
+ const onChainUrl = useMemo(() => {
+  if (!onChainContent || !onChainContent.contentType.startsWith("image/")) return "";
+  const copy = new Uint8Array(onChainContent.bytes.byteLength);
+  copy.set(onChainContent.bytes);
+  return URL.createObjectURL(new Blob([copy.buffer], { type: onChainContent.contentType }));
+ }, [onChainContent]);
+ useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
+ useEffect(() => () => { if (onChainUrl) URL.revokeObjectURL(onChainUrl); }, [onChainUrl]);
+
  return <AppLayout>
   <PageHero eyebrow="Asset Studio · CCC · Spore" title="Spore / DOB Studio" description="Mint text, images or binary files fully on-chain as Spore digital objects, optionally attach a Cluster ID, then transfer or melt them." />
   <div className="asset-pro-banner"><strong>Fully on-chain content</strong><span>The selected file bytes are encoded into the Spore Cell; your wallet remains the signer.</span></div>
@@ -97,7 +126,7 @@ export function DobSporePage() {
     <div className="separator"/>
     <label className="standalone-label">Spore ID<input value={sporeId} onChange={e=>setSporeId(e.target.value)} placeholder="0x..."/></label>
     <label className="standalone-label">New Owner<input value={recipient} onChange={e=>setRecipient(e.target.value)} placeholder="ckt1..."/></label>
-    <div className="buttonRow"><button className="secondary" disabled={busy || !sporeId || !recipient} onClick={()=>void transfer()}>Transfer</button><button className="danger" disabled={busy || !sporeId} onClick={()=>void melt()}>Melt</button></div>
+    <div className="buttonRow"><button className="secondary" disabled={busy || !sporeId} onClick={()=>void readFromChain()}>Read On-chain</button><button className="secondary" disabled={busy || !sporeId || !recipient} onClick={()=>void transfer()}>Transfer</button><button className="danger" disabled={busy || !sporeId} onClick={()=>void melt()}>Melt</button></div>
    </section>
    <section className="panel dob-result-panel">
     <span className="page-eyebrow">DOB Result</span>
@@ -105,6 +134,7 @@ export function DobSporePage() {
     <div className="result-field"><span>Spore ID</span><code>{sporeId || "—"}</code></div>
     <div className="result-field"><span>Cluster ID</span><code>{clusterId || "Standalone"}</code></div>
     <div className="result-field"><span>Transaction Hash</span><code>{txHash || "—"}</code></div>
+    {onChainContent && <div className="file-preview-card"><strong>Decoded from live Cell</strong><span>{onChainContent.contentType} · {onChainContent.bytes.length.toLocaleString()} bytes</span>{onChainContent.clusterId && <code>{onChainContent.clusterId}</code>}{onChainUrl ? <img src={onChainUrl} alt="On-chain Spore content"/> : onChainContent.contentType.startsWith("text/") ? <pre>{new TextDecoder().decode(onChainContent.bytes)}</pre> : <code>{ccc.hexFrom(onChainContent.bytes)}</code>}</div>}
     {txHash && <TransactionLifecycle txHash={txHash}/>}
     {status && <p className="status-line">{status}</p>}
    </section>
