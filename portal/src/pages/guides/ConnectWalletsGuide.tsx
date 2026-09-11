@@ -1,3 +1,4 @@
+import { useFeatureCcc } from '../../dev-console/hooks';
 import { ccc } from "@ckb-ccc/connector-react";
 import { GuideHeader, GuideSection, GuideShell, CodeBlock, ResultBox, StepList } from "../../components/GuideShell";
 import { useWallet } from "../../hooks/useWallet";
@@ -16,7 +17,7 @@ const providerCode = `import { ccc } from "@ckb-ccc/connector-react";
 </ccc.Provider>`;
 
 export function ConnectWalletsGuide() {
- const { open, disconnect, wallet, signerInfo } = ccc.useCcc();
+ const { open, disconnect, wallet, signerInfo } = useFeatureCcc();
  const walletState = useWallet();
 
  return (

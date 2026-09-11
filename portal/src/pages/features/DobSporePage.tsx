@@ -1,12 +1,17 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { createSpore, findSpore, meltSpore, transferSpore } from "@ckb-ccc/spore";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
-import { assetApi } from "../../api/backend";
+import { recordSubmittedAsset } from "../../utils/submission";
 import { TransactionLifecycle } from "../../components/transactions/TransactionLifecycle";
 
 export function DobSporePage() {
- const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+ const signer = useFeatureSigner();
  const [name, setName] = useState("My CKB Spore");
  const [textContent, setTextContent] = useState("Hello, Spore!");
  const [file, setFile] = useState<File | null>(null);
@@ -20,6 +25,9 @@ export function DobSporePage() {
  const previewUrl = useMemo(() => file && file.type.startsWith("image/") ? URL.createObjectURL(file) : "", [file]);
 
  async function mint(event: FormEvent) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'mint');
+ try {
+
   event.preventDefault();
   if (!signer) return setStatus("Connect a wallet first.");
   setBusy(true);
@@ -40,17 +48,21 @@ export function DobSporePage() {
    await tx.completeFeeBy(signer, 2000);
    const hash = await signer.sendTransaction(tx);
    setSporeId(id); setTxHash(hash);
-   await assetApi.record({
+   setStatus(await recordSubmittedAsset(signer.client, {
     assetKind: "SPORE", action: "MINT", assetId: id, ownerAddress,
     displayName: name.trim(), txHash: hash,
     metadataJson: JSON.stringify({ contentType, bytes: content.byteLength, clusterId: clusterId.trim() || null, fileName: file?.name || null }),
-   }).catch(() => undefined);
-   setStatus("Spore minted and recorded in the asset audit registry.");
-  } catch (error) { setStatus(error instanceof Error ? error.message : String(error)); }
+   }));
+  } catch (error) { featureOperation.fail(error);  setStatus(error instanceof Error ? error.message : String(error)); }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function transfer() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'transfer');
+ try {
+
   if (!signer || !sporeId || !recipient) return;
   setBusy(true);
   try {
@@ -60,13 +72,17 @@ export function DobSporePage() {
    const { tx } = await transferSpore({ signer, id: sporeId.trim(), to });
    await tx.completeInputsByCapacity(signer); await tx.completeFeeBy(signer, 1000);
    const hash = await signer.sendTransaction(tx); setTxHash(hash);
-   await assetApi.record({ assetKind:"SPORE", action:"TRANSFER", assetId:sporeId.trim(), ownerAddress, displayName:name.trim(), txHash:hash, metadataJson:JSON.stringify({ recipient: recipient.trim() }) }).catch(()=>undefined);
-   setStatus("Spore transfer submitted.");
-  } catch (error) { setStatus(error instanceof Error ? error.message : String(error)); }
+   setStatus(await recordSubmittedAsset(signer.client, { assetKind:"SPORE", action:"TRANSFER", assetId:sporeId.trim(), ownerAddress, displayName:name.trim(), txHash:hash, metadataJson:JSON.stringify({ recipient: recipient.trim() }) }));
+  } catch (error) { featureOperation.fail(error);  setStatus(error instanceof Error ? error.message : String(error)); }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function melt() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'melt');
+ try {
+
   if (!signer || !sporeId) return;
   if (!window.confirm("Melt this Spore? The Spore Cell will be consumed and this is irreversible.")) return;
   setBusy(true);
@@ -76,13 +92,17 @@ export function DobSporePage() {
    const { tx } = await meltSpore({ signer, id: sporeId.trim() });
    await tx.completeFeeBy(signer, 1000);
    const hash = await signer.sendTransaction(tx); setTxHash(hash);
-   await assetApi.record({ assetKind:"SPORE", action:"MELT", assetId:sporeId.trim(), ownerAddress, displayName:name.trim(), txHash:hash }).catch(()=>undefined);
-   setStatus("Spore melt submitted.");
-  } catch (error) { setStatus(error instanceof Error ? error.message : String(error)); }
+   setStatus(await recordSubmittedAsset(signer.client, { assetKind:"SPORE", action:"MELT", assetId:sporeId.trim(), ownerAddress, displayName:name.trim(), txHash:hash }));
+  } catch (error) { featureOperation.fail(error);  setStatus(error instanceof Error ? error.message : String(error)); }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function readFromChain() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'readFromChain');
+ try {
+
   if (!signer) return setStatus("Connect a wallet first.");
   if (!sporeId.trim()) return setStatus("Enter a Spore ID first.");
   setBusy(true);
@@ -97,9 +117,11 @@ export function DobSporePage() {
     clusterId: found.sporeData.clusterId ? ccc.hexFrom(found.sporeData.clusterId) : undefined,
    });
    setStatus(`Decoded ${bytes.length.toLocaleString()} bytes from the live Spore Cell.`);
-  } catch (error) { setStatus(error instanceof Error ? error.message : String(error)); }
+  } catch (error) { featureOperation.fail(error);  setStatus(error instanceof Error ? error.message : String(error)); }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  const onChainUrl = useMemo(() => {
   if (!onChainContent || !onChainContent.contentType.startsWith("image/")) return "";

@@ -1,3 +1,5 @@
+import { useFeatureSigner, useFeatureCcc } from '../dev-console/hooks';
+import { clientNetwork } from "../utils/network";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ccc } from "@ckb-ccc/connector-react";
@@ -30,8 +32,8 @@ const emptyDashboard: DashboardResponse = {
 
 export function Dashboard() {
  const wallet = useWallet();
- const signer = ccc.useSigner();
- const { client, open } = ccc.useCcc();
+ const signer = useFeatureSigner();
+ const { client, open } = useFeatureCcc();
  const navigate = useNavigate();
 
  const [network, setNetwork] = useState<NetworkResponse>({
@@ -51,6 +53,10 @@ export function Dashboard() {
    const networkInfo = await backendApi.getNetwork();
    setNetwork(networkInfo);
 
+   if (networkInfo.network.toLowerCase() !== clientNetwork(client)) {
+    setDashboard(emptyDashboard);
+    throw new Error("Activity service uses another network; connect a matching backend.");
+   }
    if (wallet.address) {
     setDashboard(await backendApi.getDashboard(wallet.address));
    }
@@ -59,7 +65,7 @@ export function Dashboard() {
   } finally {
    setBackendLoading(false);
   }
- }, [wallet.address]);
+ }, [wallet.address, client]);
 
  const loadCells = useCallback(async () => {
   if (!signer) {
@@ -104,7 +110,7 @@ export function Dashboard() {
  }
 
  const frontendNetwork =
-  client.addressPrefix === "ckb" ? "mainnet" : "testnet";
+  clientNetwork(client);
 
  const networkMismatch =
   network.network &&

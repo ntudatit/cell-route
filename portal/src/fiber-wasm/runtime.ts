@@ -146,6 +146,9 @@ export class FiberWasmRuntime {
   }
 
   private async startInternal(): Promise<void> {
+    if ((import.meta.env.VITE_CKB_NETWORK ?? "testnet") === "mainnet" && (NETWORK !== "mainnet" || import.meta.env.VITE_FIBER_MAINNET_ENABLED !== "true")) {
+      throw new Error("Mainnet Fiber is not configured. Supply a mainnet Fiber config and enable VITE_FIBER_MAINNET_ENABLED to start it.");
+    }
     const finishLoading = beginLoadingActivity("connection");
     try {
     const cap = this.browserCapability();

@@ -1,0 +1,17 @@
+{
+  "network": "offckb-devnet",
+  "genesisHash": "0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be",
+  "codeHash": "0x191a12efda778478ac4173a4b4c0218e8676d0e2fc568dbb6500862f6d14d273",
+  "codeOutPoint": {
+    "txHash": "0xd6e697ad00741fae4027c352f31ffd51cd243bedafe577d30905901e39152a08",
+    "index": 0
+  },
+  "address": "ckt1qzkymvxscq5t5rtnmmy7uhn28sxf3lxle2y4gq4r9pwksr5kfh95vqgqqqv35yh0mfmcg79vg9e6fdxqyx8gvaksut79drdmv5qgvtmdznf8xpyc5wf9pycl3tsxq7jsyujle8qxanf5lyn0y6tqvj9c5e47yux6vgk6teus",
+  "digest": "0x98a39250931f8ae0607a502725fc9c06ecd34f926f26960648b8a66be270da62",
+  "fundingTxHash": "0xe11568d8b55c4aace03f6eb120df92d4d651f58a99d3c470bb3fa1490ebaa409",
+  "unlockTxHash": "0x0a6013948b1026a13b76839b2aec7ce3de25d7799be989ff9d172fc05cca72cc",
+  "status": "committed",
+  "wrongPreimageExitCode": 7,
+  "missingWitnessExitCode": 6,
+  "checkedAt": "2026-09-09T14:02:26.192Z"
+}

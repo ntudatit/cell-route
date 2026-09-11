@@ -1,3 +1,6 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { useEffect, useRef, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { Play, RefreshCw, Square, Trash2, Wifi, Database, ShieldCheck, PlugZap, CircleDollarSign, Unplug, Power } from "lucide-react";
@@ -7,7 +10,9 @@ import { useFiberRuntime } from "../../fiber-wasm/FiberRuntimeContext";
 import { assertOnlyWitnessesChanged, cccTransactionToRpc, fiberFundingStore, rpcScriptFromCcc, rpcTransactionToCcc, type FiberRpcTransaction } from "../../fiber-wasm/funding";
 
 export function BrowserFiberNodePage() {
-  const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+  const signer = useFeatureSigner();
   const runtime = useFiberRuntime();
   const fundingSubmitStarted = useRef(false);
   const [busy, setBusy] = useState(false);
@@ -44,48 +49,81 @@ export function BrowserFiberNodePage() {
       .finally(() => setBusy(false));
   }, []);
 
-  async function stop() { setBusy(true); try { await runtime.stop(); } finally { setBusy(false); } }
+  async function stop() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'stop');
+ try {
+ setBusy(true); try { await runtime.stop(); } finally { setBusy(false); }
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
   async function reset() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'reset');
+ try {
+
     const activeChannels = channels.filter((channel) => !/closed/i.test(String(channel.state?.state_name ?? channel.state?.stateName ?? channel.state ?? "")));
     if (activeChannels.length > 0) { setError("Close all active channels before resetting the browser Fiber identity."); return; }
     if (!confirm("Reset this browser Fiber identity? Existing local Fiber state may no longer be accessible with the new identity.")) return;
     setBusy(true); try { await runtime.resetIdentity(); } finally { setBusy(false); }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function connectPeer() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'connectPeer');
+ try {
+
     if (!peerAddress.trim() && !peerPubkey.trim()) return;
     setBusy(true); setError(""); setOperationResult(null);
     try {
       await fiberWasmRuntime.connectPeer({ address: peerAddress.trim() || undefined, pubkey: peerAddress.trim() ? undefined : peerPubkey.trim() });
       setOperationResult({ status: "Peer connected" });
       await refresh();
-    } catch (e) { setError(fiberErrorMessage(e)); }
+    } catch (e) { featureOperation.fail(e);  setError(fiberErrorMessage(e)); }
     finally { setBusy(false); }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function disconnectPeer(pubkey: string) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'disconnectPeer');
+ try {
+
     setBusy(true); setError("");
     try { await fiberWasmRuntime.disconnectPeer(pubkey); await refresh(); }
-    catch (e) { setError(fiberErrorMessage(e)); }
+    catch (e) { featureOperation.fail(e);  setError(fiberErrorMessage(e)); }
     finally { setBusy(false); }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function setChannelEnabled(channelId: string, enabled: boolean) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'setChannelEnabled');
+ try {
+
     setBusy(true); setError("");
     try { await fiberWasmRuntime.updateChannel(channelId, enabled); await refresh(); }
-    catch (e) { setError(fiberErrorMessage(e)); }
+    catch (e) { featureOperation.fail(e);  setError(fiberErrorMessage(e)); }
     finally { setBusy(false); }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function closeChannel(channelId: string) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'closeChannel');
+ try {
+
     if (!confirm("Close this Fiber channel cooperatively?")) return;
     setBusy(true); setError("");
     try { await fiberWasmRuntime.shutdownChannel(channelId, false); await refresh(); }
-    catch (e) { setError(fiberErrorMessage(e)); }
+    catch (e) { featureOperation.fail(e);  setError(fiberErrorMessage(e)); }
     finally { setBusy(false); }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function openChannel() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'openChannel');
+ try {
+
     if (!peerPubkey.trim() || BigInt(fundingAmount || "0") <= 0n) return;
     if (!signer) { setError("Connect a CKB wallet before preparing external channel funding."); return; }
     if (!confirm(`Prepare a public Fiber channel with ${fundingAmount} raw CKB units?`)) return;
@@ -138,9 +176,11 @@ export function BrowserFiberNodePage() {
       if (!stableDraft) throw new Error("Wallet cell dependencies did not stabilize after three funding attempts.");
       fiberFundingStore.set({ channelId: stableDraft.channelId, unsignedTransaction: stableDraft.transaction, createdAt: new Date().toISOString(), returnUrl: `/fiber-node?node=${encodeURIComponent(fiberWasmRuntime.profile)}&funding=submit` });
       window.location.assign("/fiber-funding");
-    } catch (e) { setError(fiberErrorMessage(e)); }
+    } catch (e) { featureOperation.fail(e);  setError(fiberErrorMessage(e)); }
     finally { setBusy(false); }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   const content = <>
     <PageHero eyebrow="FIBER NODE" title="Browser Fiber Node" description="Operate the Fiber node, inspect connectivity and monitor channel state." />

@@ -13,6 +13,7 @@ mod rpc;
 mod state;
 
 use ai::AiService;
+use anyhow::Context;
 use axum::{
     Router,
     http::{HeaderValue, Method},
@@ -31,15 +32,16 @@ use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let config = Config::from_env()?;
+    let config = Config::from_env().context("Invalid startup configuration; check rust-service/.env and shell environment variables")?;
     init_tracing(config.log_json);
 
     let pool = PgPoolOptions::new()
         .max_connections(10)
         .min_connections(1)
         .connect(&config.database_url)
-        .await?;
-    sqlx::migrate!().run(&pool).await?;
+        .await
+        .context("Unable to connect to PostgreSQL; ensure the DATABASE_URL database exists and PostgreSQL is running")?;
+    sqlx::migrate!().run(&pool).await.context("Database migrations failed. If a migration was previously applied but has been modified, use the database belonging to this checkout or configure a new dedicated CellRoute database. Do not delete migration history or reset an existing database to bypass this check")?;
 
     let state = AppState {
         transactions: TransactionRepository::new(pool.clone()),
@@ -191,7 +193,8 @@ async fn main() -> anyhow::Result<()> {
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind(config.bind_addr).await?;
+    let listener = tokio::net::TcpListener::bind(config.bind_addr).await
+        .with_context(|| format!("Unable to listen on {}; check whether PORT is already in use", config.bind_addr))?;
     info!(
         address = %config.bind_addr,
         network = %config.ckb_network,

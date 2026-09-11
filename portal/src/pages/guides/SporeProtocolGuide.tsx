@@ -1,3 +1,6 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { FormEvent, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { createSpore, meltSpore, transferSpore } from "@ckb-ccc/spore";
@@ -16,7 +19,9 @@ await tx.completeFeeBy(signer);
 const txHash = await signer.sendTransaction(tx);`;
 
 export function SporeProtocolGuide() {
- const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+ const signer = useFeatureSigner();
  const [content, setContent] = useState("Hello, Spore!");
  const [sporeId, setSporeId] = useState("");
  const [recipient, setRecipient] = useState("");
@@ -29,6 +34,9 @@ export function SporeProtocolGuide() {
  };
 
  async function create(event: FormEvent) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'create');
+ try {
+
   event.preventDefault(); if (!guard() || !signer) return;
   try {
    const { tx, id } = await createSpore({ signer, data: { contentType: "text/plain", content: new TextEncoder().encode(content) } });
@@ -36,10 +44,15 @@ export function SporeProtocolGuide() {
    await tx.completeFeeBy(signer);
    const hash = await signer.sendTransaction(tx);
    setSporeId(id); setResult(`Spore ID: ${id} | Tx: ${hash}`);
-  } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
- }
+  } catch (e) { featureOperation.fail(e);  setError(e instanceof Error ? e.message : String(e)); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function transfer() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'transfer');
+ try {
+
   if (!guard() || !signer) return;
   try {
    const { script: to } = await ccc.Address.fromString(recipient.trim(), signer.client);
@@ -47,18 +60,25 @@ export function SporeProtocolGuide() {
    await tx.completeInputsByCapacity(signer);
    await tx.completeFeeBy(signer);
    setResult(`Transfer tx: ${await signer.sendTransaction(tx)}`);
-  } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
- }
+  } catch (e) { featureOperation.fail(e);  setError(e instanceof Error ? e.message : String(e)); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function melt() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'melt');
+ try {
+
   if (!guard() || !signer) return;
   if (!window.confirm("Melt this Spore? This action is irreversible.")) return;
   try {
    const { tx } = await meltSpore({ signer, id: sporeId.trim() });
    await tx.completeFeeBy(signer);
    setResult(`Melt tx: ${await signer.sendTransaction(tx)}`);
-  } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
- }
+  } catch (e) { featureOperation.fail(e);  setError(e instanceof Error ? e.message : String(e)); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  return (
   <GuideShell>

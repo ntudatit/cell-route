@@ -1,3 +1,4 @@
+import { useFeatureCcc } from '../dev-console/hooks';
 import { ChevronDown, LogOut } from "lucide-react";
 import { ccc } from "@ckb-ccc/connector-react";
 
@@ -6,7 +7,7 @@ function short(value: string) {
 }
 
 export function WalletButton({ address }: { address: string }) {
- const { open, disconnect, wallet, signerInfo } = ccc.useCcc();
+ const { open, disconnect, wallet, signerInfo } = useFeatureCcc();
 
  if (!signerInfo) {
   return <button className="wallet-top connect" onClick={open}>Connect wallet</button>;
@@ -14,12 +15,12 @@ export function WalletButton({ address }: { address: string }) {
 
  return (
   <div className="wallet-actions">
-   <button className="wallet-top" onClick={open} title="Open CCC connector">
+   <button className="wallet-top" onClick={open} aria-label="Manage connected wallet" title={address || "Open wallet connector"}>
     <div className="avatar">C</div>
     <div><b>{wallet?.name ?? "CKB Wallet"}</b><span>{address ? short(address) : "Connected"}</span></div>
     <ChevronDown size={15}/>
    </button>
-   <button className="disconnect-btn" onClick={disconnect} title="Disconnect wallet"><LogOut size={16}/></button>
+   <button className="disconnect-btn" onClick={disconnect} aria-label="Disconnect wallet" title="Disconnect wallet"><LogOut size={16}/></button>
   </div>
  );
 }

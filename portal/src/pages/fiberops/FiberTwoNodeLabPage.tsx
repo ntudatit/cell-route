@@ -1,3 +1,5 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
 import { useEffect, useState } from "react";
 import { CheckCircle2, Copy, ExternalLink, Network, RefreshCw, Route, Send } from "lucide-react";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
@@ -10,6 +12,8 @@ const RELAY_B = "/dns4/onyxia.fiber.channel/tcp/443/wss/p2p/QmdyQWjPtbK4NWWsvy8s
 type SharedInvoice = { invoice: string; paymentHash: string; nodePubkey: string; createdAt: string };
 
 export function FiberTwoNodeLabPage() {
+ const featureConsoleScope = currentScope();
+
   const runtime = useFiberRuntime();
   const profile = fiberWasmRuntime.profile === "b" ? "B" : "A";
   const [relay, setRelay] = useState(profile === "A" ? RELAY_A : RELAY_B);
@@ -28,30 +32,60 @@ export function FiberTwoNodeLabPage() {
   }, []);
 
   async function execute(action: () => Promise<unknown>) {
-    setBusy(true); setError("");
-    try { return await action(); } catch (cause) { setError(fiberErrorMessage(cause)); return undefined; } finally { setBusy(false); }
-  }
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'execute');
+ try {
 
-  async function connectRelay() { await execute(() => fiberWasmRuntime.connectPeer({ address: relay.trim() })); await runtime.refresh(); }
-  async function scanGossip() { const value = await execute(() => fiberWasmRuntime.networkResources()); if (value) setResources(value as Record<string, unknown>); }
+    setBusy(true); setError("");
+    try { return await action(); } catch (cause) { featureOperation.fail(cause);  setError(fiberErrorMessage(cause)); return undefined; } finally { setBusy(false); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
+
+  async function connectRelay() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'connectRelay');
+ try {
+ await execute(() => fiberWasmRuntime.connectPeer({ address: relay.trim() })); await runtime.refresh();
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
+  async function scanGossip() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'scanGossip');
+ try {
+ const value = await execute(() => fiberWasmRuntime.networkResources()); if (value) setResources(value as Record<string, unknown>);
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
   async function createInvoice() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'createInvoice');
+ try {
+
     const value = await execute(() => fiberWasmRuntime.newInvoice({ amountRaw: amount, description: "Two-node routing lab", expirySeconds: 1800 })) as Record<string, any> | undefined;
     if (!value?.invoice_address) return;
     const shared = { invoice: String(value.invoice_address), paymentHash: String(fiberWasmRuntime.extractPaymentHash(value) ?? ""), nodePubkey: String(runtime.node?.pubkey ?? ""), createdAt: new Date().toISOString() };
     localStorage.setItem(LAB_INVOICE_KEY, JSON.stringify(shared)); setInvoice(shared);
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
   async function sendPayment(dryRun: boolean) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'sendPayment');
+ try {
+
     if (!invoice) return;
     if (!dryRun && !confirm("Send Node A payment to the invoice created by Node B?")) return;
     const trampolineHops = trampoline.split(/[,\s]+/).filter(Boolean);
     const value = await execute(() => fiberWasmRuntime.sendPaymentAdvanced({ invoice: invoice.invoice, dryRun, maxParts: trampolineHops.length > 1 ? 1 : 4, maxFeeAmountRaw: "100000000", timeoutSeconds: 90, trampolineHops }));
     if (value) setPayment(value as Record<string, unknown>);
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
   async function verify() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'verify');
+ try {
+
     if (!invoice?.paymentHash) return;
     const value = await execute(() => profile === "B" ? fiberWasmRuntime.getInvoice(invoice.paymentHash) : fiberWasmRuntime.getPayment(invoice.paymentHash));
     if (value) setVerification(value as Record<string, unknown>);
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   return <AppLayout><div className="fiber-lab-page">
     <PageHero eyebrow="Fiber Integration Lab" title={`Local Node ${profile}`} description="Build Node A → Relay 1 → Relay 2 → Node B with independent browser identities, public channels and gossip routing." actions={<><a className="btn secondary" href="/fiber-lab?node=a" target="_blank"><ExternalLink size={15}/> Open A</a><a className="btn secondary" href="/fiber-lab?node=b" target="_blank"><ExternalLink size={15}/> Open B</a></>} />

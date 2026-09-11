@@ -1,3 +1,6 @@
+import { useFeatureCcc } from '../../dev-console/hooks';
+import { ccc } from "@ckb-ccc/connector-react";
+import { clientNetwork } from "../../utils/network";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowDownLeft, ArrowUpRight, RefreshCw } from "lucide-react";
 import { backendApi, type TrackedTransaction } from "../../api/backend";
@@ -10,6 +13,7 @@ const isPending = (status: string) =>
 
 export function TransactionsPage() {
   const wallet = useWallet();
+  const { client } = useFeatureCcc();
   const [rows, setRows] = useState<TrackedTransaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -23,6 +27,8 @@ export function TransactionsPage() {
     if (!quiet) setLoading(true);
     try {
       setError("");
+      const backend = await backendApi.getNetwork();
+      if (backend.network.toLowerCase() !== clientNetwork(client)) { setRows([]); throw new Error("Activity service uses another network."); }
       const dashboard = await backendApi.getDashboard(wallet.address);
       setRows(dashboard.recentTransactions);
     } catch (e) {
@@ -30,7 +36,7 @@ export function TransactionsPage() {
     } finally {
       if (!quiet) setLoading(false);
     }
-  }, [wallet.address]);
+  }, [wallet.address, client]);
 
   useEffect(() => { void load(); }, [load]);
 

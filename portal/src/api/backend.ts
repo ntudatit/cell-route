@@ -1,3 +1,4 @@
+import { instrument } from '../dev-console/store';
 import { beginLoadingActivity } from "../utils/loadingActivity";
 const getFiberRuntime = async () => (await import("../fiber-wasm/runtime")).fiberWasmRuntime;
 const API_URL = (import.meta.env.VITE_API_URL ?? "http://localhost:8080/api").replace(/\/$/, "");
@@ -33,6 +34,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
  const token = authTokenStore.get();
  const response = await fetch(`${API_URL}${path}`, {
   ...init,
+  signal: init?.signal ?? AbortSignal.timeout(12000),
   headers: {
    "Content-Type": "application/json",
    ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -46,7 +48,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
    detail = body.message ?? body.error ?? detail;
   } catch { /* keep status */ }
   if (response.status === 401) authTokenStore.clear();
-  throw new Error(detail);
+  throw Object.assign(new Error(detail), { statusCode: response.status });
  }
  return response.json() as Promise<T>;
  } finally {
@@ -54,7 +56,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
  }
 }
 
-export const backendApi = {
+export const backendApi = instrument({
  getNetwork: () => request<NetworkResponse>("/ckb/network"),
  getTip: () => request<TipResponse>("/ckb/tip"),
  getTransactionStatus: (txHash: string) => request<TransactionStatus>(`/transactions/${encodeURIComponent(txHash)}/status`),
@@ -65,7 +67,7 @@ export const backendApi = {
   request<AuthToken>("/auth/verify", { method: "POST", body: JSON.stringify(body) }),
  authMe: () => request<AuthMe>("/auth/me"),
  transactionEventsUrl: (txHash: string) => `${API_URL}/transactions/${encodeURIComponent(txHash)}/events`,
-};
+}, 'api', 'backendApi');
 
 export type AssetKind = "XUDT" | "SPORE" | "CLUSTER";
 export type AssetAction = "CREATE" | "MINT" | "TRANSFER" | "MELT";
@@ -78,10 +80,10 @@ export type CreateAssetEventRequest = {
  assetKind: AssetKind; action: AssetAction; assetId: string; ownerAddress: string;
  displayName?: string; symbol?: string; amount?: string; txHash: string; metadataJson?: string;
 };
-export const assetApi = {
+export const assetApi = instrument({
  record: (body: CreateAssetEventRequest) => request<AssetEvent>("/assets/events", { method: "POST", body: JSON.stringify(body) }),
  listByOwner: (address: string) => request<AssetEvent[]>(`/assets/${encodeURIComponent(address)}`),
-};
+}, 'api', 'assetApi');
 
 export type IndexedAsset = {
  id: number; ownerAddress: string; assetKind: string; assetId: string; typeCodeHash: string;
@@ -93,12 +95,12 @@ export type IndexerSyncResponse = {
  walletAddress: string; network: string; scannedCells: number; indexedAssets: number;
  cursor?: string | null; assets: IndexedAsset[];
 };
-export const indexerApi = {
+export const indexerApi = instrument({
  sync: (walletAddress: string) => request<IndexerSyncResponse>("/indexer/sync", {
   method: "POST", body: JSON.stringify({ walletAddress }),
  }),
  list: (walletAddress: string) => request<IndexedAsset[]>(`/indexer/assets/${encodeURIComponent(walletAddress)}`),
-};
+}, 'api', 'indexerApi');
 
 export type FiberNodeSummary = {
  endpoint: string; version?: string | null; commitHash?: string | null; nodeName?: string | null; pubkey?: string | null;
@@ -111,7 +113,7 @@ export type FiberInvoiceResult = {
  invoiceAddress?: string | null; paymentHash?: string | null; amountRaw: string; fiber: unknown;
 };
 export type FiberPaymentResult = { payment_hash?: string; paymentHash?: string; status?: string; fee?: string; failed_error?: unknown } & Record<string, unknown>;
-export const fiberApi = {
+export const fiberApi = instrument({
  node: async () => (await getFiberRuntime()).nodeSummary() as Promise<FiberNodeSummary>,
  compatibility: async () => (await getFiberRuntime()).compatibility() as Promise<FiberCompatibility>,
  createInvoice: async (body: { amountRaw: string; description?: string; expirySeconds?: number }) => {
@@ -130,7 +132,7 @@ export const fiberApi = {
  payInvoice: async (_body: { walletAddress?: string; invoice: string; allowSelfPayment?: boolean }) =>
   (await getFiberRuntime()).sendPayment(_body.invoice, false, _body.allowSelfPayment === true) as Promise<FiberPaymentResult>,
  getPayment: async (paymentHash: string) => (await getFiberRuntime()).getPayment(paymentHash) as Promise<FiberPaymentResult>,
-};
+}, 'fiber', 'fiberApi');
 
 export type FiberOpsOverview = {
  nodeReachable: boolean; nodeVersion?: string | null; nodePubkey?: string | null; peers: number;
@@ -161,7 +163,7 @@ export type FiberIncident = {
  subjectType: string; subjectId: string; title: string; diagnosis: string; recommendation?: string | null;
  contextJson: unknown; network: string; firstSeenAt: string; lastSeenAt: string; resolvedAt?: string | null;
 };
-export const fiberOpsApi = {
+export const fiberOpsApi = instrument({
  compatibility: async () => (await getFiberRuntime()).compatibility() as Promise<FiberCompatibility>,
  overview: async () => (await getFiberRuntime()).overview() as Promise<FiberOpsOverview>,
  channels: async () => (await getFiberRuntime()).channelHealth() as Promise<ChannelHealthResponse>,
@@ -170,7 +172,7 @@ export const fiberOpsApi = {
  incidents: async () => (await getFiberRuntime()).incidents() as Promise<FiberIncident[]>,
  // Browser WASM is controlled in-process. There is no localhost Fiber SSE endpoint.
  eventsUrl: () => "",
-};
+}, 'fiber', 'fiberOpsApi');
 
 export type AiKnowledgeChunk = {
   id: number;
@@ -192,35 +194,35 @@ export type AiChatResponse = {
     operatorApprovalRequiredForRecovery: boolean;
   };
 };
-export const aiApi = {
+export const aiApi = instrument({
   chat: (body: { message: string; runtimeContext?: unknown; walletAddress?: string; maxChunks?: number }) =>
     request<AiChatResponse>("/ai/chat", { method: "POST", body: JSON.stringify(body) }),
   searchKnowledge: (q: string, limit = 5) =>
     request<AiKnowledgeChunk[]>(`/ai/knowledge/search?q=${encodeURIComponent(q)}&limit=${limit}`),
   syncRuntimeSnapshot: (body: { overview: unknown; channels: unknown; incidents: unknown }) =>
     request<{ status: string; network: string; runtime: string }>("/fiber/runtime/snapshot", { method: "POST", body: JSON.stringify(body) }),
-};
+}, 'api', 'aiApi');
 
 export type FiberNetworkResources = {
   graphNodes: number; graphChannels: number; connectedPeers: number; localChannels: number;
   readyChannels: number; udtChannels: number; observedAt: string;
   nodes: unknown[]; channels: unknown[];
 };
-export const fiberRuntimeService = {
+export const fiberRuntimeService = instrument({
   storeResources: (resources: FiberNetworkResources) => request<{ status: string; network: string; runtime: string }>("/fiber/runtime/resources", { method: "POST", body: JSON.stringify({ resources }) }),
   latestResources: () => request<{ network: string; runtime: string; resources: FiberNetworkResources; capturedAt: string }>("/fiber/runtime/resources"),
-};
+}, 'fiber', 'fiberRuntimeService');
 
 export type MerchantOrder = {
   id: string; merchantWallet: string; customerReference?: string | null; amountRaw: string;
   assetKind: string; description?: string | null; status: string; paymentHash?: string | null;
   invoiceAddress?: string | null; network: string; paidAt?: string | null; createdAt: string; updatedAt: string;
 };
-export const merchantOrderApi = {
+export const merchantOrderApi = instrument({
   create: (body: { customerReference?: string; amountRaw: string; assetKind?: string; description?: string; paymentHash?: string | null; invoiceAddress?: string | null }, idempotencyKey?: string) =>
     request<MerchantOrder>("/merchant/orders", { method: "POST", headers: idempotencyKey ? { "Idempotency-Key": idempotencyKey } : undefined, body: JSON.stringify(body) }),
   list: () => request<MerchantOrder[]>("/merchant/orders"),
   updateStatus: (orderId: string, status: string) => request<MerchantOrder>(`/merchant/orders/${encodeURIComponent(orderId)}`, { method: "POST", body: JSON.stringify({ status }) }),
   recordAttempt: (orderId: string, body: { paymentHash?: string; status: string; feeRaw?: string; routeParts?: number; failure?: string; raw?: unknown }) =>
     request<{ id: number; orderId: string; status: string }>(`/merchant/orders/${encodeURIComponent(orderId)}/attempts`, { method: "POST", body: JSON.stringify(body) }),
-};
+}, 'api', 'merchantOrderApi');

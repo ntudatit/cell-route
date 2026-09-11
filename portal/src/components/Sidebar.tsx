@@ -1,3 +1,4 @@
+import { useFeatureCcc, useFeatureSigner } from '../dev-console/hooks';
 import {
   Activity,
   Boxes,
@@ -59,6 +60,7 @@ const fiberOps = [
 ];
 
 const tools = [
+  { to: "/simple-lock", label: "Simple Lock Lab", icon: FileCode2 },
   { to: "/docs", label: "FiberPay API", icon: Code2 },
   { to: "/explorer", label: "CKB Explorer", icon: Search },
   { to: "/faucet", label: "Testnet Faucet", icon: Droplets },
@@ -75,7 +77,7 @@ function NavGroup({
   items: readonly NavItem[];
   locked?: boolean;
 }) {
-  const { open } = ccc.useCcc();
+  const { open } = useFeatureCcc();
   return (
     <>
       <div className="sidebar-section-label">{label}</div>
@@ -117,8 +119,8 @@ function NavGroup({
   );
 }
 
-export function Sidebar({ network, tip }: { network: string; tip: string }) {
-  const signer = ccc.useSigner();
+export function Sidebar({ network, tip, connected = false }: { network: string; tip: string; connected?: boolean }) {
+  const signer = useFeatureSigner();
   const navigate = useNavigate();
   const fiberRoute = isFiberRoute();
 
@@ -132,13 +134,13 @@ export function Sidebar({ network, tip }: { network: string; tip: string }) {
         <NavGroup label="FiberPay" items={commerce} />
         <NavGroup label="FiberOps" items={fiberOps} />
         <NavGroup label="CKB Settlement" items={settlement} locked={!signer} />
-        <NavGroup label="Developers" items={tools} />
+        <NavGroup label="Developers" items={tools.filter(item => network !== "mainnet" || !["/faucet", "/simple-lock"].includes(item.to))} />
       </div>
 
       <div className="network-box">
         <div>
           <span className="network-live"><i /> CKB Network</span>
-          <span className="connected">Live</span>
+          <span className="connected">{connected ? "Live" : "Connecting"}</span>
         </div>
         <hr />
         <div className="network-row">

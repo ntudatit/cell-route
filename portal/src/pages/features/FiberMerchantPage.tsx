@@ -1,3 +1,5 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
 import { useEffect, useState } from "react";
 import { Copy, RefreshCw, Store, Zap, Search, XCircle, ShoppingBag } from "lucide-react";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
@@ -9,6 +11,8 @@ import { useBackendAuth } from "../../auth/AuthProvider";
 import { BackendAuthButton } from "../../components/BackendAuthButton";
 
 export function FiberMerchantPage() {
+ const featureConsoleScope = currentScope();
+
  const runtime = useFiberRuntime();
  const auth = useBackendAuth();
  const nodeOnline = Boolean(runtime.node);
@@ -27,13 +31,21 @@ export function FiberMerchantPage() {
  const [busy, setBusy] = useState(false);
 
  async function refreshOrders() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'refreshOrders');
+ try {
+
   if (!auth.authenticated) { setOrders([]); return; }
-  try { setOrders(await merchantOrderApi.list()); } catch (e) { setStatus(fiberErrorMessage(e)); }
- }
+  try { setOrders(await merchantOrderApi.list()); } catch (e) { featureOperation.fail(e);  setStatus(fiberErrorMessage(e)); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  useEffect(() => { void refreshOrders(); }, [auth.authenticated]);
 
  async function createInvoice() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'createInvoice');
+ try {
+
   if (!/^\d+$/.test(amount) || BigInt(amount) <= 0n) return setStatus("Enter a valid invoice amount.");
   setBusy(true);
   try {
@@ -44,11 +56,16 @@ export function FiberMerchantPage() {
     await refreshOrders();
     setStatus("Fiber invoice and merchant order created.");
    } else setStatus("Fiber invoice created locally. Authenticate the API to persist merchant orders and audit history.");
-  } catch (e) { setStatus(fiberErrorMessage(e)); }
+  } catch (e) { featureOperation.fail(e);  setStatus(fiberErrorMessage(e)); }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function sendPayment() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'sendPayment');
+ try {
+
   if (!payInvoice.trim()) return setStatus("Paste a Fiber invoice first.");
   if (outboundLiquidity === 0n) return;
   setBusy(true);
@@ -59,7 +76,7 @@ export function FiberMerchantPage() {
    const relatedOrder = orders.find(order => order.invoiceAddress === payInvoice.trim());
    if (relatedOrder && auth.authenticated) await merchantOrderApi.recordAttempt(relatedOrder.id, { paymentHash: String(result.payment_hash ?? result.paymentHash ?? ""), status: String(result.status ?? "CREATED"), feeRaw: result.fee ? String(result.fee) : undefined, raw: result });
    setStatus(`Payment submitted: ${String(result.status ?? "Created")}`);
-  } catch (e) {
+  } catch (e) { featureOperation.fail(e);
    const message = fiberErrorMessage(e);
    setStatus(/allow_self_payment|pay to self/i.test(message)
     ? "This invoice belongs to the current browser Fiber node. Enable local QA self-payment or pay it from another Fiber node."
@@ -68,33 +85,55 @@ export function FiberMerchantPage() {
     : message);
   }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function inspectInvoice() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'inspectInvoice');
+ try {
+
   if (!payInvoice.trim()) return;
   setBusy(true); setStatus("");
   try { setParsedInvoice(await fiberApi.parseInvoice(payInvoice.trim())); setStatus("Invoice is valid."); }
-  catch (e) { setParsedInvoice(null); setStatus(fiberErrorMessage(e)); }
+  catch (e) { featureOperation.fail(e);  setParsedInvoice(null); setStatus(fiberErrorMessage(e)); }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function checkCreatedInvoice() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'checkCreatedInvoice');
+ try {
+
   if (!invoiceHash) return;
   try { const result = await fiberApi.getInvoice(invoiceHash); const invoiceStatus = String(result.status ?? "UNKNOWN"); const order = orders.find(item => item.paymentHash === invoiceHash); if (order && auth.authenticated) { const status = /paid|received/i.test(invoiceStatus) ? "PAID" : /cancel/i.test(invoiceStatus) ? "CANCELLED" : /expir/i.test(invoiceStatus) ? "EXPIRED" : null; if (status) { await merchantOrderApi.updateStatus(order.id, status); await refreshOrders(); } } setStatus(`Invoice status: ${invoiceStatus}`); }
-  catch (e) { setStatus(fiberErrorMessage(e)); }
- }
+  catch (e) { featureOperation.fail(e);  setStatus(fiberErrorMessage(e)); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function cancelCreatedInvoice() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'cancelCreatedInvoice');
+ try {
+
   if (!invoiceHash || !confirm("Cancel this Fiber invoice?")) return;
   try { const result = await fiberApi.cancelInvoice(invoiceHash); setStatus(`Invoice status: ${String(result.status ?? "CANCELLED")}`); }
-  catch (e) { setStatus(fiberErrorMessage(e)); }
- }
+  catch (e) { featureOperation.fail(e);  setStatus(fiberErrorMessage(e)); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function checkPayment() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'checkPayment');
+ try {
+
   if (!outboundPaymentHash) return;
   try { const result = await fiberApi.getPayment(outboundPaymentHash); setStatus(`Payment status: ${String(result.status ?? "UNKNOWN")}`); }
-  catch (e) { setStatus(fiberErrorMessage(e)); }
- }
+  catch (e) { featureOperation.fail(e);  setStatus(fiberErrorMessage(e)); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  return <AppLayout>
   <PageHero eyebrow="Fiber Commerce" title="Merchant Gateway" description="Manage orders, Fiber invoices, payment lifecycle and auditable commerce state." actions={<><BackendAuthButton/><button className="btn secondary" disabled={runtime.loading} onClick={() => { void runtime.refresh(); void refreshOrders(); }}><RefreshCw className={runtime.loading ? "spin" : ""} size={15}/> Refresh</button></>} />

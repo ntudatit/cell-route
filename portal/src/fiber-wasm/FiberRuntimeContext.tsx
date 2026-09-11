@@ -1,3 +1,6 @@
+import { useFeatureObject } from "../dev-console/hooks";
+import { currentScope } from "../dev-console/features";
+import { beginOperation } from "../dev-console/store";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 type RecordValue = Record<string, any>;
@@ -34,6 +37,7 @@ export function FiberRuntimeProvider({ children }: { children: ReactNode }) {
   const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
+    const operation = beginOperation(currentScope(), "fiber", "Runtime.refresh");
     setLoading(true); setError("");
     try {
       const { fiberWasmRuntime } = await import("./runtime");
@@ -46,7 +50,9 @@ export function FiberRuntimeProvider({ children }: { children: ReactNode }) {
       ]);
       setNode(nextNode); setPeers(nextPeers); setChannels(nextChannels); setChannelHealth(nextHealth);
       setRefreshedAt(new Date().toISOString());
+      operation.complete();
     } catch (cause) {
+      operation.fail(cause);
       const { fiberErrorMessage } = await import("./runtime");
       setError(fiberErrorMessage(cause));
     } finally {
@@ -79,5 +85,5 @@ export function FiberRuntimeProvider({ children }: { children: ReactNode }) {
 export function useFiberRuntime() {
   const value = useContext(FiberRuntimeContext);
   if (!value) throw new Error("useFiberRuntime must be used inside FiberRuntimeProvider");
-  return value;
+  return useFeatureObject(value, "fiber");
 }

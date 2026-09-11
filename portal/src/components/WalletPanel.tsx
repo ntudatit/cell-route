@@ -1,3 +1,4 @@
+import { useFeatureCcc } from '../dev-console/hooks';
 import { Copy, RefreshCw, Send } from "lucide-react";
 import { ccc } from "@ckb-ccc/connector-react";
 
@@ -12,7 +13,7 @@ export function WalletPanel({ address, balance, loading, onRefresh, onSend }: {
  onRefresh: () => void;
  onSend: () => void;
 }) {
- const { open, signerInfo } = ccc.useCcc();
+ const { open, signerInfo } = useFeatureCcc();
 
  async function copyAddress() {
   if (address) await navigator.clipboard.writeText(address);

@@ -1,3 +1,6 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { FormEvent, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { CodeBlock, GuideHeader, GuideSection, GuideShell, ResultBox, StepList } from "../../components/GuideShell";
@@ -23,7 +26,9 @@ await tx.completeFeeBy(signer);
 const txHash = await signer.sendTransaction(tx);`;
 
 export function UdtTokensGuide() {
- const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+ const signer = useFeatureSigner();
  const [tokenArgs, setTokenArgs] = useState("");
  const [receiver, setReceiver] = useState("");
  const [amount, setAmount] = useState("1");
@@ -31,6 +36,9 @@ export function UdtTokensGuide() {
  const [error, setError] = useState("");
 
  async function submit(event: FormEvent) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'submit');
+ try {
+
   event.preventDefault();
   if (!signer) return setError("Connect a wallet first.");
   try {
@@ -45,8 +53,10 @@ export function UdtTokensGuide() {
    await tx.completeInputsByCapacity(signer);
    await tx.completeFeeBy(signer);
    setResult(await signer.sendTransaction(tx));
-  } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
- }
+  } catch (e) { featureOperation.fail(e);  setError(e instanceof Error ? e.message : String(e)); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  return (
   <GuideShell>

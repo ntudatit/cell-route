@@ -1,3 +1,5 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
 import { useMemo, useState } from "react";
 import { Bot, BrainCircuit, DatabaseZap, Send, ShieldCheck, Sparkles, TerminalSquare, Wrench } from "lucide-react";
 import { AppLayout } from "../../components/layout/AppLayout";
@@ -13,6 +15,8 @@ const prompts = [
 ];
 
 export function FiberAiCopilotPage() {
+ const featureConsoleScope = currentScope();
+
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", text: "FiberOps AI is ready. I use Browser WASM telemetry + the FiberOps knowledge base. I am read-only: I will not send payments, close channels, or expose keys." },
@@ -23,6 +27,9 @@ export function FiberAiCopilotPage() {
   const lastResponse = useMemo(() => [...messages].reverse().find((m) => m.response)?.response, [messages]);
 
   async function ask(text = input) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'ask');
+ try {
+
     const question = text.trim();
     if (!question || loading) return;
     setInput(""); setError(""); setLoading(true);
@@ -39,12 +46,14 @@ export function FiberAiCopilotPage() {
       void aiApi.syncRuntimeSnapshot(runtimeContext).catch(() => undefined);
       const response = await aiApi.chat({ message: question, runtimeContext, maxChunks: 5 });
       setMessages((prev) => [...prev, { role: "assistant", text: response.answer, response }]);
-    } catch (e) {
+    } catch (e) { featureOperation.fail(e);
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg);
       setMessages((prev) => [...prev, { role: "assistant", text: `Unable to complete the analysis: ${msg}` }]);
     } finally { setLoading(false); }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   return (
     <AppLayout>

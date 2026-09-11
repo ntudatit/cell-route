@@ -1,0 +1,345 @@
+{
+  "devnet": {
+    "secp256k1_blake160_sighash_all": {
+      "name": "secp256k1_blake160_sighash_all",
+      "script": {
+        "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x4d804f1495612631da202fe9902fa9899118554b08138cfe5dfb50e1ede76293",
+                "index": 0
+              },
+              "depType": "depGroup"
+            }
+          }
+        ]
+      }
+    },
+    "dao": {
+      "name": "dao",
+      "script": {
+        "codeHash": "0x82d76d1b75fe2fd9a27dfbaa65a039221a380d76c926f378d3f81cf3e7e13f2e",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 2
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "secp256k1_blake160_multisig_all": {
+      "name": "secp256k1_blake160_multisig_all",
+      "script": {
+        "codeHash": "0x5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x4d804f1495612631da202fe9902fa9899118554b08138cfe5dfb50e1ede76293",
+                "index": 1
+              },
+              "depType": "depGroup"
+            }
+          }
+        ]
+      }
+    },
+    "sudt": {
+      "name": "sudt",
+      "script": {
+        "codeHash": "0x6283a479a3cf5d4276cd93594de9f1827ab9b55c7b05b3d28e4c2e0a696cfefd",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 5
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "xudt": {
+      "name": "xudt",
+      "script": {
+        "codeHash": "0x1a1e4fef34f5982906f745b048fe7b1089647e82346074e0f32c2ece26cf6b1e",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 6
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "omnilock": {
+      "name": "omnilock",
+      "script": {
+        "codeHash": "0x9c6933d977360f115a3e9cd5a2e0e475853681b80d775d93ad0f8969da343e56",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 7
+              },
+              "depType": "code"
+            }
+          },
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x4d804f1495612631da202fe9902fa9899118554b08138cfe5dfb50e1ede76293",
+                "index": 0
+              },
+              "depType": "depGroup"
+            }
+          }
+        ]
+      }
+    },
+    "anyone_can_pay": {
+      "name": "anyone_can_pay",
+      "script": {
+        "codeHash": "0xe09352af0066f3162287763ce4ddba9af6bfaeab198dc7ab37f8c71c9e68bb5b",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 8
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "always_success": {
+      "name": "always_success",
+      "script": {
+        "codeHash": "0xbb4469004225b39e983929db71fe2253cba1d49a76223e9e1d212cdca1f79f28",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 9
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "spore": {
+      "name": "spore",
+      "script": {
+        "codeHash": "0x7e8bf78a62232caa2f5d47e691e8db1a90d05e93dc6828ad3cb935c01ec6d208",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 10
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "spore_cluster": {
+      "name": "spore_cluster",
+      "script": {
+        "codeHash": "0x7366a61534fa7c7e6225ecc0d828ea3b5366adec2b58206f2ee84995fe030075",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 11
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "spore_cluster_agent": {
+      "name": "spore_cluster_agent",
+      "script": {
+        "codeHash": "0xc986099b41d79ca1b2a56ce5874bcda8175440a17298ea5e2bbc3897736b8c21",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 12
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "spore_cluster_proxy": {
+      "name": "spore_cluster_proxy",
+      "script": {
+        "codeHash": "0xbe8b9ce3d05a32c4bb26fe71cd5fc1407ce91e3a8b9e8719be2ab072cef1454b",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 13
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "spore_extension_lua": {
+      "name": "spore_extension_lua",
+      "script": {
+        "codeHash": "0x94a9b875911ace20f1f0d063a26495d14e4b04e32fd218261bb747f34e71ae47",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 14
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "ckb_js_vm": {
+      "name": "ckb_js_vm",
+      "script": {
+        "codeHash": "0xac4db0d0c028ba0d73dec9ee5e6a3c0c98fcdfca895402a3285d680e964dcb46",
+        "hashType": "type",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 15
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "nostr_lock": {
+      "name": "nostr_lock",
+      "script": {
+        "codeHash": "0x97bb42c154a4fda179e0cd891c94efd0ed5eb7fa5371135122ed58deb39d94b0",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x1bb87da347a776a927ab6593e1e10304ca195f8e24279f039008d5e3115b1bf7",
+                "index": 16
+              },
+              "depType": "code"
+            }
+          }
+        ]
+      }
+    },
+    "secp256k1_keccak256_sighash_all": {
+      "name": "secp256k1_keccak256_sighash_all",
+      "script": {
+        "codeHash": "0xf3d9b5e8eff7bce00731be767a65f58cc5707c2b6ee8e732d56f383a47f77abd",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x4d804f1495612631da202fe9902fa9899118554b08138cfe5dfb50e1ede76293",
+                "index": 3
+              },
+              "depType": "depGroup"
+            }
+          }
+        ]
+      }
+    },
+    "secp256k1_keccak256_sighash_all_acpl": {
+      "name": "secp256k1_keccak256_sighash_all_acpl",
+      "script": {
+        "codeHash": "0xf7c7fedcb0cbf549095f5b1ad6c267a141e96282b0f5308cad2d0af2901cfc48",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x4d804f1495612631da202fe9902fa9899118554b08138cfe5dfb50e1ede76293",
+                "index": 4
+              },
+              "depType": "depGroup"
+            }
+          }
+        ]
+      }
+    },
+    "secp256k1_blake160_multisig_all_v2": {
+      "name": "secp256k1_blake160_multisig_all_v2",
+      "script": {
+        "codeHash": "0x36c971b8d41fbd94aabca77dc75e826729ac98447b46f91e00796155dddb0d29",
+        "hashType": "data2",
+        "cellDeps": [
+          {
+            "cellDep": {
+              "outPoint": {
+                "txHash": "0x4d804f1495612631da202fe9902fa9899118554b08138cfe5dfb50e1ede76293",
+                "index": 2
+              },
+              "depType": "depGroup"
+            }
+          }
+        ]
+      }
+    },
+    "type_id": {
+      "name": "type_id",
+      "script": {
+        "codeHash": "0x00000000000000000000000000000000000000000000000000545950455f4944",
+        "hashType": "type",
+        "cellDeps": []
+      }
+    }
+  }
+}

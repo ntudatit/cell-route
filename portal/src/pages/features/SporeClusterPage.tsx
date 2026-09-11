@@ -1,12 +1,17 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { FormEvent, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { createSporeCluster, transferSporeCluster } from "@ckb-ccc/spore";
-import { assetApi } from "../../api/backend";
+import { recordSubmittedAsset } from "../../utils/submission";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
 import { TransactionLifecycle } from "../../components/transactions/TransactionLifecycle";
 
 export function SporeClusterPage() {
- const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+ const signer = useFeatureSigner();
  const [name, setName] = useState("CKBuilder Collection");
  const [description, setDescription] = useState("A curated collection of on-chain DOBs.");
  const [clusterId, setClusterId] = useState("");
@@ -16,6 +21,9 @@ export function SporeClusterPage() {
  const [busy, setBusy] = useState(false);
 
  async function create(event: FormEvent) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'create');
+ try {
+
   event.preventDefault();
   if (!signer) return;
   setBusy(true);
@@ -27,17 +35,21 @@ export function SporeClusterPage() {
    await tx.completeFeeBy(signer, 2000);
    const hash = await signer.sendTransaction(tx);
    setClusterId(id); setTxHash(hash);
-   await assetApi.record({
+   setStatus(await recordSubmittedAsset(signer.client, {
     assetKind: "CLUSTER", action: "CREATE", assetId: id, ownerAddress,
     displayName: name.trim(), txHash: hash,
     metadataJson: JSON.stringify({ description: description.trim() }),
-   }).catch(() => undefined);
-   setStatus("Cluster submitted. Use the Cluster ID when minting Spores.");
-  } catch (e) { setStatus(e instanceof Error ? e.message : String(e)); }
+   }));
+  } catch (e) { featureOperation.fail(e);  setStatus(e instanceof Error ? e.message : String(e)); }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function transfer() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'transfer');
+ try {
+
   if (!signer || !clusterId.trim() || !recipient.trim()) return;
   setBusy(true);
   try {
@@ -48,15 +60,16 @@ export function SporeClusterPage() {
    await tx.completeFeeBy(signer, 1000);
    const hash = await signer.sendTransaction(tx);
    setTxHash(hash);
-   await assetApi.record({
+   setStatus(await recordSubmittedAsset(signer.client, {
     assetKind: "CLUSTER", action: "TRANSFER", assetId: clusterId.trim(), ownerAddress,
     displayName: name.trim(), txHash: hash,
     metadataJson: JSON.stringify({ recipient: recipient.trim() }),
-   }).catch(() => undefined);
-   setStatus("Cluster transfer submitted.");
-  } catch (e) { setStatus(e instanceof Error ? e.message : String(e)); }
+   }));
+  } catch (e) { featureOperation.fail(e);  setStatus(e instanceof Error ? e.message : String(e)); }
   finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  return <AppLayout>
   <PageHero eyebrow="Spore Protocol · Collections" title="Spore Cluster Studio" description="Create named on-chain collections, attach new Spores to a Cluster ID, and transfer collection ownership." />
@@ -77,7 +90,7 @@ export function SporeClusterPage() {
     <span className="page-eyebrow">Cluster identity</span>
     <div className="result-field"><span>Cluster ID</span><code>{clusterId || "—"}</code></div>
     <div className="result-field"><span>Transaction Hash</span><code>{txHash || "—"}</code></div>
-    {txHash && <TransactionLifecycle txHash={txHash}/>} 
+    {txHash && <TransactionLifecycle txHash={txHash}/>}
    </section>
   </div>
  </AppLayout>;

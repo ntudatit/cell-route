@@ -1,3 +1,4 @@
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { useCallback, useEffect, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { Copy, RefreshCw } from "lucide-react";
@@ -24,7 +25,7 @@ function shortJson(value: unknown, max = 26) {
 }
 
 export function CellsPage() {
- const signer = ccc.useSigner();
+ const signer = useFeatureSigner();
  const [cells, setCells] = useState<CellRow[]>([]);
  const [selected, setSelected] = useState<CellRow | null>(null);
  const [status, setStatus] = useState("Connect a wallet to load live Cells.");

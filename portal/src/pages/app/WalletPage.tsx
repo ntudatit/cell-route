@@ -1,3 +1,4 @@
+import { useFeatureCcc, useFeatureSigner } from '../../dev-console/hooks';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ccc } from "@ckb-ccc/connector-react";
@@ -14,8 +15,8 @@ import { useWallet } from "../../hooks/useWallet";
 
 export function WalletPage() {
  const walletState = useWallet();
- const { wallet, signerInfo, client } = ccc.useCcc();
- const signer = ccc.useSigner();
+ const { wallet, signerInfo, client } = useFeatureCcc();
+ const signer = useFeatureSigner();
  const [signerType, setSignerType] = useState("-");
  const [signType, setSignType] = useState("-");
 

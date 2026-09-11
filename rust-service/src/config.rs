@@ -45,19 +45,25 @@ impl Config {
             .unwrap_or_else(|_| "12".into())
             .parse::<u64>()?;
 
+        let ckb_network = env::var("CKB_NETWORK")
+            .unwrap_or_else(|_| "testnet".into()).trim().to_lowercase();
+        let default_rpc = default_ckb_rpc(&ckb_network)?;
+        let ckb_rpc_url = optional_env("CKB_RPC_URL").unwrap_or_else(|| default_rpc.into());
+        let ckb_indexer_url = optional_env("CKB_INDEXER_URL").unwrap_or_else(|| ckb_rpc_url.clone());
+
+        let jwt_secret = optional_env("JWT_SECRET").unwrap_or_else(|| "dev-only-change-me".into());
+        validate_jwt_secret(&ckb_network, &jwt_secret)?;
+
         Ok(Self {
             bind_addr: SocketAddr::from(([0, 0, 0, 0], port)),
             database_url: env::var("DATABASE_URL").unwrap_or_else(|_| {
-                "postgresql://postgres:postgres@localhost:5432/postgres".into()
+                format!("postgresql://postgres:postgres@localhost:5432/cellroute_{ckb_network}")
             }),
             cors_origin: env::var("CORS_ORIGIN").unwrap_or_else(|_| "http://localhost:5173".into()),
-            ckb_network: env::var("CKB_NETWORK").unwrap_or_else(|_| "testnet".into()),
-            ckb_rpc_url: env::var("CKB_RPC_URL")
-                .unwrap_or_else(|_| "https://testnet.ckb.dev".into()),
-            ckb_indexer_url: env::var("CKB_INDEXER_URL")
-                .or_else(|_| env::var("CKB_RPC_URL"))
-                .unwrap_or_else(|_| "https://testnet.ckb.dev".into()),
-            jwt_secret: env::var("JWT_SECRET").unwrap_or_else(|_| "dev-only-change-me".into()),
+            ckb_network,
+            ckb_rpc_url,
+            ckb_indexer_url,
+            jwt_secret,
             jwt_ttl_seconds: env::var("JWT_TTL_SECONDS")
                 .unwrap_or_else(|_| "3600".into())
                 .parse::<i64>()?,
@@ -108,4 +114,53 @@ fn optional_env(name: &str) -> Option<String> {
         .ok()
         .map(|v| v.trim().to_owned())
         .filter(|v| !v.is_empty())
+}
+
+fn default_ckb_rpc(network: &str) -> anyhow::Result<&'static str> {
+    match network {
+        "mainnet" => Ok("https://mainnet.ckb.dev"),
+        "testnet" => Ok("https://testnet.ckb.dev"),
+        "devnet" => Ok("http://127.0.0.1:8114"),
+        _ => anyhow::bail!("Unsupported CKB_NETWORK: {network}"),
+    }
+}
+
+#[cfg(test)]
+mod network_tests {
+    use super::default_ckb_rpc;
+    #[test]
+    fn selects_rpc_for_each_chain() {
+        assert_eq!(default_ckb_rpc("mainnet").unwrap(), "https://mainnet.ckb.dev");
+        assert_eq!(default_ckb_rpc("testnet").unwrap(), "https://testnet.ckb.dev");
+        assert_eq!(default_ckb_rpc("devnet").unwrap(), "http://127.0.0.1:8114");
+        assert!(default_ckb_rpc("mainent").is_err());
+    }
+}
+
+fn validate_jwt_secret(network: &str, secret: &str) -> anyhow::Result<()> {
+    let normalized = secret.to_ascii_lowercase();
+    if network == "mainnet" && (secret.len() < 32
+        || normalized.contains("replace") || normalized.contains("change-me")
+        || normalized.contains("change_me") || normalized.contains("your-secret")) {
+        anyhow::bail!("Mainnet requires a randomly generated JWT_SECRET of at least 32 bytes; development defaults and placeholders are not allowed");
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod mainnet_secret_tests {
+    use super::validate_jwt_secret;
+    #[test]
+    fn rejects_development_and_placeholder_secrets() {
+        for secret in ["", "dev-only-change-me", "short", "REPLACE_WITH_A_RANDOM_SECRET_AT_LEAST_32_BYTES"] {
+            assert!(validate_jwt_secret("mainnet", secret).is_err());
+        }
+    }
+    #[test]
+    fn allows_configured_secret_and_development_defaults() {
+        // Synthetic validation fixture, never used for signing.
+        assert!(validate_jwt_secret("mainnet", &"a".repeat(32)).is_ok());
+        assert!(validate_jwt_secret("testnet", "dev-only-change-me").is_ok());
+        assert!(validate_jwt_secret("devnet", "dev-only-change-me").is_ok());
+    }
 }

@@ -1,3 +1,6 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { FormEvent, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { backendApi } from "../../api/backend";
@@ -17,7 +20,9 @@ await tx.completeFeeBy(signer);
 const txHash = await signer.sendTransaction(tx);`;
 
 export function ComposeTransactionsGuide() {
- const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+ const signer = useFeatureSigner();
  const [receiver, setReceiver] = useState("");
  const [amount, setAmount] = useState("100");
  const [txHash, setTxHash] = useState("");
@@ -25,6 +30,9 @@ export function ComposeTransactionsGuide() {
  const [loading, setLoading] = useState(false);
 
  async function submit(event: FormEvent) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'submit');
+ try {
+
   event.preventDefault();
   if (!signer) return setError("Connect a wallet first.");
   try {
@@ -37,10 +45,12 @@ export function ComposeTransactionsGuide() {
    setTxHash(hash);
    const fromAddress = await signer.getRecommendedAddress();
    await backendApi.trackTransaction({ txHash: hash, walletAddress: fromAddress, recipient: receiver.trim(), amountCkb: amount, direction: "SEND" });
-  } catch (e) {
+  } catch (e) { featureOperation.fail(e);
    setError(e instanceof Error ? e.message : String(e));
   } finally { setLoading(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  return (
   <GuideShell>

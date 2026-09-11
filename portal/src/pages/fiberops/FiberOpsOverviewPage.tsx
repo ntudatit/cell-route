@@ -1,3 +1,5 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import {
   Activity,
@@ -118,6 +120,8 @@ function FiberMesh({ channels }: { channels: ChannelHealth[] }) {
 }
 
 export function FiberOpsOverviewPage() {
+ const featureConsoleScope = currentScope();
+
   const [overview, setOverview] = useState<FiberOpsOverview | null>(null);
   const [channels, setChannels] = useState<ChannelHealthResponse | null>(null);
   const [incidents, setIncidents] = useState<FiberIncident[]>([]);
@@ -127,6 +131,9 @@ export function FiberOpsOverviewPage() {
   const [compatibility, setCompatibility] = useState<FiberCompatibility | null>(null);
 
   async function load() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'load');
+ try {
+
     setLoading(true);
     setError("");
     const results = await Promise.allSettled([
@@ -153,7 +160,9 @@ export function FiberOpsOverviewPage() {
       setError("Some FiberOps telemetry is unavailable. Showing the latest data that could be loaded.");
     }
     setLoading(false);
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   useEffect(() => { void load(); }, []);
 

@@ -51,6 +51,7 @@ pub async fn auth_challenge(
     Json(request): Json<AuthChallengeRequest>,
 ) -> ApiResult<Json<AuthChallengeResponse>> {
     request.validate().map_err(ApiError::BadRequest)?;
+    auth::validate_wallet_network(&request.wallet_address, &state.config.ckb_network)?;
     let _ = state.auth.delete_expired().await;
     Ok(Json(
         state
@@ -69,6 +70,7 @@ pub async fn auth_verify(
     Json(request): Json<AuthVerifyRequest>,
 ) -> ApiResult<Json<AuthTokenResponse>> {
     request.validate().map_err(ApiError::BadRequest)?;
+    auth::validate_wallet_network(&request.wallet_address, &state.config.ckb_network)?;
 
     let challenge = state
         .auth
@@ -118,6 +120,7 @@ pub async fn create_asset_event(
     Json(request): Json<CreateAssetEventRequest>,
 ) -> ApiResult<Json<AssetEventResponse>> {
     request.validate().map_err(ApiError::BadRequest)?;
+    auth::validate_wallet_network(&request.owner_address, &state.config.ckb_network)?;
     let claims = auth::authorize(&state, &headers)?;
     if claims.sub != request.owner_address {
         return Err(ApiError::Unauthorized(
@@ -136,6 +139,7 @@ pub async fn asset_events(
     State(state): State<AppState>,
     Path(address): Path<String>,
 ) -> ApiResult<Json<Vec<AssetEventResponse>>> {
+    auth::validate_wallet_network(&address, &state.config.ckb_network)?;
     if address.trim().is_empty() {
         return Err(ApiError::BadRequest("address is required".into()));
     }
@@ -148,6 +152,7 @@ pub async fn sync_indexer(
     Json(request): Json<IndexerSyncRequest>,
 ) -> ApiResult<Json<IndexerSyncResponse>> {
     request.validate().map_err(ApiError::BadRequest)?;
+    auth::validate_wallet_network(&request.wallet_address, &state.config.ckb_network)?;
     let claims = auth::authorize(&state, &headers)?;
     if claims.sub != request.wallet_address {
         return Err(ApiError::Unauthorized(
@@ -163,6 +168,7 @@ pub async fn indexed_assets(
     State(state): State<AppState>,
     Path(address): Path<String>,
 ) -> ApiResult<Json<Vec<IndexedAssetResponse>>> {
+    auth::validate_wallet_network(&address, &state.config.ckb_network)?;
     if address.trim().is_empty() {
         return Err(ApiError::BadRequest("address is required".into()));
     }
@@ -191,6 +197,7 @@ pub async fn track_transaction(
     Json(request): Json<TrackTransactionRequest>,
 ) -> ApiResult<Json<TrackedTransactionResponse>> {
     request.validate().map_err(ApiError::BadRequest)?;
+    auth::validate_wallet_network(&request.wallet_address, &state.config.ckb_network)?;
     let claims = auth::authorize(&state, &headers)?;
     if claims.sub != request.wallet_address {
         return Err(ApiError::Unauthorized(
@@ -285,6 +292,7 @@ pub async fn dashboard(
     State(state): State<AppState>,
     Path(address): Path<String>,
 ) -> ApiResult<Json<DashboardResponse>> {
+    auth::validate_wallet_network(&address, &state.config.ckb_network)?;
     if address.trim().is_empty() {
         return Err(ApiError::BadRequest("address is required".into()));
     }

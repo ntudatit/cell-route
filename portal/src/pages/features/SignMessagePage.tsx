@@ -1,3 +1,6 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { FormEvent, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { CheckCircle2, Copy } from "lucide-react";
@@ -9,7 +12,9 @@ function safeJson(value: unknown) {
 }
 
 export function SignMessagePage() {
- const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+ const signer = useFeatureSigner();
  const [message, setMessage] = useState("Hello CKB from CCC!");
  const [signature, setSignature] = useState("");
  const [identity, setIdentity] = useState("");
@@ -18,6 +23,9 @@ export function SignMessagePage() {
  const [status, setStatus] = useState("");
 
  async function submit(event: FormEvent) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'submit');
+ try {
+
   event.preventDefault();
 
   if (!signer) {
@@ -40,11 +48,13 @@ export function SignMessagePage() {
    }
    setValid(verified);
    setStatus("Message signed and verified.");
-  } catch (error) {
+  } catch (error) { featureOperation.fail(error);
    setStatus(error instanceof Error ? error.message : String(error));
    setValid(false);
   }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  return (
   <AppLayout>

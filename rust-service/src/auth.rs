@@ -5,7 +5,7 @@ use crate::{
 use axum::http::{HeaderMap, header::AUTHORIZATION};
 use chrono::Utc;
 use ckb_hash::blake2b_256;
-use ckb_sdk::{Address, constants::SIGHASH_TYPE_HASH};
+use ckb_sdk::{Address, NetworkType, constants::SIGHASH_TYPE_HASH};
 use ckb_types::packed::Script;
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use secp256k1::{
@@ -24,6 +24,7 @@ pub struct Claims {
 }
 
 pub fn issue_token(state: &AppState, wallet_address: &str) -> ApiResult<String> {
+    validate_wallet_network(wallet_address, &state.config.ckb_network)?;
     let now = Utc::now().timestamp();
     let claims = Claims {
         sub: wallet_address.to_owned(),
@@ -65,6 +66,7 @@ pub fn authorize(state: &AppState, headers: &HeaderMap) -> ApiResult<Claims> {
         ));
     }
 
+    validate_wallet_network(&data.claims.sub, &state.config.ckb_network)?;
     Ok(data.claims)
 }
 
@@ -141,5 +143,40 @@ mod tests {
         assert!(normalize_recovery_id(27).is_ok());
         assert!(normalize_recovery_id(28).is_ok());
         assert!(normalize_recovery_id(99).is_err());
+    }
+}
+
+pub fn validate_wallet_network(wallet_address: &str, network: &str) -> ApiResult<()> {
+    let address = Address::from_str(wallet_address.trim())
+        .map_err(|_| ApiError::BadRequest("Invalid CKB address".into()))?;
+    let expected = match network {
+        "mainnet" => NetworkType::Mainnet,
+        "testnet" | "devnet" => NetworkType::Testnet,
+        _ => return Err(ApiError::BadRequest("Unsupported service network".into())),
+    };
+    // Devnet and Testnet both encode addresses with ckt; endpoint identity separates them.
+    if address.network() != expected {
+        return Err(ApiError::BadRequest("Wallet address network does not match service network".into()));
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod wallet_network_tests {
+    use super::validate_wallet_network;
+    use ckb_sdk::{Address, AddressPayload, NetworkType};
+    use ckb_types::H160;
+    #[test]
+    fn validates_checksum_and_rejects_cross_network_addresses() {
+        let payload = AddressPayload::from_pubkey_hash(H160::from([1u8; 20]));
+        let mainnet = Address::new(NetworkType::Mainnet, payload.clone(), true).to_string();
+        let testnet = Address::new(NetworkType::Testnet, payload, true).to_string();
+        assert!(validate_wallet_network(&mainnet, "mainnet").is_ok());
+        assert!(validate_wallet_network(&testnet, "testnet").is_ok());
+        assert!(validate_wallet_network(&testnet, "devnet").is_ok());
+        assert!(validate_wallet_network(&testnet, "mainnet").is_err());
+        assert!(validate_wallet_network(&mainnet, "testnet").is_err());
+        assert!(validate_wallet_network("ckb1invalid", "mainnet").is_err());
+        assert!(validate_wallet_network(&mainnet, "unknown").is_err());
     }
 }

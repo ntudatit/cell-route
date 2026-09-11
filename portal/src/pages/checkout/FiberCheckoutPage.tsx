@@ -1,3 +1,5 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
 import { useState } from "react";
 import { CheckCircle2, Copy, CreditCard, RefreshCw, Route, ShieldCheck, Zap } from "lucide-react";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
@@ -6,6 +8,8 @@ import { fiberErrorMessage } from "../../fiber-wasm/runtime";
 import { useFiberRuntime } from "../../fiber-wasm/FiberRuntimeContext";
 
 export function FiberCheckoutPage() {
+ const featureConsoleScope = currentScope();
+
   const runtime = useFiberRuntime();
   const [mode, setMode] = useState<"receive" | "pay">("receive");
   const [amount, setAmount] = useState("100000000");
@@ -17,13 +21,21 @@ export function FiberCheckoutPage() {
   const [busy, setBusy] = useState(false);
 
   async function createInvoice() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'createInvoice');
+ try {
+
     if (!/^\d+$/.test(amount) || BigInt(amount) === 0n) return setResult("Enter an amount greater than zero.");
     setBusy(true); setResult("");
     try { const created = await fiberApi.createInvoice({ amountRaw: amount, description, expirySeconds: 900 }); setInvoice(created.invoiceAddress ?? ""); setPaymentHash(created.paymentHash ?? ""); setResult("Invoice ready for payment."); }
-    catch (error) { setResult(fiberErrorMessage(error)); } finally { setBusy(false); }
-  }
+    catch (error) { featureOperation.fail(error);  setResult(fiberErrorMessage(error)); } finally { setBusy(false); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function pay() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'pay');
+ try {
+
     if (!paymentInvoice.trim()) return setResult("Paste a Fiber invoice first.");
     setBusy(true); setResult("");
     try {
@@ -31,8 +43,10 @@ export function FiberCheckoutPage() {
       if (!readiness.payable) return setResult(`Payment unavailable: ${readiness.failure ?? readiness.recommendations.join(" ")}`);
       const payment = await fiberApi.payInvoice({ invoice: paymentInvoice.trim() });
       setPaymentHash(String(payment.payment_hash ?? payment.paymentHash ?? "")); setResult(`Payment ${String(payment.status ?? "submitted").toLowerCase()}.`);
-    } catch (error) { setResult(fiberErrorMessage(error)); } finally { setBusy(false); }
-  }
+    } catch (error) { featureOperation.fail(error);  setResult(fiberErrorMessage(error)); } finally { setBusy(false); }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   return <AppLayout>
     <PageHero eyebrow="FiberPay Checkout" title="Pay at Fiber speed" description="A non-custodial checkout powered by the browser-local Fiber node. Keys and node identity stay on this device." actions={<button className="btn secondary" onClick={() => void runtime.refresh()} disabled={runtime.loading}><RefreshCw className={runtime.loading ? "spin" : ""} size={15}/>Refresh node</button>}/>

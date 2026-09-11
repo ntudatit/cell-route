@@ -10,7 +10,11 @@
     "verify:isolation": "node scripts/verify-isolation.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "dev:mainnet": "vite --mode mainnet",
+    "build:mainnet": "tsc -b && vite build --mode mainnet",
+    "check:mainnet": "node scripts/check-mainnet.mjs",
+    "test:e2e:mainnet": "npm run build:mainnet && playwright test --config=playwright.mainnet.config.ts"
   },
   "dependencies": {
     "@ckb-ccc/connector-react": "^1.1.9",

@@ -1,0 +1,18 @@
+.dev-console-launch { position:fixed; right:20px; bottom:18px; z-index:45; padding:11px 16px; background:#101d27; color:#bdfbea; border:1px solid #2d7566; border-radius:10px; font:600 12px ui-monospace,monospace; box-shadow:0 4px 24px #0008; max-width:calc(100vw - 32px); }
+.dev-console-launch span { margin-left:8px; color:#30d7b0; }
+.dev-console { position:fixed; right:16px; bottom:16px; z-index:45; width:min(1060px,calc(100vw - 32px)); background:#09121c; border:1px solid #31515c; border-radius:12px; color:#dbe7ed; box-shadow:0 12px 50px #000b; overflow:hidden; font:12px ui-monospace,monospace; }
+.dev-console header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#10212d; gap:12px; }
+.dev-console header strong,.dev-console header span { display:block; }.dev-console header span { color:#9eabb9; margin-top:5px; }
+.dev-console button,.dev-console input,.dev-console select { font:inherit; color:#dbe7ed; background:#142532; border:1px solid #3a5260; border-radius:5px; padding:6px 9px; }
+.dev-console button { cursor:pointer; }.dev-console button:disabled { opacity:.5; cursor:default; }.dev-console button:hover:not(:disabled) { border-color:#30d7b0; }.dev-console :focus-visible,.dev-console-launch:focus-visible { outline:2px solid #30d7b0; outline-offset:2px; }
+.dev-console-toolbar { padding:10px 16px; display:flex; align-items:end; gap:10px; flex-wrap:wrap; }.dev-console-toolbar label { display:flex; flex-direction:column; gap:4px; font-size:11px; }.dev-console-toolbar .dev-follow { flex-direction:row; align-self:center; align-items:center; }.dev-console-entries { height:240px; overflow:auto; overscroll-behavior:contain; border-block:1px solid #263e4b; }
+.dev-console-entry { display:grid; grid-template-columns:88px 64px minmax(0,1fr); gap:8px; padding:8px 14px; border-bottom:1px solid #172733; }.dev-console-entry time,.dev-console-entry small { color:#859dad; }.dev-console-entry code { overflow-wrap:anywhere; font:inherit; }.dev-console-entry pre { white-space:pre-wrap; margin:5px 0 0; font:inherit; color:#a2b7c5; }.dev-level-error>span { color:#ff9696; }.dev-level-success>span { color:#57dec0; }.dev-level-info>span { color:#86bff3; }.dev-console-empty { padding:20px; color:#9eabb9; }.dev-console footer { padding:9px 16px; color:#8fa6b7; font-size:10px; }
+@media(max-width:600px) { .dev-console { right:8px; bottom:8px; width:calc(100vw - 16px); }.dev-console-entries { height:190px; }.dev-console-entry { grid-template-columns:76px 53px minmax(0,1fr); padding:8px; gap:4px; font-size:10px; }.dev-console-toolbar { gap:6px; padding:8px; }.dev-console-toolbar input:not([type=checkbox]) { width:145px; }.dev-console-launch { right:8px; bottom:8px; }.dev-console header { padding:10px; } }
+/* Reserve a scrollable workspace above the open console so feature actions stay reachable. */
+html.dev-console-open, html.dev-console-open body { overflow:hidden; }
+html.dev-console-open #root { height:calc(100dvh - var(--dev-console-height)); overflow:auto; scroll-padding-top:90px; }
+html.dev-console-open .sidebar { max-height:calc(100dvh - var(--dev-console-height)); }
+.dev-console { max-height:65dvh; display:flex; flex-direction:column; }
+.dev-console-entries { flex:1 1 240px; min-height:60px; }
+.dev-console header,.dev-console-toolbar,.dev-console footer { flex-shrink:0; }
+@media(max-height:600px) { .dev-console footer { display:none; }.dev-console-entries { flex-basis:100px; }.dev-console-toolbar { padding-block:4px; } }

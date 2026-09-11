@@ -1,3 +1,6 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { CheckCircle2, PenLine, XCircle } from "lucide-react";
@@ -6,12 +9,17 @@ import { assertOnlyWitnessesChanged, cccTransactionToRpc, fiberFundingStore, rpc
 import { fiberErrorMessage } from "../../fiber-wasm/runtime";
 
 export function ExternalFundingPage() {
-  const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+  const signer = useFeatureSigner();
   const draft = fiberFundingStore.get();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   async function signFunding() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'signFunding');
+ try {
+
     if (!signer || !draft) return;
     setBusy(true); setError("");
     try {
@@ -20,12 +28,14 @@ export function ExternalFundingPage() {
       assertOnlyWitnessesChanged(draft.unsignedTransaction, signedTransaction);
       fiberFundingStore.set({ ...draft, signedTransaction });
       window.location.assign(draft.returnUrl || "/fiber-node?funding=submit");
-    } catch (e) {
+    } catch (e) { featureOperation.fail(e);
       setError(fiberErrorMessage(e));
     } finally {
       setBusy(false);
     }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   return <AppLayout>
     <PageHero eyebrow="Channel Funding" title="Review funding transaction" description="Approve the channel funding transaction with your connected CKB wallet." />

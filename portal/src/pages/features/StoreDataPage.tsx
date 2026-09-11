@@ -1,8 +1,11 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { FormEvent, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { Copy } from "lucide-react";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
-import { backendApi } from "../../api/backend";
+import { recordSubmittedTransaction } from "../../utils/submission";
 
 function utf8ToHex(value: string): `0x${string}` {
  const bytes = new TextEncoder().encode(value);
@@ -18,7 +21,9 @@ function hexToUtf8(value: string) {
 }
 
 export function StoreDataPage() {
- const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+ const signer = useFeatureSigner();
  const [message, setMessage] = useState("Hello CKB! This is stored on cell via CCC.");
  const [feeRate, setFeeRate] = useState("1000");
  const [encoded, setEncoded] = useState("");
@@ -27,6 +32,9 @@ export function StoreDataPage() {
  const [status, setStatus] = useState("");
 
  async function store(event: FormEvent) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'store');
+ try {
+
   event.preventDefault();
   if (!signer) {
    setStatus("Connect a wallet first.");
@@ -52,18 +60,23 @@ export function StoreDataPage() {
    setTxHash(hash);
    setStatus("Transaction submitted. The output Cell contains your UTF-8 bytes.");
 
-   await backendApi.trackTransaction({
+   setStatus(await recordSubmittedTransaction(signer.client, {
     txHash: hash,
     walletAddress: await signer.getRecommendedAddress(),
     amountCkb: ccc.fixedPointToString(tx.outputs[0].capacity),
     direction: "SEND",
-   });
-  } catch (error) {
+   }));
+  } catch (error) { featureOperation.fail(error);
    setStatus(error instanceof Error ? error.message : String(error));
   }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function readOutput() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'readOutput');
+ try {
+
   if (!signer || !txHash) return;
 
   try {
@@ -80,10 +93,12 @@ export function StoreDataPage() {
 
    setDecoded(hexToUtf8(cell.outputData));
    setStatus("Live Cell data decoded successfully.");
-  } catch (error) {
+  } catch (error) { featureOperation.fail(error);
    setStatus(error instanceof Error ? error.message : String(error));
   }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  return (
   <AppLayout>

@@ -1,3 +1,5 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
 import { useEffect, useMemo, useState } from "react";
 import { Boxes, Network, RefreshCw, Route, Send, ShieldCheck } from "lucide-react";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
@@ -27,6 +29,8 @@ function parseHops(value: string) {
 }
 
 export function FiberTransferConsolePage() {
+ const featureConsoleScope = currentScope();
+
   const runtime = useFiberRuntime();
   const [invoice, setInvoice] = useState("");
   const [amount, setAmount] = useState("1000000");
@@ -47,22 +51,35 @@ export function FiberTransferConsolePage() {
   useEffect(() => { void scanResources(); }, []);
 
   async function run(action: () => Promise<unknown>) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'run');
+ try {
+
     setBusy(true); setError("");
     try { const next = await action(); setResult(next); return next; }
-    catch (cause) { setError(fiberErrorMessage(cause)); }
+    catch (cause) { featureOperation.fail(cause);  setError(fiberErrorMessage(cause)); }
     finally { setBusy(false); }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function scanResources() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'scanResources');
+ try {
+
     const next = await run(() => fiberWasmRuntime.networkResources());
     if (next) {
       const snapshot = next as ResourceSnapshot;
       setResources(snapshot);
       void fiberRuntimeService.storeResources(snapshot).then(() => setServiceStatus("Synced to FiberOps API")).catch(() => setServiceStatus("Local runtime · API sync unavailable"));
     }
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function createStablecoinInvoice() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'createStablecoinInvoice');
+ try {
+
     const next = await run(async () => {
       const script = parseScript(codeHash, hashType, args);
       if (!script) throw new Error("Enter the stablecoin xUDT type script.");
@@ -70,28 +87,45 @@ export function FiberTransferConsolePage() {
     });
     const address = (next as { invoice_address?: string } | undefined)?.invoice_address;
     if (address) setInvoice(address);
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function pay(dryRun: boolean) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'pay');
+ try {
+
     if (!invoice.trim()) return setError("Paste a Fiber invoice first.");
     if (!dryRun && !confirm("Send this Fiber payment using the selected fee and MPP limits?")) return;
     await run(() => fiberWasmRuntime.sendPaymentAdvanced({ invoice: invoice.trim(), dryRun, maxParts: Number(maxParts), maxFeeAmountRaw: maxFee, timeoutSeconds: 60 }));
     if (!dryRun) await runtime.refresh();
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function buildRoute() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'buildRoute');
+ try {
+
     const script = parseScript(codeHash, hashType, args);
     const next = await run(() => fiberWasmRuntime.buildMultiHopRoute({ amountRaw: amount, hops: parseHops(hopsText), udtTypeScript: script }));
     if (next) setRouteResult(next as RouteResult);
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   async function sendRoute(dryRun: boolean) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'sendRoute');
+ try {
+
     const router = routeResult?.router_hops;
     if (!Array.isArray(router) || !router.length) return setError("Build a valid route first.");
     if (!dryRun && !confirm("Send a keysend payment through this explicit multi-hop route?")) return;
     await run(() => fiberWasmRuntime.sendWithRouter({ router, udtTypeScript: parseScript(codeHash, hashType, args), dryRun }));
     if (!dryRun) await runtime.refresh();
-  }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
   return <AppLayout>
     <PageHero eyebrow="Fiber Payments" title="Transfer Console" description="Operate stablecoin payments, MPP and explicit multi-hop routes against the browser Fiber node." actions={<><span className="ops-badge info">{serviceStatus}</span><button className="btn secondary" disabled={busy} onClick={() => void scanResources()}><RefreshCw className={busy ? "spin" : ""} size={16}/> Scan network</button></>} />

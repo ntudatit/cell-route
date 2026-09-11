@@ -1,9 +1,10 @@
+import { useFeatureSigner } from '../dev-console/hooks';
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { ccc } from "@ckb-ccc/connector-react";
 
 export function WalletRouteGuard({ children }: { children: ReactNode }) {
-  const signer = ccc.useSigner();
+  const signer = useFeatureSigner();
   const location = useLocation();
 
   if (!signer) {

@@ -1,3 +1,4 @@
+import { useFeatureSigner } from '../dev-console/hooks';
 import { useCallback, useEffect, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 
@@ -9,7 +10,7 @@ export type WalletSnapshot = {
 };
 
 export function useWallet() {
- const signer = ccc.useSigner();
+ const signer = useFeatureSigner();
  const [snapshot, setSnapshot] = useState<WalletSnapshot>({
   address: "",
   balanceCkb: "0",

@@ -1,3 +1,5 @@
+import { useFeatureSigner } from '../dev-console/hooks';
+import { clientNetwork } from "../utils/network";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { authTokenStore, backendApi } from "../api/backend";
@@ -14,7 +16,7 @@ type AuthState = {
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
- const signer = ccc.useSigner();
+ const signer = useFeatureSigner();
  const [authenticated, setAuthenticated] = useState(false);
  const [walletAddress, setWalletAddress] = useState("");
  const [authenticating, setAuthenticating] = useState(false);
@@ -33,6 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   setError("");
   try {
    const address = await signer.getRecommendedAddress();
+   const backend = await backendApi.getNetwork();
+   if (backend.network.toLowerCase() !== clientNetwork(signer.client)) throw new Error("Backend authentication network does not match the wallet.");
    const challenge = await backendApi.createAuthChallenge(address);
    const signed = await signer.signMessage(challenge.message);
    const signType = String(signed.signType);
@@ -73,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    try {
     const [address, me] = await Promise.all([signer.getRecommendedAddress(), backendApi.authMe()]);
     if (!active) return;
-    if (address !== me.walletAddress) {
+    if (address !== me.walletAddress || me.network.toLowerCase() !== clientNetwork(signer.client)) {
      logout();
      return;
     }

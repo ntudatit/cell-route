@@ -1,7 +1,10 @@
+import { currentScope } from '../../dev-console/features';
+import { beginOperation } from '../../dev-console/store';
+import { useFeatureSigner } from '../../dev-console/hooks';
 import { FormEvent, useMemo, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
-import { assetApi } from "../../api/backend";
+import { recordSubmittedAsset } from "../../utils/submission";
 import { TransactionLifecycle } from "../../components/transactions/TransactionLifecycle";
 import { parseUnits } from "../../utils/units";
 
@@ -19,7 +22,9 @@ async function buildXudtType(signer: ccc.Signer, args: string) {
 }
 
 export function FungibleTokenPage() {
- const signer = ccc.useSigner();
+ const featureConsoleScope = currentScope();
+
+ const signer = useFeatureSigner();
  const [name, setName] = useState("CKBuilder Token");
  const [symbol, setSymbol] = useState("CKBT");
  const [decimals, setDecimals] = useState(8);
@@ -37,14 +42,22 @@ export function FungibleTokenPage() {
  }, [amount, decimals]);
 
  async function useMyLockAsIssuer() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'useMyLockAsIssuer');
+ try {
+
   if (!signer) return;
   const owner = await signer.getRecommendedAddressObj();
   // The official CKB xUDT tutorial uses issuer lock hash + 4-byte extension placeholder.
   setTokenArgs(`${owner.script.hash()}00000000`);
   if (!receiver) setReceiver(await signer.getRecommendedAddress());
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function issueOrMint(event: FormEvent) {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'issueOrMint');
+ try {
+
   event.preventDefault();
   if (!signer) return setStatus("Connect a wallet first.");
   setBusy(true);
@@ -72,22 +85,23 @@ export function FungibleTokenPage() {
    const hash = await signer.sendTransaction(tx);
    setTxHash(hash);
    setStatus("xUDT mint submitted. Recording asset audit event...");
-   await Promise.allSettled([
-    assetApi.record({
-     assetKind: "XUDT", action: "MINT", assetId: args, ownerAddress,
-     displayName: name.trim(), symbol: symbol.trim().toUpperCase(), amount,
-     txHash: hash,
-     metadataJson: JSON.stringify({ decimals, receiver: destination, rawAmount: raw.toString() }),
-    }),
-    signer.client.waitTransaction(hash),
-   ]);
-   setStatus("xUDT minted. Transaction is committed or being finalized by the connected network.");
-  } catch (error) {
+   setStatus(await recordSubmittedAsset(signer.client, {
+    assetKind: "XUDT", action: "MINT", assetId: args, ownerAddress,
+    displayName: name.trim(), symbol: symbol.trim().toUpperCase(), amount,
+    txHash: hash,
+    metadataJson: JSON.stringify({ decimals, receiver: destination, rawAmount: raw.toString() }),
+   }));
+  } catch (error) { featureOperation.fail(error);
    setStatus(error instanceof Error ? error.message : String(error));
   } finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function transfer() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'transfer');
+ try {
+
   if (!signer) return setStatus("Connect a wallet first.");
   if (!tokenArgs.trim()) return setStatus("Token Args are required for transfer.");
   setBusy(true);
@@ -111,18 +125,22 @@ export function FungibleTokenPage() {
    setPreview(safeJson(tx));
    const hash = await signer.sendTransaction(tx);
    setTxHash(hash);
-   await assetApi.record({
+   setStatus(await recordSubmittedAsset(signer.client, {
     assetKind: "XUDT", action: "TRANSFER", assetId: tokenArgs.trim(), ownerAddress,
     displayName: name.trim(), symbol: symbol.trim().toUpperCase(), amount, txHash: hash,
     metadataJson: JSON.stringify({ decimals, receiver: receiver.trim(), rawAmount: raw.toString() }),
-   }).catch(() => undefined);
-   setStatus("xUDT transfer submitted.");
-  } catch (error) {
+   }));
+  } catch (error) { featureOperation.fail(error);
    setStatus(error instanceof Error ? error.message : String(error));
   } finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  async function queryTokenCells() {
+ const featureOperation = beginOperation(featureConsoleScope, 'action', 'queryTokenCells');
+ try {
+
   if (!signer) return setStatus("Connect a wallet first.");
   if (!tokenArgs.trim()) return setStatus("Token Args are required to query holders.");
   setBusy(true);
@@ -139,10 +157,12 @@ export function FungibleTokenPage() {
    }
    setTokenCells(cells);
    setStatus(`Found ${cells.length} live xUDT Cell${cells.length === 1 ? "" : "s"}.`);
-  } catch (error) {
+  } catch (error) { featureOperation.fail(error);
    setStatus(error instanceof Error ? error.message : String(error));
   } finally { setBusy(false); }
- }
+
+ } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
+}
 
  return <AppLayout>
   <PageHero eyebrow="Asset Studio · CCC · xUDT" title="Token Studio" description="Issue, mint and transfer xUDT assets with wallet signing, exact u128 token amounts and backend audit history." />
