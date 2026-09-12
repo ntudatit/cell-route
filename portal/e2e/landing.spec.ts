@@ -5,7 +5,7 @@ test('landing offers clear actions and remembers favorites',async({page})=>{
  await page.getByRole('link',{name:'Browse services',exact:true}).click();await expect(page).toHaveURL(/#service-directory$/);
  await page.getByRole('button',{name:'Favorite Wallet',exact:true}).click();await page.reload();
  await expect(page.getByRole('button',{name:'Favorite Wallet',exact:true})).toHaveAttribute('aria-pressed','false');
- await page.getByLabel('Filter services').fill('no match');await expect(page.getByRole('heading',{name:'No services match your search'})).toBeVisible();
+ await page.getByRole('button',{name:'Favorite Live Cells',exact:true}).click();await page.getByRole('tab',{name:'Favorites',exact:true}).click();await expect(page.getByRole('heading',{name:'Your favorites start here'})).toBeVisible();
  await page.getByRole('button',{name:'Show all services'}).click();await expect(page.locator('.azure-table tbody tr')).toHaveCount(9);
  await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:'test-results/landing-desktop.png',fullPage:true});
  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:'test-results/landing-mobile.png',fullPage:true});

@@ -14,10 +14,6 @@ body { background:#fff; color:#242424; }
 .app-shell .content-body { padding:28px 32px 48px; }
 .azure-header.topbar.blockchain-topbar { position:fixed; top:0; left:0; right:0; z-index:60; height:48px; min-height:48px; padding:0 18px; margin:0; background:#0078d4; border:0; color:#fff; display:flex; gap:24px; box-shadow:none; }
 .azure-brand { display:flex; align-items:center; gap:20px; min-width:178px; color:#fff; text-decoration:none; font:16px 'Segoe UI',sans-serif; }
-.azure-search { display:flex; align-items:center; position:relative; gap:8px; width:min(540px,45vw); margin:auto; background:#fff; color:#555; height:30px; padding:0 10px; border-radius:2px; }
-.azure-header .azure-search input { background:transparent; border:0; outline:0; color:#333; font:12px 'Segoe UI',sans-serif; width:100%; padding:0; min-height:0; box-shadow:none; }
-.azure-search-results { position:absolute; top:34px; left:0; right:0; background:white; border:1px solid #ddd; box-shadow:0 4px 12px #0002; }
-.azure-search-results a { display:block; color:#0067b8; padding:12px; text-decoration:none; }.azure-search-results a:hover { background:#edf5fc; }.azure-search-results p { padding:10px; }
 .azure-header .topbar-actions { display:flex; align-items:center; gap:12px; }.azure-header .topbar-actions>a { color:white; }.azure-network { font-size:11px; text-transform:capitalize; }
 .azure-header .topbar-actions button { min-height:28px; height:30px; min-width:0; padding:4px 10px; margin:0; font:12px 'Segoe UI',sans-serif; border:1px solid #ffffff80; border-radius:2px; background:transparent; color:white; box-shadow:none; }.azure-header .wallet-top span { color:#fff; }
 .app-shell .page-hero { background:none; border-bottom:1px solid #e5e5e5; padding:0 0 24px; margin-bottom:24px; }.app-shell .page-hero:before,.app-shell .page-hero:after { display:none; }
@@ -36,13 +32,13 @@ body { background:#fff; color:#242424; }
 .azure-start-grid h2 { font-size:15px; font-weight:600; margin:14px 0 7px; }.azure-start-grid p { font-size:12px; color:#555; line-height:1.6; margin:0 0 13px; min-height:38px; }.azure-primary { display:inline-block; text-decoration:none; padding:6px 18px; background:#0078d4; color:white; font-size:12px; border-radius:2px; }
 .azure-section { margin-top:36px; }.azure-section h2 { font-size:16px; font-weight:600; margin:0 0 16px; }.azure-section-title { display:flex; justify-content:space-between; align-items:baseline; }.azure-section-title>a { display:flex; align-items:center; gap:5px; font-size:12px; color:#0078d4; text-decoration:none; }
 .azure-services { display:grid; grid-template-columns:repeat(9,minmax(0,1fr)); gap:10px; }.azure-services a { display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px; padding:12px 4px; color:#0067b8; text-decoration:none; font-size:11px; }.azure-services a:hover { background:#f3f8fc; }
-.azure-directory-toolbar { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #ddd; }.azure-directory-toolbar button { background:none; border:0; padding:10px 14px; color:#444; font:12px 'Segoe UI',sans-serif; }.azure-directory-toolbar button[aria-selected=true] { border-bottom:2px solid #0078d4; color:#0078d4; }.azure-directory-toolbar input { padding:6px 10px; width:190px; font-size:12px; margin-bottom:6px; }
+.azure-directory-toolbar { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #ddd; }.azure-directory-toolbar button { background:none; border:0; padding:10px 14px; color:#444; font:12px 'Segoe UI',sans-serif; }.azure-directory-toolbar button[aria-selected=true] { border-bottom:2px solid #0078d4; color:#0078d4; }
 .azure-table-wrap { overflow:auto; }.azure-table { width:100%; border-collapse:collapse; font-size:12px; }.azure-table th { text-align:left; font-weight:600; padding:10px 14px; }.azure-table td { padding:8px 14px; border-bottom:1px solid #eee; }.azure-table td:first-child { width:55%; }.azure-table a { color:#0078d4; text-decoration:none; display:flex; align-items:center; gap:10px; }.azure-table button { border:0; background:none; color:#0078d4; padding:3px; }.azure-table tr:hover { background:#f8f8f8; }.azure-empty { text-align:center; color:#666; padding:24px; }
 .azure-tools { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }.azure-tools a { display:flex; gap:12px; color:#0078d4; text-decoration:none; font-size:12px; }.azure-tools small { display:block; color:#666; margin-top:5px; font-size:11px; line-height:1.5; }.azure-useful { display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:24px; }.azure-useful a { display:inline-flex; align-items:center; gap:5px; margin:0 22px 12px 0; color:#0078d4; text-decoration:none; font-size:12px; }.azure-useful p { font-size:12px; line-height:1.8; color:#666; }
 .project-loading { background:#ffffffed; }.project-loading-grid { display:none; }.project-loading-content strong,.project-loading-content small,.project-loading-content p { color:#0078d4; }.project-loading-mark { color:#0078d4; background:#eff6fc; border-color:#c7e0f4; }
 .dev-console-launch { background:#fff; border-color:#0078d4; color:#005a9e; border-radius:2px; box-shadow:0 2px 8px #0002; }.dev-console-launch span { color:#0078d4; }
 @media(max-width:1100px) { .azure-header { gap:12px!important; }.azure-network { display:none; }.azure-brand { min-width:130px; }.azure-services { grid-template-columns:repeat(5,1fr); } }
-@media(max-width:760px) { .app-shell.blockchain-shell { display:block; padding-top:92px; }.app-shell .sidebar { display:none; }.app-shell .content-body { padding:22px 16px 70px; }.azure-header.topbar.blockchain-topbar { height:92px; flex-wrap:wrap; padding:8px 12px; gap:8px; align-content:center; }.azure-brand { min-width:0; flex:1; }.azure-search { order:3; width:100%; height:28px; }.azure-header .topbar-actions { gap:8px; }.azure-start-grid { grid-template-columns:1fr; }.azure-illustration { height:130px; }.azure-services { grid-template-columns:repeat(3,1fr); }.azure-tools { grid-template-columns:repeat(2,1fr); }.azure-useful { gap:20px; flex-wrap:wrap; }.azure-directory-toolbar input { width:140px; }.azure-welcome h1 { font-size:23px; } }
+@media(max-width:760px) { .app-shell.blockchain-shell { display:block; padding-top:48px; }.app-shell .sidebar { display:none; }.app-shell .content-body { padding:22px 16px 70px; }.azure-header.topbar.blockchain-topbar { height:48px; flex-wrap:wrap; padding:8px 12px; gap:8px; align-content:center; }.azure-brand { min-width:0; flex:1; }.azure-header .topbar-actions { gap:8px; }.azure-start-grid { grid-template-columns:1fr; }.azure-illustration { height:130px; }.azure-services { grid-template-columns:repeat(3,1fr); }.azure-tools { grid-template-columns:repeat(2,1fr); }.azure-useful { gap:20px; flex-wrap:wrap; }.azure-welcome h1 { font-size:23px; } }
 .app-shell .sidebar { width:216px; min-width:0; box-shadow:none; }
 .app-shell .sidebar .sidebar-section-label { font:600 11px 'Segoe UI',sans-serif; letter-spacing:0; color:#616161; }
 .azure-home,.azure-home button,.azure-home input,.azure-home a,.azure-home table { font-family:'Segoe UI',Arial,sans-serif; }
@@ -175,9 +171,9 @@ input[type=checkbox] { accent-color:var(--az-blue); }::selection { background:#c
 .azure-navigation { min-width:0; }
 .azure-menu-backdrop { display:none; }
 @media(max-width:760px) {
- .app-shell .azure-navigation:not([hidden]) { display:block; position:fixed; top:92px; bottom:0; left:0; width:min(280px,85vw); z-index:58; box-shadow:4px 0 16px #0003; }
+ .app-shell .azure-navigation:not([hidden]) { display:block; position:fixed; top:48px; bottom:0; left:0; width:min(280px,85vw); z-index:58; box-shadow:4px 0 16px #0003; }
  .app-shell .azure-navigation .sidebar { display:flex; position:relative; top:0; width:100%; height:100%; max-height:100%; }
- .azure-menu-backdrop { display:block; position:fixed; inset:92px 0 0; border:0; background:#0005; z-index:57; cursor:default; }
+ .azure-menu-backdrop { display:block; position:fixed; inset:48px 0 0; border:0; background:#0005; z-index:57; cursor:default; }
  .azure-brand { gap:10px; }
 }
 .azure-navigation .sidebar-scroll { display:block; overflow-y:auto; overflow-x:hidden; flex:1; min-height:0; }
@@ -190,7 +186,6 @@ input[type=checkbox] { accent-color:var(--az-blue); }::selection { background:#c
 
 /* Header actions: keep the wallet visible; move secondary controls into overflow. */
 .azure-header.topbar.blockchain-topbar { gap:18px; }
-.azure-header .azure-search { flex:1 1 360px; min-width:120px; max-width:540px; }
 .azure-header .topbar-actions { flex:0 0 auto; min-width:0; gap:10px; white-space:nowrap; }
 .topbar-secondary { display:flex; align-items:center; gap:10px; }
 .azure-header .azure-network { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border:1px solid #ffffff40; border-radius:20px; font-size:11px; }
@@ -212,5 +207,7 @@ input[type=checkbox] { accent-color:var(--az-blue); }::selection { background:#c
 .azure-header .topbar-popover .auth-button { width:100%; color:#005a9e; border-color:#8a8886; background:white; }.azure-header .topbar-popover .auth-button:disabled { color:#605e5c; background:#f3f2f1; opacity:1; }.azure-header .topbar-popover .auth-button:hover:not(:disabled) { background:#eff6fc; }
 .azure-header .topbar-popover a { display:flex; gap:8px; align-items:center; margin-top:14px; color:#005a9e; text-decoration:none; font-size:12px; }.azure-header .topbar-popover :is(a,button):focus-visible { outline-color:#0078d4; }
 @media(max-width:1200px) { .azure-header .topbar-secondary,.azure-header .azure-network { display:none; }.topbar-overflow { display:block; }.azure-header .topbar-actions { gap:6px; } }
-@media(max-width:760px) { .azure-header .azure-search { flex:0 0 100%; max-width:none; min-width:0; }.azure-header.topbar.blockchain-topbar { gap:8px; }.azure-header .azure-brand { gap:6px; min-width:0; }.azure-header .wallet-top div:nth-child(2) { max-width:90px; }.azure-header .wallet-top .avatar { display:none; } }
+@media(max-width:760px) {.azure-header.topbar.blockchain-topbar { gap:8px; }.azure-header .azure-brand { gap:6px; min-width:0; }.azure-header .wallet-top div:nth-child(2) { max-width:90px; }.azure-header .wallet-top .avatar { display:none; } }
 @media(max-width:380px) { .azure-header .azure-brand strong { font-size:13px; }.azure-header .topbar-actions .wallet-top { padding:4px 7px; }.azure-header .wallet-top div:nth-child(2) { max-width:65px; }.azure-header .wallet-top>svg { display:none; } }
+
+.azure-header .topbar-actions { margin-left:auto; }
