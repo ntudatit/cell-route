@@ -60,7 +60,6 @@ const fiberOps = [
 ];
 
 const tools = [
-  { to: "/reports/week-6", label: "Week 6 Report", icon: FileCode2 },
   { to: "/simple-lock", label: "Simple Lock Lab", icon: FileCode2 },
   { to: "/docs", label: "FiberPay API", icon: Code2 },
   { to: "/explorer", label: "CKB Explorer", icon: Search },

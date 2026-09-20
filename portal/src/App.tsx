@@ -1,6 +1,5 @@
 import { FeatureDevConsole } from "./dev-console/FeatureDevConsole";
 import { SimpleLockLabPage } from "./pages/features/SimpleLockLabPage";
-import { Week6ReportPage } from "./pages/reports/Week6ReportPage";
 import { lazy, Suspense, type ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { WalletRouteGuard } from "./components/WalletRouteGuard";
@@ -59,7 +58,6 @@ export default function App() {
       <Route path="/cells" element={<Protected><CellsPage /></Protected>} />
       <Route path="/transfer-ckb" element={<Protected><TransferCkbPage /></Protected>} />
       <Route path="/simple-lock" element={<SimpleLockLabPage />} />
-      <Route path="/reports/week-6" element={<Week6ReportPage />} />
       <Route path="/store-data" element={<Protected><StoreDataPage /></Protected>} />
       <Route path="/fungible-token" element={<Protected><FungibleTokenPage /></Protected>} />
       <Route path="/dob-spore" element={<Protected><DobSporePage /></Protected>} />
