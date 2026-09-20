@@ -88,7 +88,7 @@ export function AssetPortfolioPage() {
    <div className="panel-heading"><div><span className="page-eyebrow">On-chain source of truth</span><h2>Indexed Live Assets</h2></div><span>{onChain.length} live typed Cells</span></div>
    <div className="asset-event-list">
     {onChain.map(asset => <article key={`${asset.txHash}:${asset.outputIndex}`} className="asset-event-row">
-     <div className="asset-event-icon">{asset.assetKind === "XUDT" ? "T" : asset.assetKind === "SPORE" ? "S" : asset.assetKind === "CLUSTER" ? "C" : "#"}</div>
+     <div className="asset-event-icon">{(asset.assetKind === "XUDT" || asset.assetKind === "SUDT") ? "T" : asset.assetKind === "SPORE" ? "S" : asset.assetKind === "CLUSTER" ? "C" : "#"}</div>
      <div className="asset-event-main"><strong>{asset.assetKind}</strong><span>Cell #{asset.outputIndex}{asset.blockNumber != null ? ` · block ${asset.blockNumber}` : ""}</span><code>{asset.assetId}</code></div>
      <div className="asset-event-meta"><span>{asset.amountRaw ? `raw ${asset.amountRaw}` : asset.typeHashType}</span><time>{new Date(asset.lastSeenAt).toLocaleString()}</time><code>{asset.txHash.slice(0, 14)}…</code></div>
     </article>)}
@@ -99,7 +99,7 @@ export function AssetPortfolioPage() {
    <div className="panel-heading"><div><span className="page-eyebrow">Application read model</span><h2>Authenticated Audit Trail</h2></div><span>{events.length} events</span></div>
    <div className="asset-event-list">
     {events.map(event => <article key={event.id} className="asset-event-row">
-     <div className="asset-event-icon">{event.assetKind === "XUDT" ? "T" : event.assetKind === "CLUSTER" ? "C" : "S"}</div>
+     <div className="asset-event-icon">{(event.assetKind === "XUDT" || event.assetKind === "SUDT") ? "T" : event.assetKind === "CLUSTER" ? "C" : "S"}</div>
      <div className="asset-event-main"><strong>{event.displayName || event.assetKind}</strong><span>{event.action} · {event.symbol || event.assetKind} {event.amount ? `· ${event.amount}` : ""}</span><code>{event.assetId}</code></div>
      <div className="asset-event-meta"><span>{event.network}</span><time>{new Date(event.createdAt).toLocaleString()}</time><code>{event.txHash.slice(0, 12)}…</code></div>
     </article>)}

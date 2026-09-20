@@ -69,8 +69,8 @@ export const backendApi = instrument({
  transactionEventsUrl: (txHash: string) => `${API_URL}/transactions/${encodeURIComponent(txHash)}/events`,
 }, 'api', 'backendApi');
 
-export type AssetKind = "XUDT" | "SPORE" | "CLUSTER";
-export type AssetAction = "CREATE" | "MINT" | "TRANSFER" | "MELT";
+export type AssetKind = "SUDT" | "XUDT" | "SPORE" | "CLUSTER";
+export type AssetAction = "CREATE" | "MINT" | "TRANSFER" | "BURN" | "MELT";
 export type AssetEvent = {
  id: number; assetKind: AssetKind; action: AssetAction; assetId: string; ownerAddress: string;
  displayName?: string | null; symbol?: string | null; amount?: string | null; txHash: string;

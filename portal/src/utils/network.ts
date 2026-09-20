@@ -1,5 +1,5 @@
 import { ccc } from '@ckb-ccc/connector-react';
-import devnet from '../../public/simple-lock.devnet.json';
+import devnet from '../../public/token.devnet.json';
 export type CkbNetwork = 'mainnet' | 'testnet' | 'devnet';
 export function parseNetwork(value = 'testnet'): CkbNetwork {
   const network = value.trim().toLowerCase();

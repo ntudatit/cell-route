@@ -36,7 +36,7 @@ No Mainnet funds were sent while implementing or testing these changes. Wallet s
 
 ## Development-only features
 
-The Week 5 bearer hash-lock stays on OffCKB Devnet. Mainnet builds show an explanation at `/simple-lock` and do not expose its funding/unlocking controls. The Testnet faucet is unavailable on Mainnet. Run `npm run dev` for the normal Testnet/Devnet development flow.
+The Simple Lock bearer hash-lock stays on OffCKB Devnet. Mainnet builds show an explanation at `/simple-lock` and do not expose its funding/unlocking controls. The Testnet faucet is unavailable on Mainnet. Run `npm run dev` for the normal Testnet/Devnet development flow.
 
 Only a Testnet Fiber YAML is bundled. Mainnet mode disables browser Fiber startup. To operate Mainnet Fiber, provide and validate a Mainnet configuration, set `VITE_FIBER_NETWORK=mainnet`, and explicitly set `VITE_FIBER_MAINNET_ENABLED=true`. Do not reuse Testnet chain settings or browser database identifiers. The Mainnet example uses a separate database prefix. Native Fiber operations also require a separately configured Mainnet FNN service; enabling the CKB portal does not configure that service.
 
@@ -51,7 +51,7 @@ npm run test:e2e:mainnet
 cargo test --locked --offline network_tests --bin rust-service
 ```
 
-`check:mainnet` reads genesis and tip only. Optionally set `CKB_MAINNET_RPC_URL` for that CLI check. It never loads signing material or submits a transaction. The browser smoke test verifies the Mainnet indication and disabled Devnet lab without connecting a wallet. The existing Week 5 Devnet evidence remains in `contracts/deployment/week5-evidence.json`.
+`check:mainnet` reads genesis and tip only. Optionally set `CKB_MAINNET_RPC_URL` for that CLI check. It never loads signing material or submits a transaction. The browser smoke test verifies the Mainnet indication and disabled Devnet lab without connecting a wallet. The Simple Lock Devnet verification data remains in `contracts/deployment/week5-evidence.json`.
 
 Read-only verification on 2026-09-09 returned Mainnet genesis `0x92b197aa1fba0f63633922c61c92375c9c074a93e85963554f5499fe1450d0e5` and tip 20404561. This is a point-in-time connectivity observation, not a transaction confirmation.
 

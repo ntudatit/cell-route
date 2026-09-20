@@ -1,4 +1,5 @@
 export const FEATURES: Record<string, string> = {
+ '/reports/week-6': 'Week 6 Report',
  '/': 'Home', '/platform': 'Platform Overview', '/checkout': 'Checkout', '/merchant': 'Merchant Console',
  '/dashboard': 'Dashboard', '/wallet': 'Wallet', '/cells': 'Live Cells', '/transfer-ckb': 'Transfer CKB',
  '/simple-lock': 'Simple Lock Lab', '/store-data': 'Store Data', '/fungible-token': 'Fungible Token',

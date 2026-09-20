@@ -20,10 +20,16 @@ See [DEPLOYMENT.md](DEPLOYMENT.md). Start from `.env.deploy.example`; never comm
 
 For a testnet demo using free hosting, follow [FREE_DEPLOYMENT.md](FREE_DEPLOYMENT.md).
 
-## Week 5: Simple Lock Lab
+## Simple Lock Lab
 
-Open /simple-lock for hash-lock address derivation, local funding, live capacity and unlocking. See [contract build and Devnet workflow](contracts/README.md) and the [Week 5 report](docs/week-5-report.md). Contract source and artifacts are separate from the React portal.
+Open /simple-lock for hash-lock address derivation, local funding, live capacity and unlocking. See [contract build and Devnet workflow](contracts/README.md). Contract source and artifacts are separate from the React portal.
 
 ## Mainnet
 
 Run the portal with `npm run dev:mainnet` or build with `npm run build:mainnet` from `portal`. See [Mainnet configuration and verification](docs/mainnet.md).
+
+## Token Lab
+
+Open `/fungible-token` for sUDT/xUDT mint, transfer, explicit burn and transaction review. See [Token Lab configuration and development](docs/token-lab.md).
+
+See the [Week 6 report](README-WEEK-6.md) for implementation and recorded Devnet results, and the [response-check guide](docs/week-6-response-check.md) for demo commands and expected responses.

@@ -12,6 +12,7 @@ pub struct Config {
     pub jwt_ttl_seconds: i64,
     pub auth_challenge_ttl_seconds: i64,
     pub xudt_code_hash: Option<String>,
+    pub sudt_code_hash: Option<String>,
     pub spore_code_hash: Option<String>,
     pub spore_cluster_code_hash: Option<String>,
     pub rpc_timeout: Duration,
@@ -71,6 +72,7 @@ impl Config {
                 .unwrap_or_else(|_| "300".into())
                 .parse::<i64>()?,
             xudt_code_hash: optional_env("XUDT_CODE_HASH"),
+            sudt_code_hash: optional_env("SUDT_CODE_HASH"),
             spore_code_hash: optional_env("SPORE_CODE_HASH"),
             spore_cluster_code_hash: optional_env("SPORE_CLUSTER_CODE_HASH"),
             rpc_timeout: Duration::from_secs(rpc_timeout_seconds),

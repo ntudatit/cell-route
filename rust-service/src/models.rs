@@ -129,14 +129,14 @@ pub struct CreateAssetEventRequest {
 
 impl CreateAssetEventRequest {
     pub fn validate(&self) -> Result<(), String> {
-        if !matches!(self.asset_kind.as_str(), "XUDT" | "SPORE" | "CLUSTER") {
-            return Err("assetKind must be XUDT, SPORE, or CLUSTER".into());
+        if !matches!(self.asset_kind.as_str(), "SUDT" | "XUDT" | "SPORE" | "CLUSTER") {
+            return Err("assetKind must be SUDT, XUDT, SPORE, or CLUSTER".into());
         }
         if !matches!(
             self.action.as_str(),
-            "CREATE" | "MINT" | "TRANSFER" | "MELT"
+            "CREATE" | "MINT" | "TRANSFER" | "BURN" | "MELT"
         ) {
-            return Err("action must be CREATE, MINT, TRANSFER, or MELT".into());
+            return Err("action must be CREATE, MINT, TRANSFER, BURN, or MELT".into());
         }
         if self.asset_id.trim().is_empty() || self.owner_address.trim().is_empty() {
             return Err("assetId and ownerAddress are required".into());

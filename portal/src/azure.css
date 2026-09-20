@@ -211,3 +211,6 @@ input[type=checkbox] { accent-color:var(--az-blue); }::selection { background:#c
 @media(max-width:380px) { .azure-header .azure-brand strong { font-size:13px; }.azure-header .topbar-actions .wallet-top { padding:4px 7px; }.azure-header .wallet-top div:nth-child(2) { max-width:65px; }.azure-header .wallet-top>svg { display:none; } }
 
 .azure-header .topbar-actions { margin-left:auto; }
+.token-lab-fields { border:0; margin:0; padding:0; display:grid; gap:14px; min-width:0; }
+.token-lab-fields label { display:grid; gap:6px; font-size:12px; }.token-lab-fields input,.token-lab-fields select { width:100%; padding:9px; }
+.token-review { margin-top:20px; }.token-review pre { overflow:auto; max-height:280px; padding:12px; }.token-review>button { margin:14px 8px 0 0; }.token-review>label { display:flex; gap:8px; align-items:center; padding:14px 0; }

@@ -18,7 +18,11 @@
     "format": "prettier --write .",
     "export:metadata": "node scripts/export-metadata.mjs",
     "test:devnet": "node scripts/verify-devnet.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "week6:build": "node scripts/week6/build.mjs",
+    "week6:export": "node scripts/week6/export.mjs",
+    "week6:test": "jest --runInBand --testPathPattern=sudt.mock",
+    "week6:demo": "node scripts/week6/demo.mjs"
   },
   "dependencies": {
     "@ckb-js-std/bindings": "~1.0.0",

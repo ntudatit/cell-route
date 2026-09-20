@@ -1,4 +1,4 @@
-# Week 5 — Simple Lock
+# CellRoute contracts — Simple Lock
 
 TypeScript contract source lives in `contracts/simple-lock/src/index.ts`, outside the React portal. It runs in CKB JS VM; Node.js does not validate the on-chain lock.
 
@@ -68,5 +68,5 @@ The preimage digest is 32-byte BLAKE2b with CKB personalization `ckb-default-has
 
 This is an educational bearer hash-lock. It does not bind a signature, recipient, or transaction hash. Anyone who learns the preimage can spend any Cell using the same lock, and submission publicly reveals the preimage. Use local Devnet funds only.
 
-See `../docs/week-5-report.md` for the validation lifecycle and recorded results.
+For sUDT/xUDT tooling, configuration and local development, see [Token Lab](../docs/token-lab.md).
 

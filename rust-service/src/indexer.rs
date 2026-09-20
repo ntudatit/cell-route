@@ -158,7 +158,7 @@ fn parse_typed_cell(
         .to_owned();
 
     let kind = classify_kind(state, &code_hash);
-    let amount_raw = if kind == "XUDT" {
+    let amount_raw = if kind == "XUDT" || kind == "SUDT" {
         parse_xudt_amount(&data)
     } else {
         None
@@ -197,7 +197,9 @@ fn classify_kind(state: &AppState, code_hash: &str) -> String {
             .map(|value| value.eq_ignore_ascii_case(code_hash))
             .unwrap_or(false)
     };
-    if eq(&state.config.xudt_code_hash) {
+    if eq(&state.config.sudt_code_hash) {
+        "SUDT".into()
+    } else if eq(&state.config.xudt_code_hash) {
         "XUDT".into()
     } else if eq(&state.config.spore_code_hash) {
         "SPORE".into()

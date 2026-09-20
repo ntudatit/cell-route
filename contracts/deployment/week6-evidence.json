@@ -1,0 +1,115 @@
+{
+  "network": "devnet",
+  "genesisHash": "0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be",
+  "createdAt": "2026-09-17T14:48:17.178Z",
+  "ownerAddress": "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsq2hs00gj98uew5pvz5shwrquqv33x946pgql8u60",
+  "holderAddress": "ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsq2qsvsvzc4u9qrk23g40mvgn8kmch2j6rgxmkhyx",
+  "runs": [
+    {
+      "standard": "SUDT",
+      "type": {
+        "codeHash": "0x6283a479a3cf5d4276cd93594de9f1827ab9b55c7b05b3d28e4c2e0a696cfefd",
+        "hashType": "type",
+        "args": "0x19fe99678e8c43d938eb15b116f7bc5049d5750c150b1852deba0c486bcd28f3"
+      },
+      "transactions": [
+        {
+          "action": "MINT",
+          "txHash": "0xc198c435e4184d5076caaf6d847ca4c7824dcd84971caf55af3e64096e0e78db",
+          "status": "committed",
+          "blockNumber": "882",
+          "inputAmount": "0",
+          "outputAmount": "1000",
+          "inputCapacity": "200000000000",
+          "outputCapacity": "199999998796",
+          "fee": "1204",
+          "ownerBalance": "0",
+          "holderBalance": "1000"
+        },
+        {
+          "action": "TRANSFER",
+          "txHash": "0xd4610f48fac5af54c5e0974620d27e59ecd5275c9227ddfb613ca3b4231d19c9",
+          "status": "committed",
+          "blockNumber": "885",
+          "inputAmount": "1000",
+          "outputAmount": "1000",
+          "inputCapacity": "214200000000",
+          "outputCapacity": "214199998288",
+          "fee": "1712",
+          "ownerBalance": "250",
+          "holderBalance": "750"
+        },
+        {
+          "action": "BURN",
+          "txHash": "0xa3e6edef2b3738b8457e89500f9edb230b23a38d780bf523cc869e95737c2557",
+          "status": "committed",
+          "blockNumber": "888",
+          "inputAmount": "750",
+          "outputAmount": "700",
+          "inputCapacity": "199999998288",
+          "outputCapacity": "199999996996",
+          "fee": "1292",
+          "ownerBalance": "250",
+          "holderBalance": "700"
+        }
+      ],
+      "unauthorizedMint": {
+        "expectedExitCode": -52,
+        "error": "Error: Client request error TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/6283a479a3cf5d4276cd93594de9f1827ab9b55c7b05b3d28e4c2e0a696cfefd.html#-52 })"
+      }
+    },
+    {
+      "standard": "XUDT",
+      "type": {
+        "codeHash": "0x1a1e4fef34f5982906f745b048fe7b1089647e82346074e0f32c2ece26cf6b1e",
+        "hashType": "type",
+        "args": "0x19fe99678e8c43d938eb15b116f7bc5049d5750c150b1852deba0c486bcd28f300000000"
+      },
+      "transactions": [
+        {
+          "action": "MINT",
+          "txHash": "0xff7323b54590b23d0cd3e78561a94390ac8a80eeb82aa68963cfe2996c6450e0",
+          "status": "committed",
+          "blockNumber": "891",
+          "inputAmount": "0",
+          "outputAmount": "1000",
+          "inputCapacity": "185799998796",
+          "outputCapacity": "185799997584",
+          "fee": "1212",
+          "ownerBalance": "0",
+          "holderBalance": "1000"
+        },
+        {
+          "action": "TRANSFER",
+          "txHash": "0x4fcfadc8387441ebb6c0f52ea0416def931469051d92c50bdee60432a87a1efd",
+          "status": "committed",
+          "blockNumber": "894",
+          "inputAmount": "1000",
+          "outputAmount": "1000",
+          "inputCapacity": "200399996996",
+          "outputCapacity": "200399995268",
+          "fee": "1728",
+          "ownerBalance": "250",
+          "holderBalance": "750"
+        },
+        {
+          "action": "BURN",
+          "txHash": "0xe9ed02ad588e2d0fcb79cea7be66cc670a7a0d30e0eca417336e4f514905a1f9",
+          "status": "committed",
+          "blockNumber": "897",
+          "inputAmount": "750",
+          "outputAmount": "700",
+          "inputCapacity": "185799995268",
+          "outputCapacity": "185799993968",
+          "fee": "1300",
+          "ownerBalance": "250",
+          "holderBalance": "700"
+        }
+      ],
+      "unauthorizedMint": {
+        "expectedExitCode": -52,
+        "error": "Error: Client request error TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/1a1e4fef34f5982906f745b048fe7b1089647e82346074e0f32c2ece26cf6b1e.html#-52 })"
+      }
+    }
+  ]
+}
