@@ -59,7 +59,6 @@ Backend support requires the correct network-specific `SUDT_CODE_HASH` and datab
 
 ## Reproduction and supporting files
 
-- [Vietnamese guide: run the demo and check responses](docs/week-6-response-check.md)
 - [Token Lab setup](docs/token-lab.md)
 - [Token transaction helpers](portal/src/utils/token.ts)
 - [Native sUDT tests](contracts/tests/sudt.mock.test.ts)
