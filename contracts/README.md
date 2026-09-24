@@ -1,5 +1,7 @@
 # CellRoute contracts — Simple Lock
 
+For the AssemblyScript → WASM → C → RISC-V pipeline and native GDB workflow, see [Script runtime and debugging](../docs/script-runtime.md). Run `npm run runtime:setup` once on Windows x64, then `npm run runtime:test`.
+
 TypeScript contract source lives in `contracts/simple-lock/src/index.ts`, outside the React portal. It runs in CKB JS VM; Node.js does not validate the on-chain lock.
 
 ## Reproducible build and tests
@@ -69,4 +71,3 @@ The preimage digest is 32-byte BLAKE2b with CKB personalization `ckb-default-has
 This is an educational bearer hash-lock. It does not bind a signature, recipient, or transaction hash. Anyone who learns the preimage can spend any Cell using the same lock, and submission publicly reveals the preimage. Use local Devnet funds only.
 
 For sUDT/xUDT tooling, configuration and local development, see [Token Lab](../docs/token-lab.md).
-

@@ -1,0 +1,22 @@
+{
+  "assemblyscript": {
+    "version": "0.27.31",
+    "repository": "https://github.com/AssemblyScript/assemblyscript",
+    "commit": "285afb1ffe1cf9b3a187b8f070d8d6a87b869751"
+  },
+  "wabt": {
+    "version": "1.0.42",
+    "repository": "https://github.com/WebAssembly/wabt",
+    "commit": "ff0ef7e0009402740c805a9744c09b05be063e48",
+    "windowsArchiveSha256": "62f1eb2b51aa57cf0f0b8ba333bf2c72a049930aa9c5de01dcad271c4fe48c88"
+  },
+  "gccDistribution": {
+    "version": "15.2.0-1",
+    "repository": "https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack",
+    "commit": "67154c02dda3f88ad8ad2b3412d226b94b7ec98a",
+    "windowsArchiveSha256": "85ef714dacd273b1dadf4af4892774520ac01915bfa6da816a56e7e41591e09e",
+    "note": "Commit identifies the xPack distribution recipe, not GCC's upstream source tree."
+  },
+  "runner": { "name": "ckb-debugger", "testedVersion": "1.1.1", "scriptVersion": 2 },
+  "gdb": { "testedVersion": "16.3" }
+}

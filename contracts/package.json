@@ -22,7 +22,12 @@
     "week6:build": "node scripts/week6/build.mjs",
     "week6:export": "node scripts/week6/export.mjs",
     "week6:test": "jest --runInBand --testPathPattern=sudt.mock",
-    "week6:demo": "node scripts/week6/demo.mjs"
+    "week6:demo": "node scripts/week6/demo.mjs",
+    "runtime:setup": "node scripts/runtime-setup.mjs",
+    "runtime:build": "node scripts/runtime-build.mjs",
+    "runtime:verify": "node --test tests/runtime-tools.test.mjs && node scripts/runtime-verify.mjs",
+    "runtime:debug": "node scripts/runtime-gdb.mjs",
+    "runtime:test": "run-s runtime:build runtime:verify runtime:debug"
   },
   "dependencies": {
     "@ckb-js-std/bindings": "~1.0.0",
@@ -30,16 +35,17 @@
     "dotenv": "^17.2.1"
   },
   "devDependencies": {
-    "ckb-testtool": "1.0.5",
     "@ckb-ccc/core": "1.12.2",
+    "@types/jest": "~29.5.14",
+    "@types/node": "~22.13.8",
+    "assemblyscript": "0.27.31",
+    "ckb-testtool": "1.0.5",
     "esbuild": "~0.25.8",
     "jest": "~29.7.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
-    "typescript": "~5.8.2",
     "ts-jest": "~29.2.6",
-    "@types/node": "~22.13.8",
-    "@types/jest": "~29.5.14"
+    "typescript": "~5.8.2"
   }
 }
