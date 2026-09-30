@@ -4,6 +4,10 @@
 #include <string.h>
 static unsigned char memory[65536];
 static bool initialized;
+#ifdef LAB_SKIP_INITIAL_ZERO
+// ELF/BSS supplies zero bytes on process entry. Reuse must still clear memory.
+static bool allocated_once;
+#endif
 __attribute__((noreturn)) void lab_exit(int code) {
   register long a0 __asm__("a0") = code;
   register long a7 __asm__("a7") = 93;
@@ -17,7 +21,12 @@ void wasm_rt_trap(wasm_rt_trap_t code) { (void)code; lab_exit(70); }
 void wasm_rt_allocate_memory(wasm_rt_memory_t *mem, uint64_t initial,
                             uint64_t maximum, bool is64, uint32_t page_size) {
   if (initial != 1 || is64 || page_size != sizeof(memory)) lab_exit(71);
+#ifdef LAB_SKIP_INITIAL_ZERO
+  if (allocated_once) memset(memory, 0, sizeof(memory));
+  allocated_once = true;
+#else
   memset(memory, 0, sizeof(memory));
+#endif
   mem->data = memory; mem->data_end = memory + sizeof(memory);
   mem->pages = initial; mem->max_pages = maximum;
   mem->size = sizeof(memory); mem->is64 = false; mem->page_size = page_size;

@@ -27,7 +27,8 @@
     "runtime:build": "node scripts/runtime-build.mjs",
     "runtime:verify": "node --test tests/runtime-tools.test.mjs && node scripts/runtime-verify.mjs",
     "runtime:debug": "node scripts/runtime-gdb.mjs",
-    "runtime:test": "run-s runtime:build runtime:verify runtime:debug"
+    "runtime:test": "run-s runtime:build runtime:verify runtime:debug",
+    "runtime:benchmark": "node scripts/runtime-benchmark.mjs"
   },
   "dependencies": {
     "@ckb-js-std/bindings": "~1.0.0",

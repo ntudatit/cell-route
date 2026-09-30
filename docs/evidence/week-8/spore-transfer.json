@@ -1,0 +1,5 @@
+{
+  "operation": "spore-transfer",
+  "status": "NOT EXECUTED",
+  "reason": "Requires an interactive funded wallet and user-reviewed transactions. Read-only deployment probe is separate evidence."
+}

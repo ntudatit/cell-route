@@ -29,3 +29,9 @@ npx playwright test e2e/dev-console.spec.ts --reporter=line
 npm run build:mainnet
 npx playwright test --config=playwright.mainnet.config.ts --reporter=line
 ```
+
+## Week 8 Spore lifecycle
+
+Spore and Cluster Studios share prepare/review/sign/broadcast/observe infrastructure. New static labels cover reviewed operations, `Spore.sign-start`, `Spore.broadcast.sendTransaction`, `Spore.tx-hash.sendTransaction`, `Spore.observe`, `Spore.committed`, `Spore.read-live-cell`, and `Spore.dob-decode`. Uncached node calls and `signOnlyTransaction` are instrumented. Complete preparation is not transaction commitment.
+
+The browser test exports actual local preview events to `docs/evidence/week-8/dev-console.jsonl`; these are UI/Worker events, not chain evidence. Existing filters, pause, scope isolation, redaction and JSONL export remain in use. See [Week 8 report](week-8-report.md).

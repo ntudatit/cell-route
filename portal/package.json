@@ -17,9 +17,9 @@
     "test:e2e:mainnet": "npm run build:mainnet && playwright test --config=playwright.mainnet.config.ts"
   },
   "dependencies": {
-    "@ckb-ccc/connector-react": "^1.1.9",
+    "@ckb-ccc/connector-react": "1.1.9",
     "@ckb-ccc/core": "1.19.1",
-    "@ckb-ccc/spore": "^1.6.9",
+    "@ckb-ccc/spore": "1.6.9",
     "@nervosnetwork/fiber-js": "0.9.0",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",

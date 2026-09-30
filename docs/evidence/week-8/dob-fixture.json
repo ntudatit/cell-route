@@ -1,0 +1,93 @@
+{
+  "scope": "Pinned deployed decoder binary executed locally in CKB-VM; not a mint/commitment",
+  "dna": "0102030405060708",
+  "pattern": [
+    [
+      "BackgroundColor",
+      "String",
+      0,
+      1,
+      "options",
+      [
+        "red",
+        "blue",
+        "green",
+        "black",
+        "white"
+      ]
+    ],
+    [
+      "Type",
+      "Number",
+      1,
+      1,
+      "range",
+      [
+        10,
+        50
+      ]
+    ],
+    [
+      "Timestamp",
+      "Number",
+      2,
+      4,
+      "rawNumber"
+    ]
+  ],
+  "expected": [
+    {
+      "name": "BackgroundColor",
+      "traits": [
+        {
+          "String": "blue"
+        }
+      ]
+    },
+    {
+      "name": "Type",
+      "traits": [
+        {
+          "Number": 12
+        }
+      ]
+    },
+    {
+      "name": "Timestamp",
+      "traits": [
+        {
+          "Number": 100992003
+        }
+      ]
+    }
+  ],
+  "decoder": {
+    "outPoint": {
+      "txHash": "0x4a8a0d079f8438bed89e0ece1b14e67ab68e2aa7688a5f4917a59a185e0f8fd5",
+      "index": 0
+    },
+    "codeHash": "0x13cac78ad8482202f18f9df4ea707611c35f994375fa03ae79121312dda9925c",
+    "sha256": "ae805f9ed598d4f36cd88791d3c12ec7531171984fe47eef0856c8670a9590ef",
+    "bytes": 70288,
+    "verified": true
+  },
+  "status": "UNAVAILABLE: debugger cannot execute this decoder binary",
+  "cookbookCommit": "969db44523c7bad75ebc126a513353163843c3df",
+  "decoderSourceCommit": "a592680c9a507a014ebf505075cbef0b21382799",
+  "runner": "ckb-debugger 1.1.1",
+  "unavailable": {
+    "command": "C:\\Users\\nguye\\AppData\\Local\\offckb-nodejs\\Data\\tools\\ckb-debugger.exe",
+    "args": [
+      "--bin",
+      "build/runtime-lab/dob0-decoder",
+      "--",
+      "0102030405060708",
+      "[[\"BackgroundColor\",\"String\",0,1,\"options\",[\"red\",\"blue\",\"green\",\"black\",\"white\"]],[\"Type\",\"Number\",1,1,\"range\",[10,50]],[\"Timestamp\",\"Number\",2,4,\"rawNumber\"]]"
+    ],
+    "status": 254,
+    "signal": null,
+    "stdout": "Run result: invalid instruction pc=0x18c70 instruction=0x44e6a7af\n",
+    "stderr": ""
+  },
+  "runs": []
+}

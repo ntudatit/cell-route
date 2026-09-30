@@ -1,0 +1,19 @@
+{
+  "scope": "Local CKB-VM; no transaction fee inference",
+  "optimization": "Skip redundant first fixed-page zero fill; preserve zero fill on reuse",
+  "correctness": "14 inputs × 5 repetitions × 2 variants; full-page initial/reuse check for both variants",
+  "cyclesFib10": {
+    "baseline": 35021,
+    "optimized": 2161,
+    "delta": -32860,
+    "deltaPercent": -93.82941663573284
+  },
+  "binaryBytes": {
+    "baseline": 28480,
+    "optimized": 28608,
+    "delta": 128,
+    "deltaPercent": 0.44943820224719105
+  },
+  "transactionBytes": null,
+  "fee": null
+}

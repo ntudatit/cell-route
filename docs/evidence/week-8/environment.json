@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-09-30T04:28:06.194Z",
+  "packageManager": "npm",
+  "node": "v24.19.0",
+  "network": "testnet",
+  "rpcOrigin": "https://testnet.ckb.dev",
+  "sdk": {
+    "@ckb-ccc/core": "1.19.1",
+    "@ckb-ccc/connector-react": "1.1.9",
+    "@ckb-ccc/spore": "1.6.9",
+    "vitest": "4.1.11",
+    "@playwright/test": "1.62.1"
+  },
+  "contractVersion": "V2 SDK deployment",
+  "contracts": [
+    {
+      "name": "spore",
+      "codeHash": "0x685a60219309029d01310311dba953d67029170ca4848a4ff638e57002130a0d",
+      "hashType": "data1",
+      "dependencies": [
+        {
+          "cellDep": {
+            "outPoint": {
+              "txHash": "0x5e8d2a517d50fd4bb4d01737a7952a1f1d35c8afc77240695bb569cd7d9d5a1f",
+              "index": "0x0"
+            },
+            "depType": "code"
+          }
+        }
+      ],
+      "live": true,
+      "dataBytes": 75792
+    },
+    {
+      "name": "cluster",
+      "codeHash": "0x0bbe768b519d8ea7b96d58f1182eb7e6ef96c541fbd9526975077ee09f049058",
+      "hashType": "data1",
+      "dependencies": [
+        {
+          "cellDep": {
+            "outPoint": {
+              "txHash": "0xcebb174d6e300e26074aea2f5dbd7f694bb4fe3de52b6dfe205e54f90164510a",
+              "index": "0x0"
+            },
+            "depType": "code"
+          }
+        }
+      ],
+      "live": true,
+      "dataBytes": 46528
+    }
+  ],
+  "status": "READ-ONLY DEPLOYMENT VERIFIED",
+  "genesisHash": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "decoder": {
+    "outPoint": {
+      "txHash": "0x4a8a0d079f8438bed89e0ece1b14e67ab68e2aa7688a5f4917a59a185e0f8fd5",
+      "index": 0
+    },
+    "codeHash": "0x13cac78ad8482202f18f9df4ea707611c35f994375fa03ae79121312dda9925c",
+    "sha256": "ae805f9ed598d4f36cd88791d3c12ec7531171984fe47eef0856c8670a9590ef",
+    "bytes": 70288,
+    "verified": true
+  }
+}

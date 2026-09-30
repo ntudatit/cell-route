@@ -60,8 +60,8 @@ export default function App() {
       <Route path="/simple-lock" element={<SimpleLockLabPage />} />
       <Route path="/store-data" element={<Protected><StoreDataPage /></Protected>} />
       <Route path="/fungible-token" element={<Protected><FungibleTokenPage /></Protected>} />
-      <Route path="/dob-spore" element={<Protected><DobSporePage /></Protected>} />
-      <Route path="/spore-clusters" element={<Protected><SporeClusterPage /></Protected>} />
+      <Route path="/dob-spore" element={<DobSporePage />} />
+      <Route path="/spore-clusters" element={<SporeClusterPage />} />
       <Route path="/sign-message" element={<Protected><SignMessagePage /></Protected>} />
       <Route path="/activity-log" element={<Protected><TransactionsPage /></Protected>} />
       <Route path="/assets" element={<Protected><AssetPortfolioPage /></Protected>} />

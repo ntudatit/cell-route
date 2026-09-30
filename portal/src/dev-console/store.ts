@@ -43,7 +43,7 @@ function resultDetails(operation: string, result: unknown): Record<string, strin
  const details: Record<string, string | number> = {};
  if (/sendTransaction$/.test(operation) && typeof result === 'string' && /^0x[0-9a-f]{64}$/i.test(result)) details.txHash = result;
  if (Array.isArray(result)) details.items = result.length;
- if (/getTransaction$|getTransactionStatus$/.test(operation) && result && typeof result === 'object') {
+ if (/getTransaction$|getTransactionNoCache$|getTransactionStatus$/.test(operation) && result && typeof result === 'object') {
   const status = (result as { status?: unknown }).status;
   if (typeof status === 'string' && ['sent','pending','proposed','committed','rejected','unknown','not_found'].includes(status)) details.status = status;
  }
@@ -94,8 +94,8 @@ export function instrument<T extends object>(target: T, source: LogSource, label
   return cache.get(property)!.wrapped;
  } });
 }
-export const CLIENT_METHODS = new Set(['getTipHeader','getTransaction','getCellLive','findCells','findCellsByLock','sendTransaction','waitTransaction','getBalance','getBlockByNumber','getKnownScript']);
-export const SIGNER_METHODS = new Set(['getBalance','findCells','signMessage','signTransaction','sendTransaction','connect','disconnect']);
+export const CLIENT_METHODS = new Set(['getTipHeader','getTransaction','getTransactionNoCache','getCellLive','getCellLiveNoCache','findCells','findCellsByLock','sendTransaction','waitTransaction','getBalance','getBlockByNumber','getKnownScript']);
+export const SIGNER_METHODS = new Set(['getBalance','findCells','signMessage','signTransaction','signOnlyTransaction','sendTransaction','connect','disconnect']);
 export function exportLogs(scope: LogScope, entries = snapshot(scope.key)) {
  return entries.map(entry => JSON.stringify({ feature: scope.title, network: scope.network, ...entry })).join('\n');
 }

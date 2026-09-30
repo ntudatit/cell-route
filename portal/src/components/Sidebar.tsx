@@ -83,7 +83,7 @@ function NavGroup({
       <div className="sidebar-section-label">{label}</div>
       <nav>
         {items.map(({ to, label: itemLabel, icon: Icon, external }) => {
-          if (locked) {
+          if (locked && !['/dob-spore', '/spore-clusters'].includes(to)) {
             return (
               <button
                 className="navLink navLocked"

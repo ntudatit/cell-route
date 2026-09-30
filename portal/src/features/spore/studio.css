@@ -1,0 +1,77 @@
+.spore-studio .panel {
+  min-width: 0;
+  margin-bottom: 18px;
+}
+.spore-studio fieldset {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.spore-studio label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.spore-studio label:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 0;
+}
+.spore-studio input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  flex: 0 0 18px;
+  margin: 0;
+  padding: 0;
+}
+.spore-studio pre {
+  max-width: 100%;
+  overflow: auto;
+  padding: 12px;
+  font-size: 12px;
+}
+.spore-studio .buttonRow {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.spore-studio button {
+  min-height: 36px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.spore-studio button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.spore-studio .danger {
+  border: 1px solid #a4262c;
+  color: #a4262c;
+  background: #fff4f4;
+}
+.spore-studio .spore-warning {
+  padding: 12px;
+  border-left: 4px solid #a4262c;
+  background: #fff4f4;
+  color: #8b1920;
+}
+.spore-review-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.spore-review-summary dt {
+  color: #52616f;
+}
+.spore-review-summary dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+.spore-studio details {
+  margin: 14px 0;
+}
+.spore-studio summary {
+  cursor: pointer;
+  color: #0078d4;
+}

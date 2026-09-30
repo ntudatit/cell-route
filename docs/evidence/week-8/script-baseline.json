@@ -1,0 +1,647 @@
+{
+  "scope": "Local CKB-VM standalone executable, NOT a committed transaction",
+  "sourceCommit": "bb85cc4f8bf5fa4d9aa27c3c3e71f682e319f333",
+  "timestamp": "2026-09-30T09:59:49.702Z",
+  "sourceHashes": {
+    "runtime-lab/fib.ts": "6ef03536cb9ca6958c961fb25e63025fccafc1882edc4258cbbe9e3de1a8f343",
+    "runtime-lab/main.c": "5223e7670c5bec4b31d535b3e93763cdaa374eca1f3772e0c5fe43b1ef234374",
+    "runtime-lab/runtime.c": "9dc013276151f38c3ba40cdd2bb6e9790c584ead1ac3631588669db6ae1ff3f8",
+    "runtime-lab/start.S": "aa02de322be1d700fb16b3975318ac2ea46e413f54911debd6267222351bdc90",
+    "runtime-lab/link.ld": "b05314a91717bedbfb3e2c7dc4e9512a3a6a7c2c13801b3d77c6dee48b6b227e",
+    "runtime-lab/carrot.c": "1a80eb130358ee0b92d90d475c5b92e62fa7c470c85bed231c93d8e556c08ce9",
+    "build/runtime-lab/fib.wasm": "bc7983e82748314a422217ce2b2ed6c1ca654f4948372a5ba2ce6986af381bb6",
+    "build/runtime-lab/fib.c": "58646d3cc2d342987c2f52961efc6dfa7c16f5bc27d8541bb234b9aa5a775719",
+    "build/runtime-lab/fib.h": "fa03b64e2f0885e94723c479fe3e75a069d706505664d875434328804e876685",
+    "build/runtime-lab/fib": "d08b92218e23f4fef2f1779e45d3d4eaef8d2bfacbc6f6a7fb8511a67a134e1c",
+    "build/runtime-lab/carrot-bug": "b7269a66d89e6443848eae29fdf6c45b10abec2d22425f42bda12eeadff46f68",
+    "build/runtime-lab/carrot-fixed": "5e34c9cca4a017be2c697d8ea0756c1596efa0d3ef3723e0fe098a0f02e0b0c0",
+    "runtime-lab/memory-check.c": "4c74212c2aff95aa3f63746869df54a0b96976b84220ee5efe806501b9025352",
+    "scripts/runtime-benchmark.mjs": "143b7303284b44eb93e817b753eafbe8b11f00120b7b3ebbf7c3c41e6fa66697"
+  },
+  "versions": {
+    "node": "v24.19.0",
+    "assemblyscript": "Version 0.27.31",
+    "wabt": "1.0.42",
+    "gcc": "riscv-none-elf-gcc.exe (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0\r",
+    "debugger": "ckb-debugger 1.1.1"
+  },
+  "compile": {
+    "command": "D:\\cell-route\\contracts\\build\\toolchains\\xpack-riscv-none-elf-gcc-15.2.0-1\\bin\\riscv-none-elf-gcc.exe",
+    "args": [
+      "-march=rv64imc",
+      "-mabi=lp64",
+      "-mcmodel=medany",
+      "-std=c99",
+      "-g",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-nostartfiles",
+      "-Wl,--gc-sections",
+      "-Wl,-T,runtime-lab/link.ld",
+      "runtime-lab/start.S",
+      "-O2",
+      "-DNDEBUG",
+      "-DWASM_RT_USE_MMAP=0",
+      "-DWASM_RT_NONCONFORMING_UNCHECKED_STACK_EXHAUSTION=1",
+      "-ID:\\cell-route\\contracts\\build\\toolchains\\wabt-1.0.42\\include",
+      "-Ibuild/runtime-lab",
+      "runtime-lab/main.c",
+      "runtime-lab/runtime.c",
+      "build/runtime-lab/fib.c",
+      "-lc",
+      "-lgcc",
+      "-o",
+      "build/runtime-lab/fib-baseline"
+    ],
+    "status": 0,
+    "signal": null,
+    "stdout": "",
+    "stderr": ""
+  },
+  "binarySHA256": "a61421278b94d2ab0b33efea6709b4e15cbca2acc2cd403125ef73a9110e51ab",
+  "binaryBytes": 28480,
+  "fixturesSHA256": "9ff1cb7bc346d23b9574032ca3bce1831acb37084e367b1d47d7d65f58c0febb",
+  "measurements": [
+    {
+      "input": "0",
+      "expected": 1,
+      "runs": [
+        {
+          "scriptResult": 1,
+          "cycles": 34917,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34917(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 1,
+          "cycles": 34917,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34917(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 1,
+          "cycles": 34917,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34917(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 1,
+          "cycles": 34917,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34917(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 1,
+          "cycles": 34917,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34917(34.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "1",
+      "expected": 1,
+      "runs": [
+        {
+          "scriptResult": 1,
+          "cycles": 34929,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34929(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 1,
+          "cycles": 34929,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34929(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 1,
+          "cycles": 34929,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34929(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 1,
+          "cycles": 34929,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34929(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 1,
+          "cycles": 34929,
+          "processExitStatus": 254,
+          "stdout": "Run result: 1\nAll cycles: 34929(34.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "2",
+      "expected": 2,
+      "runs": [
+        {
+          "scriptResult": 2,
+          "cycles": 34937,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 34937(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 34937,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 34937(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 34937,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 34937(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 34937,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 34937(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 34937,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 34937(34.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "3",
+      "expected": 3,
+      "runs": [
+        {
+          "scriptResult": 3,
+          "cycles": 34945,
+          "processExitStatus": 254,
+          "stdout": "Run result: 3\nAll cycles: 34945(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 3,
+          "cycles": 34945,
+          "processExitStatus": 254,
+          "stdout": "Run result: 3\nAll cycles: 34945(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 3,
+          "cycles": 34945,
+          "processExitStatus": 254,
+          "stdout": "Run result: 3\nAll cycles: 34945(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 3,
+          "cycles": 34945,
+          "processExitStatus": 254,
+          "stdout": "Run result: 3\nAll cycles: 34945(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 3,
+          "cycles": 34945,
+          "processExitStatus": 254,
+          "stdout": "Run result: 3\nAll cycles: 34945(34.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "4",
+      "expected": 5,
+      "runs": [
+        {
+          "scriptResult": 5,
+          "cycles": 34953,
+          "processExitStatus": 254,
+          "stdout": "Run result: 5\nAll cycles: 34953(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 5,
+          "cycles": 34953,
+          "processExitStatus": 254,
+          "stdout": "Run result: 5\nAll cycles: 34953(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 5,
+          "cycles": 34953,
+          "processExitStatus": 254,
+          "stdout": "Run result: 5\nAll cycles: 34953(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 5,
+          "cycles": 34953,
+          "processExitStatus": 254,
+          "stdout": "Run result: 5\nAll cycles: 34953(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 5,
+          "cycles": 34953,
+          "processExitStatus": 254,
+          "stdout": "Run result: 5\nAll cycles: 34953(34.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "5",
+      "expected": 8,
+      "runs": [
+        {
+          "scriptResult": 8,
+          "cycles": 34961,
+          "processExitStatus": 254,
+          "stdout": "Run result: 8\nAll cycles: 34961(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 8,
+          "cycles": 34961,
+          "processExitStatus": 254,
+          "stdout": "Run result: 8\nAll cycles: 34961(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 8,
+          "cycles": 34961,
+          "processExitStatus": 254,
+          "stdout": "Run result: 8\nAll cycles: 34961(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 8,
+          "cycles": 34961,
+          "processExitStatus": 254,
+          "stdout": "Run result: 8\nAll cycles: 34961(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 8,
+          "cycles": 34961,
+          "processExitStatus": 254,
+          "stdout": "Run result: 8\nAll cycles: 34961(34.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "6",
+      "expected": 13,
+      "runs": [
+        {
+          "scriptResult": 13,
+          "cycles": 34969,
+          "processExitStatus": 254,
+          "stdout": "Run result: 13\nAll cycles: 34969(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 13,
+          "cycles": 34969,
+          "processExitStatus": 254,
+          "stdout": "Run result: 13\nAll cycles: 34969(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 13,
+          "cycles": 34969,
+          "processExitStatus": 254,
+          "stdout": "Run result: 13\nAll cycles: 34969(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 13,
+          "cycles": 34969,
+          "processExitStatus": 254,
+          "stdout": "Run result: 13\nAll cycles: 34969(34.1K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 13,
+          "cycles": 34969,
+          "processExitStatus": 254,
+          "stdout": "Run result: 13\nAll cycles: 34969(34.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "7",
+      "expected": 21,
+      "runs": [
+        {
+          "scriptResult": 21,
+          "cycles": 34977,
+          "processExitStatus": 254,
+          "stdout": "Run result: 21\nAll cycles: 34977(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 21,
+          "cycles": 34977,
+          "processExitStatus": 254,
+          "stdout": "Run result: 21\nAll cycles: 34977(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 21,
+          "cycles": 34977,
+          "processExitStatus": 254,
+          "stdout": "Run result: 21\nAll cycles: 34977(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 21,
+          "cycles": 34977,
+          "processExitStatus": 254,
+          "stdout": "Run result: 21\nAll cycles: 34977(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 21,
+          "cycles": 34977,
+          "processExitStatus": 254,
+          "stdout": "Run result: 21\nAll cycles: 34977(34.2K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "8",
+      "expected": 34,
+      "runs": [
+        {
+          "scriptResult": 34,
+          "cycles": 34985,
+          "processExitStatus": 254,
+          "stdout": "Run result: 34\nAll cycles: 34985(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 34,
+          "cycles": 34985,
+          "processExitStatus": 254,
+          "stdout": "Run result: 34\nAll cycles: 34985(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 34,
+          "cycles": 34985,
+          "processExitStatus": 254,
+          "stdout": "Run result: 34\nAll cycles: 34985(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 34,
+          "cycles": 34985,
+          "processExitStatus": 254,
+          "stdout": "Run result: 34\nAll cycles: 34985(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 34,
+          "cycles": 34985,
+          "processExitStatus": 254,
+          "stdout": "Run result: 34\nAll cycles: 34985(34.2K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "9",
+      "expected": 55,
+      "runs": [
+        {
+          "scriptResult": 55,
+          "cycles": 34993,
+          "processExitStatus": 254,
+          "stdout": "Run result: 55\nAll cycles: 34993(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 55,
+          "cycles": 34993,
+          "processExitStatus": 254,
+          "stdout": "Run result: 55\nAll cycles: 34993(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 55,
+          "cycles": 34993,
+          "processExitStatus": 254,
+          "stdout": "Run result: 55\nAll cycles: 34993(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 55,
+          "cycles": 34993,
+          "processExitStatus": 254,
+          "stdout": "Run result: 55\nAll cycles: 34993(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 55,
+          "cycles": 34993,
+          "processExitStatus": 254,
+          "stdout": "Run result: 55\nAll cycles: 34993(34.2K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "10",
+      "expected": 89,
+      "runs": [
+        {
+          "scriptResult": 89,
+          "cycles": 35021,
+          "processExitStatus": 254,
+          "stdout": "Run result: 89\nAll cycles: 35021(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 89,
+          "cycles": 35021,
+          "processExitStatus": 254,
+          "stdout": "Run result: 89\nAll cycles: 35021(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 89,
+          "cycles": 35021,
+          "processExitStatus": 254,
+          "stdout": "Run result: 89\nAll cycles: 35021(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 89,
+          "cycles": 35021,
+          "processExitStatus": 254,
+          "stdout": "Run result: 89\nAll cycles: 35021(34.2K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 89,
+          "cycles": 35021,
+          "processExitStatus": 254,
+          "stdout": "Run result: 89\nAll cycles: 35021(34.2K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "-1",
+      "expected": 2,
+      "runs": [
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "11",
+      "expected": 2,
+      "runs": [
+        {
+          "scriptResult": 2,
+          "cycles": 1645,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1645(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1645,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1645(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1645,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1645(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1645,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1645(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1645,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1645(1.6K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "input": "abc",
+      "expected": 2,
+      "runs": [
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        },
+        {
+          "scriptResult": 2,
+          "cycles": 1612,
+          "processExitStatus": 254,
+          "stdout": "Run result: 2\nAll cycles: 1612(1.6K)\n",
+          "stderr": ""
+        }
+      ]
+    }
+  ],
+  "memoryCheck": {
+    "scriptResult": 0,
+    "cycles": 2163737,
+    "processExitStatus": 0
+  },
+  "transactionBytes": null,
+  "fee": null
+}

@@ -1,115 +1,118 @@
-import { currentScope } from '../../dev-console/features';
-import { beginOperation } from '../../dev-console/store';
-import { useFeatureSigner } from '../../dev-console/hooks';
-import { FormEvent, useState } from "react";
-import { ccc } from "@ckb-ccc/connector-react";
-import { createSpore, meltSpore, transferSpore } from "@ckb-ccc/spore";
-import { CodeBlock, GuideHeader, GuideSection, GuideShell, ResultBox, StepList } from "../../components/GuideShell";
-
-const createCode = `const { tx, id } = await createSpore({
- signer,
- data: {
-  contentType: "text/plain",
-  content: new TextEncoder().encode(content),
- },
-});
-
-await tx.completeInputsByCapacity(signer);
-await tx.completeFeeBy(signer);
-const txHash = await signer.sendTransaction(tx);`;
-
+import { Link } from "react-router-dom";
+import { AppLayout, PageHero } from "../../components/layout/AppLayout";
 export function SporeProtocolGuide() {
- const featureConsoleScope = currentScope();
-
- const signer = useFeatureSigner();
- const [content, setContent] = useState("Hello, Spore!");
- const [sporeId, setSporeId] = useState("");
- const [recipient, setRecipient] = useState("");
- const [result, setResult] = useState("");
- const [error, setError] = useState("");
-
- const guard = () => {
-  if (!signer) { setError("Connect a wallet first."); return false; }
-  setError(""); setResult(""); return true;
- };
-
- async function create(event: FormEvent) {
- const featureOperation = beginOperation(featureConsoleScope, 'action', 'create');
- try {
-
-  event.preventDefault(); if (!guard() || !signer) return;
-  try {
-   const { tx, id } = await createSpore({ signer, data: { contentType: "text/plain", content: new TextEncoder().encode(content) } });
-   await tx.completeInputsByCapacity(signer);
-   await tx.completeFeeBy(signer);
-   const hash = await signer.sendTransaction(tx);
-   setSporeId(id); setResult(`Spore ID: ${id} | Tx: ${hash}`);
-  } catch (e) { featureOperation.fail(e);  setError(e instanceof Error ? e.message : String(e)); }
-
- } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
-}
-
- async function transfer() {
- const featureOperation = beginOperation(featureConsoleScope, 'action', 'transfer');
- try {
-
-  if (!guard() || !signer) return;
-  try {
-   const { script: to } = await ccc.Address.fromString(recipient.trim(), signer.client);
-   const { tx } = await transferSpore({ signer, id: sporeId.trim(), to });
-   await tx.completeInputsByCapacity(signer);
-   await tx.completeFeeBy(signer);
-   setResult(`Transfer tx: ${await signer.sendTransaction(tx)}`);
-  } catch (e) { featureOperation.fail(e);  setError(e instanceof Error ? e.message : String(e)); }
-
- } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
-}
-
- async function melt() {
- const featureOperation = beginOperation(featureConsoleScope, 'action', 'melt');
- try {
-
-  if (!guard() || !signer) return;
-  if (!window.confirm("Melt this Spore? This action is irreversible.")) return;
-  try {
-   const { tx } = await meltSpore({ signer, id: sporeId.trim() });
-   await tx.completeFeeBy(signer);
-   setResult(`Melt tx: ${await signer.sendTransaction(tx)}`);
-  } catch (e) { featureOperation.fail(e);  setError(e instanceof Error ? e.message : String(e)); }
-
- } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
-}
-
- return (
-  <GuideShell>
-   <GuideHeader title="Spore Protocol" description="Create, transfer, and melt permanent on-chain Digital Objects (DOBs) with the official CCC Spore package." docsHref="https://docs.ckbccc.com/docs/guides/spore-protocol" />
-   <div className="guide-grid two">
-    <GuideSection title="Create a text Spore" description="Spore content consumes on-chain CKB capacity; test with a funded Testnet wallet.">
-     <form className="guide-form" onSubmit={create}>
-      <label>Content<textarea rows={4} value={content} onChange={e => setContent(e.target.value)} /></label>
-      <button className="btn primary">Create Spore</button>
-     </form>
-     <div className="separator"/>
-     <label className="standalone-label">Spore ID<input value={sporeId} onChange={e => setSporeId(e.target.value)} placeholder="0x..." /></label>
-     <label className="standalone-label">New owner address<input value={recipient} onChange={e => setRecipient(e.target.value)} placeholder="ckt1..." /></label>
-     <div className="button-row">
-      <button className="btn secondary" onClick={transfer} disabled={!sporeId || !recipient}>Transfer</button>
-      <button className="btn danger" onClick={melt} disabled={!sporeId}>Melt</button>
-     </div>
-     {error && <div className="alert error">{error}</div>}
-     <ResultBox value={result}/>
-    </GuideSection>
-    <GuideSection title="Create Spore code"><CodeBlock code={createCode}/></GuideSection>
-   </div>
-   <GuideSection title="Spore lifecycle">
-    <StepList items={[
-     "Create content bytes and a MIME contentType.",
-     "createSpore() builds a new Spore cell and returns its deterministic Spore ID.",
-     "Complete capacity and fee, then sign and broadcast.",
-     "transferSpore() changes the owner lock while preserving the Digital Object.",
-     "meltSpore() permanently destroys the Spore and reclaims its locked CKB capacity.",
-    ]}/>
-   </GuideSection>
-  </GuideShell>
- );
+  return (
+    <AppLayout>
+      <PageHero
+        eyebrow="Spore V2 · CCC 1.6.9"
+        title="Spore, Cluster and DOB/0"
+        description="Review exact transaction semantics before signing. A hash alone does not prove commitment."
+      />
+      <section className="panel">
+        <h2>Open the Studios</h2>
+        <p>
+          <Link to="/dob-spore">Spore / DOB Studio</Link> ·{" "}
+          <Link to="/spore-clusters">Cluster Studio</Link>
+        </p>
+        <p>
+          Create a small public text object, including Vietnamese Unicode. The
+          Studio measures UTF-8 bytes and enforces a 16 KiB product limit. It
+          checks selected and wallet genesis plus live V2 code dependencies
+          before preparation and signing. Devnet is blocked until an explicit
+          deployment is supported.
+        </p>
+        <ol>
+          <li>
+            Prepare with your wallet connected; review network, owner, IDs,
+            content hash, inputs, outputs, capacity, fee and change.
+          </li>
+          <li>
+            Confirm to sign. The raw transaction hash must remain identical to
+            the review.
+          </li>
+          <li>
+            Broadcast and observe pending/proposed/committed or
+            rejection/timeout. A public broadcast receipt is downloaded.
+          </li>
+          <li>
+            After node commitment, verify consumed inputs, indexed live output
+            and capacity. Export verified evidence. Recheck if the indexer is
+            delayed; do not resubmit on timeout.
+          </li>
+        </ol>
+      </section>
+      <section className="panel">
+        <h2>Cell identity and ownership</h2>
+        <p>
+          The Spore Type Script args hold its ID. Molecule Cell data contains
+          contentType, content bytes and optional clusterId. The Lock Script
+          controls spending authorization; the Spore Type Script validates
+          object creation, preservation and permitted destruction.
+        </p>
+        <p>
+          Transfer consumes the old Cell and creates a new Cell with the same
+          type/ID and content under the recipient lock. Its OutPoint changes
+          because it is a different transaction output. A transaction hash
+          identifies a transaction; an OutPoint is its hash plus output index.
+        </p>
+        <p>
+          Melt consumes the Spore Cell. It does not erase blockchain history.
+          The Studio requires explicit confirmation, checks node commitment and
+          consumed inputs, and reconciles all output capacity with the reviewed
+          fee. Plain text created here has no immortal content-type parameter.
+        </p>
+        <p>
+          Capacity stays locked in an object's Cell until spent. Fee is the
+          difference between total input and output capacity; it is not the
+          object's capacity. Untyped change may also include separately supplied
+          funding.
+        </p>
+      </section>
+      <section className="panel">
+        <h2>Cluster authorization</h2>
+        <p>
+          Create the Cluster first and wait for commitment. A linked mint uses
+          the installed SDK's clusterCell mode: consume and recreate the
+          authorized Cluster Cell unchanged, include the Cluster Cell as a
+          dependency and include the V2 code dependency/cobuild action. The
+          connected wallet must own its lock. Invalid, missing or unauthorized
+          Clusters fail; links are never silently removed.
+        </p>
+      </section>
+      <section className="panel">
+        <h2>DOB/0: DNA → pattern → decoder → attributes</h2>
+        <p>
+          Select the pinned basic-loot pattern when creating a Cluster, then
+          select DOB/0 DNA and that Cluster ID when preparing a Spore. The
+          Studio checks the exact Cluster description. DNA is JSON in Spore
+          content; pattern and code-hash decoder reference are in Cluster
+          description.
+        </p>
+        <p>
+          The isolated Worker implements only this pinned pattern. Preview
+          renders escaped text attributes without HTML or external images.
+          Timeout, size/schema errors and disabled decoder states preserve raw
+          metadata. It is a local reference preview, not proof of minting or
+          deployed decoder execution.
+        </p>
+      </section>
+      <section className="panel">
+        <h2>Performance and evidence</h2>
+        <p>
+          The existing iterative Fibonacci runtime benchmark compares a
+          redundant initial memory clear with ELF/BSS zero initialization,
+          preserving clears on reuse. Run npm run runtime:benchmark in
+          contracts. CKB-VM cycles measure execution; binary bytes measure ELF
+          size; transaction bytes and fee require transaction measurements. RPC
+          latency and node commitment are separate observations.
+        </p>
+        <p>
+          See docs/week-8-report.md and docs/evidence/week-8 for measured
+          results and explicit NOT EXECUTED chain actions. The official decoder
+          binary was verified by code hash, but ckb-debugger 1.1.1 rejected an
+          unsupported instruction; its execution is not claimed as verified.
+        </p>
+      </section>
+    </AppLayout>
+  );
 }

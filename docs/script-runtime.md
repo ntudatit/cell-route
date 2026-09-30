@@ -79,3 +79,9 @@ All run output lives under ignored `contracts/build/runtime-lab/`:
 - `gdb-session.json`, `gdb-server.log`, `gdb-verification.json`: GDB observations and provenance.
 
 These files are regenerated from the current sources, not copied from an earlier exercise. Retain them locally when diagnosing a failure. Contract source stays separate from the portal; there is no additional portal page for this lab.
+
+## Week 8 performance comparison
+
+Run `npm run runtime:benchmark` in `contracts/`. This retains the iterative Fibonacci implementation and builds baseline/candidate with identical flags except `LAB_SKIP_INITIAL_ZERO`. The candidate relies on initial ELF/BSS zero bytes once and preserves clearing on subsequent allocation. A full-page initial/reuse test checks that assumption in the actual CKB-VM environment.
+
+The runner records five measurements for each of 14 inputs, binary/source/fixture hashes, compiler commands and versions in `docs/evidence/week-8/`. For the measured `fib(10)`, cycles were 35,021 → 2,161 while debug-bearing ELF size was 28,480 → 28,608 bytes. Transaction bytes and fee are not applicable to this standalone benchmark. See [Week 8 report](week-8-report.md) for measured results, reproduction commands and the separate unavailable official DOB decoder execution.
