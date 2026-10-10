@@ -1,0 +1,349 @@
+[
+  {
+    "case": "SSRI.get_methods",
+    "outcome": "PASS",
+    "receipt": {
+      "layer": "SSRI query (not on-chain validation)",
+      "profile": "ssri-test-b71dd50-legacy-code-v1",
+      "identity": {
+        "network": "devnet",
+        "genesisHash": "0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be",
+        "outPoint": {
+          "txHash": "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+          "index": 0
+        },
+        "codeHash": "0x5824889298b5b3ad937090e4c503b1fb67992dc4e872332fe491a8e03b968983",
+        "nodeOrigin": "http://127.0.0.1:28114",
+        "serverOrigin": "http://127.0.0.1:9090",
+        "codeBytes": 28320,
+        "observedTip": {
+          "hash": "0x11cfe992a1104dcc92ae08754ca78b2988b5229a7a57d0f7fb999130d7446f3a",
+          "number": "0x6b"
+        },
+        "context": "Code",
+        "timestamp": "2026-10-10T10:09:51.915Z",
+        "trust": "Node code identity verified. Server execution is trusted, not cryptographically attested. Observed tip is not a pinned execution snapshot."
+      },
+      "method": "SSRI.get_methods",
+      "discovery": {
+        "request": {
+          "id": 5,
+          "jsonrpc": "2.0",
+          "method": "run_script_level_code",
+          "params": [
+            "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+            0,
+            [
+              "0x58f02409de9de7b1",
+              "0x0000000000000000",
+              "0x4000000000000000"
+            ]
+          ]
+        },
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":5,\"result\":\"0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a\"}",
+        "result": "0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a"
+      },
+      "call": {
+        "request": {
+          "id": 5,
+          "jsonrpc": "2.0",
+          "method": "run_script_level_code",
+          "params": [
+            "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+            0,
+            [
+              "0x58f02409de9de7b1",
+              "0x0000000000000000",
+              "0x4000000000000000"
+            ]
+          ]
+        },
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":5,\"result\":\"0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a\"}",
+        "result": "0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a"
+      },
+      "decoded": [
+        {
+          "path": "0x6f2a4642323106f8",
+          "name": "SSRI.version"
+        },
+        {
+          "path": "0x58f02409de9de7b1",
+          "name": "SSRI.get_methods"
+        },
+        {
+          "path": "0xb43d1128f8726c19",
+          "name": "SSRI.has_methods"
+        },
+        {
+          "path": "0xb751cc5bbca63da9",
+          "name": "SSRI.get_cell_deps"
+        },
+        {
+          "path": "0xc78a67cec2fcc54f",
+          "name": "UDT.name"
+        },
+        {
+          "path": "0x35fa711c8c918aad",
+          "name": "UDT.symbol"
+        },
+        {
+          "path": "0x2f87f08056af234d",
+          "name": "UDT.decimals"
+        },
+        {
+          "path": "0x912ea7d939004f3a",
+          "name": "UDT.balance"
+        }
+      ]
+    }
+  },
+  {
+    "case": "UDT.name",
+    "outcome": "PASS",
+    "receipt": {
+      "layer": "SSRI query (not on-chain validation)",
+      "profile": "ssri-test-b71dd50-legacy-code-v1",
+      "identity": {
+        "network": "devnet",
+        "genesisHash": "0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be",
+        "outPoint": {
+          "txHash": "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+          "index": 0
+        },
+        "codeHash": "0x5824889298b5b3ad937090e4c503b1fb67992dc4e872332fe491a8e03b968983",
+        "nodeOrigin": "http://127.0.0.1:28114",
+        "serverOrigin": "http://127.0.0.1:9090",
+        "codeBytes": 28320,
+        "observedTip": {
+          "hash": "0x11cfe992a1104dcc92ae08754ca78b2988b5229a7a57d0f7fb999130d7446f3a",
+          "number": "0x6b"
+        },
+        "context": "Code",
+        "timestamp": "2026-10-10T10:09:51.968Z",
+        "trust": "Node code identity verified. Server execution is trusted, not cryptographically attested. Observed tip is not a pinned execution snapshot."
+      },
+      "method": "UDT.name",
+      "discovery": {
+        "request": {
+          "id": 9,
+          "jsonrpc": "2.0",
+          "method": "run_script_level_code",
+          "params": [
+            "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+            0,
+            [
+              "0x58f02409de9de7b1",
+              "0x0000000000000000",
+              "0x4000000000000000"
+            ]
+          ]
+        },
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":9,\"result\":\"0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a\"}",
+        "result": "0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a"
+      },
+      "call": {
+        "request": {
+          "id": 10,
+          "jsonrpc": "2.0",
+          "method": "run_script_level_code",
+          "params": [
+            "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+            0,
+            [
+              "0xc78a67cec2fcc54f"
+            ]
+          ]
+        },
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":10,\"result\":\"0x54657374\"}",
+        "result": "0x54657374"
+      },
+      "decoded": "Test"
+    }
+  },
+  {
+    "case": "UDT.decimals",
+    "outcome": "PASS",
+    "receipt": {
+      "layer": "SSRI query (not on-chain validation)",
+      "profile": "ssri-test-b71dd50-legacy-code-v1",
+      "identity": {
+        "network": "devnet",
+        "genesisHash": "0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be",
+        "outPoint": {
+          "txHash": "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+          "index": 0
+        },
+        "codeHash": "0x5824889298b5b3ad937090e4c503b1fb67992dc4e872332fe491a8e03b968983",
+        "nodeOrigin": "http://127.0.0.1:28114",
+        "serverOrigin": "http://127.0.0.1:9090",
+        "codeBytes": 28320,
+        "observedTip": {
+          "hash": "0x11cfe992a1104dcc92ae08754ca78b2988b5229a7a57d0f7fb999130d7446f3a",
+          "number": "0x6b"
+        },
+        "context": "Code",
+        "timestamp": "2026-10-10T10:09:52.020Z",
+        "trust": "Node code identity verified. Server execution is trusted, not cryptographically attested. Observed tip is not a pinned execution snapshot."
+      },
+      "method": "UDT.decimals",
+      "discovery": {
+        "request": {
+          "id": 14,
+          "jsonrpc": "2.0",
+          "method": "run_script_level_code",
+          "params": [
+            "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+            0,
+            [
+              "0x58f02409de9de7b1",
+              "0x0000000000000000",
+              "0x4000000000000000"
+            ]
+          ]
+        },
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":14,\"result\":\"0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a\"}",
+        "result": "0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a"
+      },
+      "call": {
+        "request": {
+          "id": 15,
+          "jsonrpc": "2.0",
+          "method": "run_script_level_code",
+          "params": [
+            "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+            0,
+            [
+              "0x2f87f08056af234d"
+            ]
+          ]
+        },
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":15,\"result\":\"0x08\"}",
+        "result": "0x08"
+      },
+      "decoded": 8
+    }
+  },
+  {
+    "case": "Repeat UDT.name",
+    "outcome": "PASS",
+    "receipt": {
+      "layer": "SSRI query (not on-chain validation)",
+      "profile": "ssri-test-b71dd50-legacy-code-v1",
+      "identity": {
+        "network": "devnet",
+        "genesisHash": "0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be",
+        "outPoint": {
+          "txHash": "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+          "index": 0
+        },
+        "codeHash": "0x5824889298b5b3ad937090e4c503b1fb67992dc4e872332fe491a8e03b968983",
+        "nodeOrigin": "http://127.0.0.1:28114",
+        "serverOrigin": "http://127.0.0.1:9090",
+        "codeBytes": 28320,
+        "observedTip": {
+          "hash": "0x11cfe992a1104dcc92ae08754ca78b2988b5229a7a57d0f7fb999130d7446f3a",
+          "number": "0x6b"
+        },
+        "context": "Code",
+        "timestamp": "2026-10-10T10:09:52.067Z",
+        "trust": "Node code identity verified. Server execution is trusted, not cryptographically attested. Observed tip is not a pinned execution snapshot."
+      },
+      "method": "UDT.name",
+      "discovery": {
+        "request": {
+          "id": 19,
+          "jsonrpc": "2.0",
+          "method": "run_script_level_code",
+          "params": [
+            "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+            0,
+            [
+              "0x58f02409de9de7b1",
+              "0x0000000000000000",
+              "0x4000000000000000"
+            ]
+          ]
+        },
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":19,\"result\":\"0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a\"}",
+        "result": "0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f35fa711c8c918aad2f87f08056af234d912ea7d939004f3a"
+      },
+      "call": {
+        "request": {
+          "id": 20,
+          "jsonrpc": "2.0",
+          "method": "run_script_level_code",
+          "params": [
+            "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+            0,
+            [
+              "0xc78a67cec2fcc54f"
+            ]
+          ]
+        },
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":20,\"result\":\"0x54657374\"}",
+        "result": "0x54657374"
+      },
+      "decoded": "Test"
+    }
+  },
+  {
+    "case": "Unsupported method",
+    "outcome": "REJECTED",
+    "error": {
+      "code": "RPC",
+      "message": "Server returned a JSON-RPC error; see raw diagnostic.",
+      "diagnostic": {
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":21,\"error\":{\"code\":1003,\"message\":\"Script returns 9\"}}",
+        "error": {
+          "code": 1003,
+          "message": "Script returns 9"
+        }
+      }
+    }
+  },
+  {
+    "case": "Unavailable OutPoint",
+    "outcome": "REJECTED",
+    "error": {
+      "code": "RPC",
+      "message": "Server returned a JSON-RPC error; see raw diagnostic.",
+      "diagnostic": {
+        "rawText": "{\"jsonrpc\":\"2.0\",\"id\":22,\"error\":{\"code\":1002,\"message\":\"Cell not found\"}}",
+        "error": {
+          "code": 1002,
+          "message": "Cell not found"
+        }
+      }
+    }
+  },
+  {
+    "case": "Wrong code hash",
+    "outcome": "REJECTED",
+    "error": {
+      "code": "IDENTITY",
+      "message": "Committed code OutPoint unavailable or code hash mismatch; SSRI was not called."
+    }
+  },
+  {
+    "case": "Pagination limit 1",
+    "layer": "actual server RPC",
+    "response": {
+      "request": {
+        "id": 25,
+        "jsonrpc": "2.0",
+        "method": "run_script_level_code",
+        "params": [
+          "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+          0,
+          [
+            "0x58f02409de9de7b1",
+            "0x0000000000000000",
+            "0x0100000000000000"
+          ]
+        ]
+      },
+      "rawText": "{\"jsonrpc\":\"2.0\",\"id\":25,\"result\":\"0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f\"}",
+      "result": "0x6f2a4642323106f858f02409de9de7b1b43d1128f8726c19b751cc5bbca63da9c78a67cec2fcc54f"
+    }
+  }
+]

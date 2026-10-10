@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-10-10T10:09:52.128Z",
+  "identity": {
+    "nodeUrl": "http://127.0.0.1:28114",
+    "serverUrl": "http://127.0.0.1:9090",
+    "network": "devnet",
+    "genesisHash": "0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be",
+    "outPoint": {
+      "txHash": "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+      "index": 0
+    },
+    "codeHash": "0x5824889298b5b3ad937090e4c503b1fb67992dc4e872332fe491a8e03b968983"
+  },
+  "pins": {
+    "profile": "ssri-test-b71dd50-legacy-code-v1",
+    "server": {
+      "repository": "https://github.com/ckb-devrel/ssri-server",
+      "commit": "2bbe85ae68dac0019ee5f7c27e6e7ca25db7ce22",
+      "rpc": "run_script_level_code",
+      "result": "0x-prefixed hex string (Option<Hex>); null is not success"
+    },
+    "contract": {
+      "repository": "https://github.com/Hanssen0/ssri-test",
+      "commit": "b71dd50d031e4e6e86eb9689658ed766d52ad0d6",
+      "package": "ssri-test",
+      "version": "0.1.0",
+      "ckbStd": "0.15.3"
+    },
+    "sdk": {
+      "kind": "prototype workspace crates",
+      "packages": [
+        "ckb-ssri",
+        "ckb-ssri-proc-macro"
+      ],
+      "version": "0.1.0",
+      "commit": "b71dd50d031e4e6e86eb9689658ed766d52ad0d6"
+    },
+    "publishedSdkReading": {
+      "package": "ckb-ssri-std",
+      "latestObserved": "0.0.1",
+      "checkedOn": "2026-10-09",
+      "repositoryCommit": "93f3a77970d5b1864e7ca0ce13e61010061237f2",
+      "usedByPrototype": false
+    },
+    "pausableUdt": {
+      "repository": "https://github.com/Alive24/pausable-udt",
+      "commit": "38f11ef0529e65dc7c5ecf37541a57ca923e9852",
+      "sdk": "ckb-ssri-std 0.0.1"
+    },
+    "context": "Code only; no Script, Cell or Transaction context supplied",
+    "warning": "Historical prototype profile, not a generic SSRI decoder. get_methods pagination has an upstream limit calculation defect. UDT.name and UDT.symbol both return raw UTF-8 Test."
+  },
+  "layer": "Actual local Devnet and pinned SSRI server"
+}

@@ -1,0 +1,11 @@
+{
+  "nodeUrl": "http://127.0.0.1:28114",
+  "serverUrl": "http://127.0.0.1:9090",
+  "network": "devnet",
+  "genesisHash": "0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be",
+  "outPoint": {
+    "txHash": "0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979",
+    "index": 0
+  },
+  "codeHash": "0x5824889298b5b3ad937090e4c503b1fb67992dc4e872332fe491a8e03b968983"
+}

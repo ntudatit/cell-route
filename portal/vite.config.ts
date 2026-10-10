@@ -50,10 +50,12 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
+    proxy: { '/ssri-rpc': { target: 'http://127.0.0.1:9090', rewrite: () => '/' } },
   },
   preview: {
     port: 4173,
     strictPort: true,
+    proxy: { '/ssri-rpc': { target: 'http://127.0.0.1:9090', rewrite: () => '/' } },
   },
   worker: {
     format: "es",

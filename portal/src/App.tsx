@@ -1,3 +1,4 @@
+import { SsriInspectorPage } from './pages/features/SsriInspectorPage';
 import { FeatureDevConsole } from "./dev-console/FeatureDevConsole";
 import { SimpleLockLabPage } from "./pages/features/SimpleLockLabPage";
 import { lazy, Suspense, type ReactNode } from "react";
@@ -57,6 +58,7 @@ export default function App() {
       <Route path="/wallet" element={<Protected><WalletPage /></Protected>} />
       <Route path="/cells" element={<Protected><CellsPage /></Protected>} />
       <Route path="/transfer-ckb" element={<Protected><TransferCkbPage /></Protected>} />
+      <Route path="/ssri" element={<SsriInspectorPage />} />
       <Route path="/simple-lock" element={<SimpleLockLabPage />} />
       <Route path="/store-data" element={<Protected><StoreDataPage /></Protected>} />
       <Route path="/fungible-token" element={<Protected><FungibleTokenPage /></Protected>} />
