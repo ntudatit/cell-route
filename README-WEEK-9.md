@@ -30,14 +30,14 @@ The inspector does not sign transactions or automatically apply returned metadat
 
 ## Source versions and compatibility
 
-| Component | Selected version / revision |
-| --- | --- |
-| SSRI server | `ckb-devrel/ssri-server` at `2bbe85ae68dac0019ee5f7c27e6e7ca25db7ce22` |
-| Prototype contract | `Hanssen0/ssri-test` at `b71dd50d031e4e6e86eb9689658ed766d52ad0d6` |
-| Prototype SDK | Vendored `ckb-ssri` and `ckb-ssri-proc-macro` 0.1.0 at the same prototype revision |
-| Contract dependency | `ckb-std` 0.15.3 |
-| Published SDK reading | `ckb-ssri-std` 0.0.1, recorded in the source pins; not used by this prototype |
-| Pausable UDT source reviewed | `Alive24/pausable-udt` at `38f11ef0529e65dc7c5ecf37541a57ca923e9852` |
+| Component                    | Selected version / revision                                                        |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| SSRI server                  | `ckb-devrel/ssri-server` at `2bbe85ae68dac0019ee5f7c27e6e7ca25db7ce22`             |
+| Prototype contract           | `Hanssen0/ssri-test` at `b71dd50d031e4e6e86eb9689658ed766d52ad0d6`                 |
+| Prototype SDK                | Vendored `ckb-ssri` and `ckb-ssri-proc-macro` 0.1.0 at the same prototype revision |
+| Contract dependency          | `ckb-std` 0.15.3                                                                   |
+| Published SDK reading        | `ckb-ssri-std` 0.0.1, recorded in the source pins; not used by this prototype      |
+| Pausable UDT source reviewed | `Alive24/pausable-udt` at `38f11ef0529e65dc7c5ecf37541a57ca923e9852`               |
 
 The selected server supports the prototype's legacy syscall 2103 and returns a hex string. The inspected newer server revision uses different syscalls and a different result schema. Those versions cannot be interchanged without adaptation.
 
@@ -45,33 +45,33 @@ Method paths are the first eight bytes of the CKB personalized Blake2b hash of t
 
 ## Deployment identity
 
-| Field | Recorded value |
-| --- | --- |
-| Network | Local OffCKB Devnet |
-| Genesis | `0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be` |
+| Field            | Recorded value                                                       |
+| ---------------- | -------------------------------------------------------------------- |
+| Network          | Local OffCKB Devnet                                                  |
+| Genesis          | `0xb15fa8a50781f3a8bf84759682e2ce4027b7ae5361df45e8b68855ee413104be` |
 | Code transaction | `0xe07f30bcce7621deb905906606e7d787ade578115668da963916ad3c30da2979` |
-| Output index | `0` |
-| Code hash | `0x5824889298b5b3ad937090e4c503b1fb67992dc4e872332fe491a8e03b968983` |
-| Node RPC | `http://127.0.0.1:28114` |
-| SSRI server | `http://127.0.0.1:9090` |
+| Output index     | `0`                                                                  |
+| Code hash        | `0x5824889298b5b3ad937090e4c503b1fb67992dc4e872332fe491a8e03b968983` |
+| Node RPC         | `http://127.0.0.1:28114`                                             |
+| SSRI server      | `http://127.0.0.1:9090`                                              |
 
 The deployment was committed, and the client verified the code data hash. SSRI queries themselves are not transactions and have no transaction commitment status. These local identities must not be reused for another network or deployment.
 
 ## Recorded results
 
-| Case | Evidence layer | Actual outcome |
-| --- | --- | --- |
-| `SSRI.get_methods` | Real server RPC | Eight methods discovered |
-| `UDT.name` | Real server RPC | Decoded `Test` |
-| `UDT.decimals` | Real server RPC | Decoded `8` |
-| Repeated `UDT.name` | Real server RPC | Returned `Test` again in Code context |
-| Unsupported method | Real server RPC | JSON-RPC rejection |
-| Unavailable code OutPoint | Real server RPC | JSON-RPC rejection |
-| Wrong code hash | Client plus real node lookup | Identity rejection before SSRI execution |
-| Discovery offset 0, limit 1 | Real server RPC | Five paths returned; upstream pagination defect recorded |
-| Portal tests | Unit/fixture tests | 81 tests passed across 14 files, including six focused SSRI tests |
-| Portal build | TypeScript and Vite | Passed; existing large-chunk warning remains |
-| Browser flow | Edge / Playwright with real RPC | Wrong identity rejected; correct query rendered; Devnet console verified |
+| Case                        | Evidence layer                  | Actual outcome                                                           |
+| --------------------------- | ------------------------------- | ------------------------------------------------------------------------ |
+| `SSRI.get_methods`          | Real server RPC                 | Eight methods discovered                                                 |
+| `UDT.name`                  | Real server RPC                 | Decoded `Test`                                                           |
+| `UDT.decimals`              | Real server RPC                 | Decoded `8`                                                              |
+| Repeated `UDT.name`         | Real server RPC                 | Returned `Test` again in Code context                                    |
+| Unsupported method          | Real server RPC                 | JSON-RPC rejection                                                       |
+| Unavailable code OutPoint   | Real server RPC                 | JSON-RPC rejection                                                       |
+| Wrong code hash             | Client plus real node lookup    | Identity rejection before SSRI execution                                 |
+| Discovery offset 0, limit 1 | Real server RPC                 | Five paths returned; upstream pagination defect recorded                 |
+| Portal tests                | Unit/fixture tests              | 81 tests passed across 14 files, including six focused SSRI tests        |
+| Portal build                | TypeScript and Vite             | Passed; existing large-chunk warning remains                             |
+| Browser flow                | Edge / Playwright with real RPC | Wrong identity rejected; correct query rendered; Devnet console verified |
 
 Fixture tests cover encoding, decoding, incompatible schemas, credential-bearing URLs, response bounds, request correlation, timeout and cancellation. They are reported separately from real server execution.
 
@@ -116,7 +116,3 @@ The audited revision differs from the source reviewed for this exercise. The aud
 - [Live console screenshot](docs/evidence/week-9/console.png)
 
 This is a trusted local Devnet lab, not a production SSRI service. Browser timeout does not stop server-side VM execution. Unknown methods are not callable through the inspector profile, and no chain-dependent snapshot invariance is claimed. No private key or seed phrase was added to the implementation or evidence.
-
-## Next steps
-
-Follow the [Week 10 work plan](docs/week-10-work-plan.md). Any extension to public execution, additional contexts or pause mutations requires separate compatibility, server resource-control and authorization testing.
