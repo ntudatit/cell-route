@@ -1,5 +1,7 @@
 # SSRI Inspector
 
+The current /ssri route accepts actual service/code identities and arbitrary method arguments. The historical pinned prototype procedure below remains a reproducible regression profile. See [Live Labs](live-labs.md).
+
 The `/ssri` route is a read-only **Devnet, Code-context** inspector for the pinned historical prototype. It verifies genesis, committed code transaction/output, and CKB code hash before method discovery. It does not sign, construct transactions, update Token Lab metadata, or attest the server's VM execution. The observed tip is diagnostic, not an enforced snapshot.
 
 ## Compatibility

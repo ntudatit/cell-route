@@ -1,0 +1,424 @@
+{
+  "schema": "cellroute-rgbpp-v1",
+  "network": {
+    "bitcoin": "testnet3",
+    "ckb": "testnet"
+  },
+  "provenance": {
+    "repository": "https://github.com/RGBPlusPlus/rgbpp-sdk",
+    "commit": "ee21eb9735c1adeb277e3a02b7f6c2f6fd1d0556",
+    "bindingPath": "packages/rgbpp/tests/mocked/50-included-41-excluded.ts",
+    "commitmentPath": "packages/rgbpp/tests/__snapshots__/RgbppXudt.test.ts.snap",
+    "groupIndex": 0,
+    "kind": "Official mocked historical binding and unsigned virtual-transaction snapshot; not a submitted transfer"
+  },
+  "bitcoin": {
+    "vout": 0,
+    "txid": "fd16aafb86ef05a373e59d2b812fcb117c65b647aa899085136913961127efca",
+    "historical": {
+      "status": {
+        "block_hash": "000000000000000ce327fa467b9a9e574934ac682f85e1057294614300372c0f",
+        "block_height": 2872518,
+        "block_time": 1723003274,
+        "confirmed": true
+      },
+      "txid": "fd16aafb86ef05a373e59d2b812fcb117c65b647aa899085136913961127efca",
+      "value": 546,
+      "vout": 0
+    }
+  },
+  "ckb": {
+    "outPoint": {
+      "index": "0x0",
+      "txHash": "0x6adafca165f29c713d15da4e9415d610c02c1b8ce585cc4f5430aa5de3e0e239"
+    },
+    "output": {
+      "capacity": "0x5e3ff5d00",
+      "lock": {
+        "args": "0x00000000caef271196136913859089aa47b6657c11cb2f812b9de573a305ef86fbaa16fd",
+        "codeHash": "0x61ca7a4796a4eb19ca4f0d065cb9b10ddcf002f10f7cbb810c706cb6bb5c3248",
+        "hashType": "type"
+      },
+      "type": {
+        "args": "0xc3fcf12ef840771b1eac4709d61d93be7b13424c16fefd0b2071c204bdeb9f4e",
+        "codeHash": "0x25c29dc317811a6f6f3985a7a9ebc4838bd388d19d0feeecf0bcd60f6c0975bb",
+        "hashType": "type"
+      }
+    },
+    "data": "0x00ca9a3b000000000000000000000000",
+    "historicalBlock": "0xd81c6a"
+  },
+  "virtual": {
+    "transaction": {
+      "cellDeps": [
+        {
+          "depType": "code",
+          "outPoint": {
+            "index": "0x0",
+            "txHash": "0x0d1567da0979f78b297d5311442669fbd1bd853c8be324c5ab6da41e7a1ed6e5"
+          }
+        },
+        {
+          "depType": "code",
+          "outPoint": {
+            "index": "0x1",
+            "txHash": "0x0d1567da0979f78b297d5311442669fbd1bd853c8be324c5ab6da41e7a1ed6e5"
+          }
+        },
+        {
+          "depType": "code",
+          "outPoint": {
+            "index": "0x0",
+            "txHash": "0xbf6fb538763efec2a70a6a3dcb7242787087e1030c4e7d86585bc63a9d337f5f"
+          }
+        }
+      ],
+      "headerDeps": [],
+      "inputs": [
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x3ee4107480a679cfdc296dc05c8d71b27a68215a9d3991494e0c13d60ae13792"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x6204bf05f0b76e0f57eeda3e34773d0b75b9c8fbc4dec329b5a5e09b6fa418ee"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xbd629504d74fda29a8b9187dc55a4a675c791d25a501862446c4c1d8a1ede2de"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xedd3f3dde6f4253f32b4a24f3c95d9824f546732f51e67447580d3a590b1468e"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x715a0ad3a91a8e88ae31998aa667e02c973da57f1a287e21dbe4dfcf9f133b65"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x75143c1c6e64b01d45122bfa5db70cc5dbb90e945e1c7c781c73363b5e3fb4e0"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xcac45b975c8c52ca6199f39de541c0c069556fd54640f4b2838946344f42ce6d"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x122d92afd897e5cce4f17896468453bef911e8ee5a2141e8da4e91fa37863b7d"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xb65cf4b3f9705253dacc74a83589024e9f751ac3b2cef41d9dfe075b957c5477"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x21c7b033b9eb7eb4f4b28783a77447acc8a284b83dc99a353794175ee5c50de8"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x2e4d2051d9d5182aa2d9d8360d55a9629e964a8a1562485f928963f39932563d"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x2e2ef6a59efa324e51cdf48f769ed044701719a47de696197ab2d52b10b46f02"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xefff789561ce58884324454924e62c1567e70e835c657b54df9a636f95029722"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x1414ed5987b243661f6f911fab762b08d84146be46e2950d3f7e20f13df1f6f6"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x30b3d64d1df36113707f0918d406c3d79482ecc8e22439121cebc458c8960fbe"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xc26347679c6f9c321af89838cac070c3a87d4280ed0054fbdd46d94a20683a8e"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x5d573c5fb16adaa17c42c7936fcfd7105818e4ef4bc613d4b6062698182500a6"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x6cac3ce5884577e922afe944e9bf05887e7ab3c847310eb79e6f39cd716cc307"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x418de4600629116373b24becdcab626f19d113a6093a75a5cef54a695714a20a"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xd1cfd6764c4aae04eebd0f9e5b69dccd2708194b1331b92adb88c3de5a96a9da"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xf8168a6392c0691293ec803cd599b3fbc631cf18ad9102dd35c6225f110ba29f"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x6fb324d629f69d1d011015325559bd1a3f58cd2bd0e2dce23b006ea85eade376"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xb5c70400545feef1c591c072b386e663805d984ecc90c9ebd282f39990a7cf17"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x83c92b4592a287cfa76b15c1d0dec0abd7f487b201a1720f3004d1d742a5e581"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xec2df4da6b567c7be7f698e1895be815626c6b5e504930d1c5b1431792465784"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xd8fcef10d92024e220bc314a216b9f1decca2f05138d6592a280ad3bb5c0d922"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x296b94918d48bf6a6a0c3ba8eb301472879060b6339d8ebb93fd59fcaa0fda62"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x9ffa6b826ed3ab1f5fa8f32ee743b4820682897b671dd96f4fea414e04ec3ecc"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xbc2a834cbb5b40f5cb47bd3f328297ca851a0c0628be06b2d6a43423750ed0aa"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xad5be28bad16f4792cc0dc9375b96b74721aafa0383a978ec24ad2ced05cfd16"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xa368465ce2b6b717312755fea8d95eb475fdd66f019cd67050c0c383409c0667"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xe763055974a3c1c58a9a8c6f14cd5d0251f26fbfc4f1dd86319411e8794f8889"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x27bf1271e34d3b89b8908302b1b52122cd4aabc9b05559c1f347ff1fdc943a12"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xd223e96ee030c303c31d79710ea19c7347a04f4b44ca4551c3342ce119e86132"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x6adafca165f29c713d15da4e9415d610c02c1b8ce585cc4f5430aa5de3e0e239"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xe7797d33ca22ebe3052b273307ccc4472ac57747dcb70d5249efea4957f04f73"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x2f8b991d647b91c931eb32b224c5693991266ed10c89326795f5b71e22a57bea"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x1ba483627e1dc86c2054a9a7c3ff34df116b2446f1c3c8c0fc70e2f9daf63a1f"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0x79f810935bf3ac47bc97c50c78527d71cacc9594ec148eeb294159f6ced0483b"
+          },
+          "since": "0x0"
+        },
+        {
+          "previousOutput": {
+            "index": "0x0",
+            "txHash": "0xe0732a33f99598399e0d1bdeaa6ee96b9f0fca39651626a30b0bafa883a12419"
+          },
+          "since": "0x0"
+        }
+      ],
+      "outputs": [
+        {
+          "capacity": "0xeb9fe321c2",
+          "lock": {
+            "args": "0x010000000000000000000000000000000000000000000000000000000000000000000000",
+            "codeHash": "0x61ca7a4796a4eb19ca4f0d065cb9b10ddcf002f10f7cbb810c706cb6bb5c3248",
+            "hashType": "type"
+          },
+          "type": {
+            "args": "0xc3fcf12ef840771b1eac4709d61d93be7b13424c16fefd0b2071c204bdeb9f4e",
+            "codeHash": "0x25c29dc317811a6f6f3985a7a9ebc4838bd388d19d0feeecf0bcd60f6c0975bb",
+            "hashType": "type"
+          }
+        }
+      ],
+      "outputsData": [
+        "0x00902f50090000000000000000000000"
+      ],
+      "version": "0x0",
+      "witnesses": [
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF",
+        "0xFF"
+      ]
+    },
+    "expectedCommitment": "e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+    "bitcoinUnsignedTx": "020000002805152dfd26ae6ceb1eabffaec1830912db78cc2ef0045039ce9edaf1042629b80000000000ffffffff061d6d03d7490283a11fafc70a81125436da7f36d5f5f99f78e3c3f16327ec7d0000000000ffffffff09b40b1ae10510d2930d92f9b8fccf8a3816e9f3ceb1570d1bd3535f54a3bfa70000000000ffffffff0c96e0d947e183c10f48a29e9f09a59f9f19432a8b3a20cd240e238ad74c7d5a0000000000ffffffff0dc84729396763b0d317475c7f6d7dac11a3f273115223002b225439d494165c0000000000ffffffff0e4e69cde867466d6f59e5342d200791c3262e652c340f73173a20b29025c3fa0000000000ffffffff0f89c4baac41e9dab88686ada08b4f5d61218b22c8d531ff8059c63cd6cd9d3a0000000000ffffffff10acdf3da8c98927a39ff61f96c5191f1c287afb09d3587756e6acf873a107100000000000ffffffff10ee09804a41185f998e627a20cc75a5ba08e87eb20bdc99857e6d6bffe8f46e0000000000ffffffff2df5620a37b8e1f60d967dd3fdcf4226186e84e82a3fc135b042e9c10e32bac30000000000ffffffff4234350dadc688b57ceab45632f0517d92f039a8af8e41de483ab2232ab615a40000000000ffffffff5d59b1defbebfb7ae328be6400d118685e0df8d170052e3f2e1ddd3ec7faa9f60000000000ffffffff5f2c8d18ea06e7158aa0e57f9a8824313d0f2b4a9b11110437e983bcfb9765330000000000ffffffff68cb047b8e47344b79c5d622baa202f9027e24da50db08f293b236c00e99e2a60000000000ffffffff6af11475fd4160596c884dbf66f59008d183cebb3aaaf64a90c412acd114057e0000000000ffffffff6c6a0594ced00d90230e2d6ed521b45f9c4c5f3c6accc67feaf2b19266a0319b0000000000ffffffff6e149587017f742b11dee26e587f8b0e9404c936a57d22240f51f0ec7018a31e0000000000ffffffff730f37a9b1ec55ebfb1ebd5552bd931f19c114cd0e37faead039cf0b30e2c60c0000000000ffffffff7b0a60701fa51c38544f7937646c2f796f746461e03ea189e698823d7bb9b3df0000000000ffffffff801b8178fcbdc1f568bd83bd790897d380e4711b31a3762216f76bd7c128ac140000000000ffffffff81997b369d0dfcfb79e06a186696da012847b48715242db282aec2667b501ed10000000000ffffffff837259a66fe7d34a45ee287bdef5559abfe784a816e4629549224d32dca8818a0000000000ffffffff86c23e2b6b5c0fb1ad7047153ceae8e084e44f1b938e566483007268c48e80ce0000000000ffffffff876ee5ba6bf8491914b51f92aa5d860ed517e31e4572ae3191e19721bf075ec00000000000ffffffff88201adf8692d2639ecc0c4cd2a33c43629f230f2cf70e161c3a904d32468fe40000000000ffffffff883a81775e930ff17a501557cadc43d0802d9ab559d7811c46c7ec26151cb18a0000000000ffffffff8aa27fe3d1e03e006909f74424a3d125b5f5148fe4b08a882152e0c0ad58f5e70000000000ffffffff95b46949776822af669b9a272aa92b82bf35ff8289b305b71cc3a1b2ac50819f0000000000ffffffffa131a6c09863d71bc9be087f9a1bbdeeae31933ebdae0571a97f53a696ee45340000000000ffffffffb82442332359c4e4b84118836d76bbc04d7cf91cabdafb7662dcd00d0faa55f50000000000ffffffffbbdc2d61503e9eeee5a9cdd12fcbf3b184916454aa41ea5a4b8ac7e2cbc97c1b0000000000ffffffffc537919e21c33ced3d088ecf8a57a62e04a4acf72be2cf007de772d861ca33870000000000ffffffffc85a34be59d9a3d070c43fd9581901d100db68259f92a4a476ea1912231f6ea10000000000ffffffffc8a7206fb806e13d96cbccb9d642d5baf2f2e2e26d96324c3ae8e44eed4cd1940000000000ffffffffcaef271196136913859089aa47b6657c11cb2f812b9de573a305ef86fbaa16fd0000000000ffffffffe46e8ee0f671a811315638e5ef0871687f05d90584054485c6258834dcf3e27b0000000000ffffffffe7688e134760756c7bc948f5444068ac20f0cfcfcb67dcdd7640f565572384110000000000ffffffffec14858f2c400bd6e553057d824f47e991f39bd1ec89a34070032681f3bcbaa10000000000fffffffff3b5ad129397e3759132cd2c8502b5457c670c083e559883f7355ba4f5b1c0300000000000fffffffffbdb03d6c7ea5a83976ed848928f6bfd36b0e31cd289efc41cc99d91bc15dff70000000000ffffffff030000000000000000226a20e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11220200000000000016001497b7383f7c10b415a8963f4b35c1afa505fff366b44900000000000016001497b7383f7c10b415a8963f4b35c1afa505fff36600000000"
+  }
+}

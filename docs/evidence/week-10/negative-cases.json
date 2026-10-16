@@ -1,0 +1,139 @@
+[
+  {
+    "case": "vout",
+    "layer": "mutated public fixture; no broadcast",
+    "expected": "mismatch",
+    "actual": "mismatch",
+    "failedChecks": [
+      {
+        "field": "Bitcoin output index",
+        "expected": "1",
+        "actual": "0",
+        "status": "mismatch"
+      }
+    ]
+  },
+  {
+    "case": "txid",
+    "layer": "mutated public fixture; no broadcast",
+    "expected": "mismatch",
+    "actual": "mismatch",
+    "failedChecks": [
+      {
+        "field": "Bitcoin txid (display order)",
+        "expected": "1111111111111111111111111111111111111111111111111111111111111111",
+        "actual": "fd16aafb86ef05a373e59d2b812fcb117c65b647aa899085136913961127efca",
+        "status": "mismatch"
+      }
+    ]
+  },
+  {
+    "case": "commitment",
+    "layer": "mutated public fixture; no broadcast",
+    "expected": "mismatch",
+    "actual": "mismatch",
+    "failedChecks": [
+      {
+        "field": "Virtual commitment vs upstream expected value",
+        "expected": "1111111111111111111111111111111111111111111111111111111111111111",
+        "actual": "e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+        "status": "mismatch"
+      }
+    ]
+  },
+  {
+    "case": "output-data",
+    "layer": "mutated public fixture; no broadcast",
+    "expected": "mismatch",
+    "actual": "mismatch",
+    "failedChecks": [
+      {
+        "field": "Virtual commitment vs upstream expected value",
+        "expected": "e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+        "actual": "077edd51f2ee3761e11c5c5395287abc7dc1665fc5950ab15dd8a5f3efbc552d",
+        "status": "mismatch"
+      },
+      {
+        "field": "Bitcoin OP_RETURN commitment (OP_RETURN PUSH32)",
+        "expected": "6a20077edd51f2ee3761e11c5c5395287abc7dc1665fc5950ab15dd8a5f3efbc552d",
+        "actual": "6a20e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+        "status": "mismatch"
+      }
+    ]
+  },
+  {
+    "case": "network",
+    "layer": "mutated public fixture; no broadcast",
+    "expected": "mismatch",
+    "actual": "mismatch",
+    "failedChecks": [
+      {
+        "field": "Network pair",
+        "expected": "testnet3/testnet",
+        "actual": "mainnet/testnet",
+        "status": "mismatch"
+      }
+    ]
+  },
+  {
+    "case": "ckb-outpoint",
+    "layer": "mutated public fixture; no broadcast",
+    "expected": "mismatch",
+    "actual": "mismatch",
+    "failedChecks": [
+      {
+        "field": "Virtual CKB transaction consumes selected Cell",
+        "expected": "true",
+        "actual": "false",
+        "status": "mismatch"
+      }
+    ]
+  },
+  {
+    "case": "API outage",
+    "layer": "HTTP503 fixture",
+    "expected": "both states unknown, no completion",
+    "actual": {
+      "bitcoin": {
+        "state": "unknown",
+        "error": "HTTP 503; state is unknown."
+      },
+      "ckb": {
+        "state": "unknown",
+        "error": "HTTP 503; state is unknown."
+      },
+      "crossChainComplete": false
+    }
+  },
+  {
+    "case": "reorg",
+    "layer": "confirmation policy fixture",
+    "before": {
+      "state": "observed threshold reached",
+      "confirmations": 11
+    },
+    "after": {
+      "state": "reorg-detected",
+      "confirmations": 0
+    },
+    "expected": "reorg-detected; no retained finality"
+  },
+  {
+    "case": "one chain pending",
+    "layer": "confirmation policy fixture",
+    "actual": {
+      "state": "pending",
+      "confirmations": 0
+    },
+    "expected": "pending; no cross-chain completion"
+  },
+  {
+    "case": "missing proof",
+    "layer": "offline fixture has no SPV proof",
+    "expected": "not verified",
+    "actual": {
+      "status": "not verified",
+      "reason": "No compatible SPV client/header proof verifier executed; retrieving proof bytes would not verify them"
+    }
+  }
+]

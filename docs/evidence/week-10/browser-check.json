@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-10-15T14:07:10.275Z",
+  "browser": "installed Edge through Playwright",
+  "layer": "actual browser against public APIs; no HTTP mocks",
+  "linkage": "matched",
+  "proof": {
+    "status": "not verified",
+    "reason": "No compatible SPV client/header proof verifier executed; retrieving proof bytes would not verify them"
+  },
+  "bitcoin": {
+    "state": "spent",
+    "spendingTxid": "0da44932270292fd3a4165f1f7ab81abf69b951e1e7d3b5c012e00a291c6b222",
+    "creationStatus": {
+      "confirmed": true,
+      "block_height": 2872518,
+      "block_hash": "000000000000000ce327fa467b9a9e574934ac682f85e1057294614300372c0f",
+      "block_time": 1723003274
+    },
+    "tip": {
+      "hash": "00000000002e59d964c5a121fe5bb0d8903224b9d10e1dddcffeaf2150bf927d",
+      "height": 5193364
+    },
+    "endTipHash": "00000000002e59d964c5a121fe5bb0d8903224b9d10e1dddcffeaf2150bf927d",
+    "stable": true,
+    "confirmation": "observed threshold reached",
+    "confirmations": 2320847
+  },
+  "ckb": {
+    "state": "unknown",
+    "transactionStatus": "committed",
+    "canonical": true,
+    "tip": {
+      "hash": "0x885c1be3767ddf6465b2ddeae6698464d14162027424ba79548188635a75aa6d",
+      "number": "0x15b264d"
+    },
+    "endTip": {
+      "hash": "0x885c1be3767ddf6465b2ddeae6698464d14162027424ba79548188635a75aa6d",
+      "number": "0x15b264d"
+    },
+    "stable": true,
+    "deployment": "type hash matched configured deployment",
+    "confirmation": "observed committed; not irreversible finality"
+  },
+  "consoleNetwork": "testnet",
+  "export": "public receipt parsed successfully"
+}

@@ -1,109 +1,88 @@
-import { useState } from "react";
-import { ccc } from "@ckb-ccc/connector-react";
+import { useEffect, useRef, useState } from "react";
+import { useFeatureCcc } from "../../../dev-console/hooks";
 import { currentScope } from "../../../dev-console/features";
 import { traceCall } from "../../../dev-console/store";
-import { decode } from "./adapter";
-import { DNA, PATTERN, PIN } from "./fixture";
-import { Attribute } from "./reference";
+import { json } from "../lifecycle";
+import { readDob } from "./pattern";
 export function DobPreview() {
-  const [dna, setDna] = useState(DNA);
-  const [enabled, setEnabled] = useState(true);
-  const [attributes, setAttributes] = useState<Attribute[]>();
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
-  async function preview() {
-    setBusy(true);
+  const { client } = useFeatureCcc();
+  const [id, setId] = useState("");
+  const [result, setResult] = useState<Awaited<ReturnType<typeof readDob>>>();
+  const [error, setError] = useState(""),
+    [busy, setBusy] = useState(false);
+  const generation = useRef(0);
+  useEffect(() => {
+    generation.current++;
+    setResult(undefined);
     setError("");
-    setAttributes(undefined);
+    return () => {
+      generation.current++;
+    };
+  }, [client]);
+  async function read() {
+    const current = ++generation.current;
+    setBusy(true);
+    setResult(undefined);
+    setError("");
     try {
-      setAttributes(
-        await traceCall(currentScope(), "feature", "Spore.dob-decode", () =>
-          decode(dna, PATTERN, { enabled }),
-        ),
+      const value = await traceCall(
+        currentScope(),
+        "ckb",
+        "Spore.readDob",
+        () => readDob(client, id),
       );
+      if (current === generation.current) setResult(value);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Decoder unavailable");
+      if (current === generation.current)
+        setError(e instanceof Error ? e.message : "DOB unavailable");
     } finally {
-      setBusy(false);
+      if (current === generation.current) setBusy(false);
     }
   }
   return (
-    <section className="panel">
-      <h2>DOB/0 — pinned basic-loot preview</h2>
+    <section className="panel product-form">
+      <h2>Read an on-chain DOB</h2>
       <p>
-        This local reference preview evaluates the official pattern in an
-        isolated Worker. It does not prove minting or execute the deployed
-        RISC-V decoder.
+        Load DNA, Cluster pattern and decoder identity from live Cells.
+        Supported DOB/0 traits are previewed locally; unsupported decoders are
+        not replaced with an example.
       </p>
-      <div className="token-product-grid">
-        <div>
-          <h3>Raw / on-chain model</h3>
-          <label>
-            DNA (8 bytes)
-            <input
-              value={dna}
-              maxLength={128}
-              disabled={busy}
-              onChange={(e) => {
-                setDna(e.target.value);
-                setAttributes(undefined);
-              }}
-            />
-          </label>
-          <pre style={{ overflow: "auto" }}>
-            {JSON.stringify(
-              {
-                contentType: "dob/0",
-                content: { dna },
-                contentHash: ccc.hashCkb(
-                  new TextEncoder().encode(JSON.stringify({ dna })),
-                ),
-                pattern: PATTERN,
-                ...PIN,
-              },
-              null,
-              2,
-            )}
+      <label>
+        DOB Spore ID
+        <input
+          value={id}
+          onChange={(e) => {
+            generation.current++;
+            setId(e.target.value);
+            setResult(undefined);
+            setError("");
+            setBusy(false);
+          }}
+        />
+      </label>
+      <button
+        className="btn secondary"
+        disabled={busy || !id.trim()}
+        onClick={() => void read()}
+      >
+        Read DOB metadata and attributes
+      </button>
+      {error && <p role="alert">{error}</p>}
+      {result && (
+        <>
+          <dl>
+            {result.attributes.map((a) => (
+              <div key={a.name}>
+                <dt>{a.name}</dt>
+                <dd>{String(a.value)}</dd>
+              </div>
+            ))}
+          </dl>
+          <pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
+            {json(result)}
           </pre>
-          <p>
-            Mint stores JSON DNA in Spore content and the pattern/decoder
-            reference in Cluster description. The decoder binary is referenced
-            by code hash. This example needs no external image or HTML.
-          </p>
-        </div>
-        <div>
-          <h3>Decoded attributes</h3>
-          <label>
-            <input
-              type="checkbox"
-              checked={enabled}
-              disabled={busy}
-              onChange={(e) => setEnabled(e.target.checked)}
-            />{" "}
-            Enable trusted reference decoder
-          </label>
-          <button
-            className="secondary"
-            disabled={busy}
-            onClick={() => void preview()}
-          >
-            Decode fixture
-          </button>
-          {error && (
-            <p role="alert">{error}. Original metadata remains available.</p>
-          )}
-          {attributes && (
-            <dl>
-              {attributes.map((a) => (
-                <div key={a.name}>
-                  <dt>{a.name}</dt>
-                  <dd>{String(Object.values(a.traits[0])[0])}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-        </div>
-      </div>
+        </>
+      )}
     </section>
   );
 }

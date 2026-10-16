@@ -1,0 +1,97 @@
+{
+  "profile": "rgbpp-testnet3-ccc-1016ee9-v1",
+  "layer": "Offline fixture linkage and commitment checks",
+  "status": "matched",
+  "checks": [
+    {
+      "field": "Network pair",
+      "expected": "testnet3/testnet",
+      "actual": "testnet3/testnet",
+      "status": "match"
+    },
+    {
+      "field": "RGB++ lock code hash",
+      "expected": "0x61ca7a4796a4eb19ca4f0d065cb9b10ddcf002f10f7cbb810c706cb6bb5c3248",
+      "actual": "0x61ca7a4796a4eb19ca4f0d065cb9b10ddcf002f10f7cbb810c706cb6bb5c3248",
+      "status": "match"
+    },
+    {
+      "field": "RGB++ lock hash type",
+      "expected": "type",
+      "actual": "type",
+      "status": "match"
+    },
+    {
+      "field": "Bitcoin txid (display order)",
+      "expected": "fd16aafb86ef05a373e59d2b812fcb117c65b647aa899085136913961127efca",
+      "actual": "fd16aafb86ef05a373e59d2b812fcb117c65b647aa899085136913961127efca",
+      "status": "match"
+    },
+    {
+      "field": "Bitcoin output index",
+      "expected": "0",
+      "actual": "0",
+      "status": "match"
+    },
+    {
+      "field": "Unsigned Bitcoin transaction spends selected seal",
+      "expected": "true",
+      "actual": "true",
+      "status": "match"
+    },
+    {
+      "field": "Virtual output indexes select spendable-script Bitcoin outputs",
+      "expected": "true",
+      "actual": "true",
+      "status": "match"
+    },
+    {
+      "field": "Virtual CKB transaction consumes selected Cell",
+      "expected": "true",
+      "actual": "true",
+      "status": "match"
+    },
+    {
+      "field": "Virtual commitment vs upstream expected value",
+      "expected": "e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+      "actual": "e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+      "status": "match"
+    },
+    {
+      "field": "Exactly one OP_RETURN",
+      "expected": "1",
+      "actual": "1",
+      "status": "match"
+    },
+    {
+      "field": "Bitcoin OP_RETURN commitment (OP_RETURN PUSH32)",
+      "expected": "6a20e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+      "actual": "6a20e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+      "status": "match"
+    }
+  ],
+  "binding": {
+    "vout": 0,
+    "txid": "fd16aafb86ef05a373e59d2b812fcb117c65b647aa899085136913961127efca"
+  },
+  "computedCommitment": "e2614965809a619bfa47b36631c3896fca24780336a8d524930dd61ef4e67d11",
+  "proof": {
+    "status": "not verified",
+    "reason": "No compatible SPV client/header proof verifier executed; retrieving proof bytes would not verify them"
+  },
+  "unchecked": [
+    "Full typed-input coverage",
+    "Token conservation",
+    "Signatures and lock execution",
+    "Bitcoin header/SPV verification"
+  ],
+  "transfer": "not performed",
+  "provenance": {
+    "repository": "https://github.com/RGBPlusPlus/rgbpp-sdk",
+    "commit": "ee21eb9735c1adeb277e3a02b7f6c2f6fd1d0556",
+    "bindingPath": "packages/rgbpp/tests/mocked/50-included-41-excluded.ts",
+    "commitmentPath": "packages/rgbpp/tests/__snapshots__/RgbppXudt.test.ts.snap",
+    "groupIndex": 0,
+    "kind": "Official mocked historical binding and unsigned virtual-transaction snapshot; not a submitted transfer"
+  }
+}

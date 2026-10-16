@@ -7,8 +7,9 @@ import { beginOperation, clearLogs, exportLogs, snapshot, subscribe, LOG_LIMIT, 
 import './console.css';
 export function FeatureDevConsole() {
  const location = useLocation(); const { client } = ccc.useCcc();
+ const [, setRevision] = useState(0);
  const [hash, setHash] = useState(globalThis.location.hash);
- useEffect(() => { const update = () => setHash(globalThis.location.hash); window.addEventListener('hashchange', update); window.addEventListener('feature-log-scope', update); return () => { window.removeEventListener('hashchange', update); window.removeEventListener('feature-log-scope', update); }; }, []);
+ useEffect(() => { const update = () => { setHash(globalThis.location.hash); setRevision(n=>n+1); }; window.addEventListener('hashchange', update); window.addEventListener('feature-log-scope', update); return () => { window.removeEventListener('hashchange', update); window.removeEventListener('feature-log-scope', update); }; }, []);
  useEffect(() => setHash(globalThis.location.hash), [location.pathname, location.hash]);
  const scope = scopeFor(location.pathname, hash, clientNetwork(client));
  return <ConsolePanel key={scope.key} scope={scope} />;

@@ -60,6 +60,7 @@ const fiberOps = [
 ];
 
 const tools = [
+  { to: '/rgbpp', label: 'RGB++ Inspector', icon: FileCode2 },
   { to: '/ssri', label: 'SSRI Inspector', icon: FileCode2 },
   { to: "/simple-lock", label: "Simple Lock Lab", icon: FileCode2 },
   { to: "/docs", label: "FiberPay API", icon: Code2 },
@@ -135,7 +136,7 @@ export function Sidebar({ network, tip, connected = false }: { network: string; 
         <NavGroup label="FiberPay" items={commerce} />
         <NavGroup label="FiberOps" items={fiberOps} />
         <NavGroup label="CKB Settlement" items={settlement} locked={!signer} />
-        <NavGroup label="Developers" items={tools.filter(item => network !== "mainnet" || !["/faucet", "/simple-lock"].includes(item.to))} />
+        <NavGroup label="Developers" items={tools.filter(item => network !== "mainnet" || !["/faucet"].includes(item.to))} />
       </div>
 
       <div className="network-box">

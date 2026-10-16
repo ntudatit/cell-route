@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/RGBPlusPlus/rgbpp-sdk",
+  "commit": "ee21eb9735c1adeb277e3a02b7f6c2f6fd1d0556",
+  "license": "ISC",
+  "files": [
+    {
+      "path": "packages/rgbpp/tests/mocked/50-included-41-excluded.ts",
+      "sha256": "731d6026dfd3ba6639d1fe57e70ddf2202171b7f04738259f8dca15d040ce74c"
+    },
+    {
+      "path": "packages/rgbpp/tests/__snapshots__/RgbppXudt.test.ts.snap",
+      "sha256": "2dc518cd50d0cc30808c7f2cb67a1d5634d7d8e5ed3a144dd2057492d89cd750"
+    }
+  ],
+  "projectionSha256": "237111d4056499596dda4ef7811bc0b53ec6a63fe4b37c8826852145a90c0af3",
+  "result": "Exact public-data projection matched; upstream account objects excluded; source not executed",
+  "checkedAt": "2026-10-15T13:59:04.109Z"
+}

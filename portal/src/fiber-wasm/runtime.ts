@@ -89,7 +89,7 @@ function stateName(value: any): string {
 }
 
 function extractPaymentHash(value: any): string | undefined {
-  return value?.payment_hash ?? value?.paymentHash ?? value?.invoice?.payment_hash ?? value?.invoice?.paymentHash;
+  return value?.payment_hash ?? value?.paymentHash ?? value?.invoice?.payment_hash ?? value?.invoice?.paymentHash ?? value?.invoice?.data?.payment_hash ?? value?.data?.payment_hash;
 }
 
 export function fiberErrorMessage(error: unknown): string {

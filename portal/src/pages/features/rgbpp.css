@@ -1,0 +1,20 @@
+.rgbpp-panel { padding: 24px; }
+.rgbpp-banner { padding: 16px; background: #eff6fc; border-left: 4px solid #0078d4; color: #17324d; }
+.rgbpp-banner p { margin-bottom: 0; }
+.rgbpp-flow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 20px 0; }
+.rgbpp-flow span:nth-child(odd) { padding: 10px; border: 1px solid #c8d8e8; background: #fafcff; }
+.rgbpp-identities { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 12px; }
+.rgbpp-identities dd { margin: 0; }
+.rgbpp-panel code, .rgbpp-panel pre { overflow-wrap: anywhere; white-space: pre-wrap; }
+.rgbpp-panel textarea { width: 100%; box-sizing: border-box; margin-top: 10px; font-family: monospace; }
+.rgbpp-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+.rgbpp-table { overflow-x: auto; }
+.rgbpp-table table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.rgbpp-table th, .rgbpp-table td { text-align: left; vertical-align: top; padding: 12px; border-bottom: 1px solid #dce5ec; overflow-wrap: anywhere; }
+.rgbpp-table th { background: #eff6fc; }
+.rgbpp-chains { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.rgbpp-chains > div { min-width: 0; padding: 16px; background: #f5f8fb; border: 1px solid #dce5ec; }
+.rgbpp-panel details { margin: 16px 0; }
+.rgbpp-panel summary { cursor: pointer; color: #0063b1; }
+.rgbpp-panel [role=alert] { color: #a4262c; }
+@media (max-width: 760px) { .rgbpp-chains { grid-template-columns: 1fr; } .rgbpp-identities { grid-template-columns: 1fr; } .rgbpp-panel { padding: 14px; } .rgbpp-table table { min-width: 680px; } }

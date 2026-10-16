@@ -1,0 +1,12 @@
+{
+  "executedAt": "2026-10-15T14:22:44.035Z",
+  "artifactSha256": "d08b92218e23f4fef2f1779e45d3d4eaef8d2bfacbc6f6a7fb8511a67a134e1c",
+  "scope": "Standalone CKB-VM execution; not a transaction validation claim",
+  "mode": "binary",
+  "cycleLimit": 10000000,
+  "expectedExitCode": 8,
+  "scriptResult": 8,
+  "cycles": 34961,
+  "processExitStatus": 254,
+  "matched": true
+}

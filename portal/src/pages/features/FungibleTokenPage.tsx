@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ccc } from "@ckb-ccc/connector-react";
 import { useFeatureSigner } from "../../dev-console/hooks";
 import { currentScope } from "../../dev-console/features";
@@ -34,10 +34,10 @@ export function FungibleTokenPage() {
   const [standard, setStandard] = useState<TokenStandard>("XUDT");
   const [args, setArgs] = useState("");
   const [recipient, setRecipient] = useState("");
-  const [amount, setAmount] = useState("1000");
+  const [amount, setAmount] = useState("");
   const [decimals, setDecimals] = useState(0);
-  const [name, setName] = useState("Week 6 Token");
-  const [symbol, setSymbol] = useState("W6");
+  const [name, setName] = useState("");
+  const [symbol, setSymbol] = useState("");
   const [status, setStatus] = useState(
     "Choose a standard, generate issuer args, and prepare a transaction.",
   );
@@ -47,6 +47,22 @@ export function FungibleTokenPage() {
   const [hash, setHash] = useState("");
   const [cells, setCells] = useState<ccc.Cell[]>([]);
   const [queried, setQueried] = useState(false);
+  const generation = useRef(0);
+  useEffect(() => {
+    generation.current++;
+    setReview(undefined);
+    setConfirmed(false);
+    setCells([]);
+    setQueried(false);
+    setHash("");
+    setBusy(false);
+    setStatus(
+      "Wallet context changed. Query or prepare using the current account.",
+    );
+    return () => {
+      generation.current++;
+    };
+  }, [signer]);
   let raw = "—";
   try {
     raw = parseTokenAmount(amount, decimals).toString();
@@ -84,6 +100,7 @@ export function FungibleTokenPage() {
     );
   }
   async function prepare(action: TokenAction) {
+    const current = generation.current;
     invalidate();
     if (!signer) throw Error("Connect a wallet first.");
     setStatus(`Preparing ${standard} ${action.toLowerCase()}...`);
@@ -97,17 +114,20 @@ export function FungibleTokenPage() {
       parseTokenAmount(amount, decimals),
       recipient.trim(),
     );
+    if (current !== generation.current) return;
     setReview(result);
     setStatus(
       "Prepared only. Review inputs, outputs, token amounts and fee before signing.",
     );
   }
   async function query() {
+    const current = generation.current;
     if (!signer) throw Error("Connect a wallet first.");
     const deployment = await getTokenDeployment(signer.client, standard);
     await verifyTokenDeployment(signer.client, deployment);
     const type = tokenType(standard, args.trim(), deployment);
     const result = await ownedTokenCells(signer, type);
+    if (current !== generation.current) return;
     setCells(result);
     setQueried(true);
     setStatus(`Found ${result.length} live token Cells owned by this wallet.`);
@@ -146,7 +166,7 @@ export function FungibleTokenPage() {
   return (
     <AppLayout>
       <PageHero
-        eyebrow="Week 6 · sUDT / xUDT"
+        eyebrow="Live sUDT / xUDT transactions"
         title="Token Lab"
         description="Mint, transfer or explicitly burn fungible tokens. Prepare and review each transaction before wallet signing."
       />

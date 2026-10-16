@@ -18,7 +18,7 @@ import {
   verifyNetwork,
 } from "./lifecycle";
 import { DobPreview } from "./dob/Preview";
-import { clusterDescription, DNA } from "./dob/fixture";
+import { clusterDescription } from "./dob/fixture";
 import { recordSubmittedAsset } from "../../utils/submission";
 import "./studio.css";
 
@@ -36,16 +36,15 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
   const signer = useFeatureSigner();
   const { client } = useFeatureCcc();
   const scope = currentScope();
-  const [name, setName] = useState("Simple loot");
-  const [content, setContent] = useState("Xin chào CKB — Spore!");
-  const [description, setDescription] = useState(
-    "A collection of on-chain objects.",
-  );
+  const [name, setName] = useState("");
+  const [content, setContent] = useState("");
+  const [description, setDescription] = useState("");
   const [file, setFile] = useState<File>();
   const [id, setId] = useState("");
   const [clusterId, setClusterId] = useState("");
   const [recipient, setRecipient] = useState("");
   const [dobMode, setDobMode] = useState(false);
+  const [dna, setDna] = useState("");
   const [prepared, setPrepared] = useState<Prepared>();
   const [meltConfirmed, setMeltConfirmed] = useState(false);
   const [phase, setPhase] = useState("Idle");
@@ -101,8 +100,10 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
         throw Error(
           "DOB/0 requires the Cluster created with the pinned pattern.",
         );
+      if (dobMode && !cluster && !/^[0-9a-f]{16}$/i.test(dna))
+        throw Error("Enter your8-byte DNA as16 hex characters.");
       const bytes = dobMode
-        ? new TextEncoder().encode(JSON.stringify({ dna: DNA }))
+        ? new TextEncoder().encode(JSON.stringify({ dna }))
         : file
           ? new Uint8Array(await file.arrayBuffer())
           : new TextEncoder().encode(content);
@@ -184,12 +185,33 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
       setHash(txHash);
       log("tx-hash.sendTransaction", () => txHash);
       // Optional backend audit must not block node observation or discard the receipt.
-      void log("audit-submit", () => recordSubmittedAsset(client, {
-        assetKind: prepared.operation.startsWith("cluster") ? "CLUSTER" : "SPORE",
-        action: prepared.operation === "create" ? "MINT" : prepared.operation === "cluster-create" ? "CREATE" : prepared.operation === "melt" ? "MELT" : "TRANSFER",
-        assetId: prepared.id, ownerAddress: prepared.sender, displayName: name, txHash,
-        metadataJson: json(prepared.review),
-      })).then(message => { if (current === generation.current) setAudit(message); }).catch(() => { if (current === generation.current) setAudit("Asset audit unavailable; use the transaction receipt."); });
+      void log("audit-submit", () =>
+        recordSubmittedAsset(client, {
+          assetKind: prepared.operation.startsWith("cluster")
+            ? "CLUSTER"
+            : "SPORE",
+          action:
+            prepared.operation === "create"
+              ? "MINT"
+              : prepared.operation === "cluster-create"
+                ? "CREATE"
+                : prepared.operation === "melt"
+                  ? "MELT"
+                  : "TRANSFER",
+          assetId: prepared.id,
+          ownerAddress: prepared.sender,
+          displayName: name,
+          txHash,
+          metadataJson: json(prepared.review),
+        }),
+      )
+        .then((message) => {
+          if (current === generation.current) setAudit(message);
+        })
+        .catch(() => {
+          if (current === generation.current)
+            setAudit("Asset audit unavailable; use the transaction receipt.");
+        });
       const observed = await log("observe", () =>
         observe(
           client,
@@ -320,6 +342,29 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
                 Use pinned DOB/0 basic-loot{" "}
                 {cluster ? "Cluster pattern" : "DNA"}
               </label>
+              {dobMode && !cluster && (
+                <label>
+                  DOB DNA (8 bytes hex)
+                  <input
+                    value={dna}
+                    onChange={(e) => setDna(e.target.value)}
+                    maxLength={16}
+                  />
+                  <button
+                    type="button"
+                    className="btn secondary"
+                    onClick={() =>
+                      setDna(
+                        ccc
+                          .hexFrom(crypto.getRandomValues(new Uint8Array(8)))
+                          .slice(2),
+                      )
+                    }
+                  >
+                    Generate unique DNA
+                  </button>
+                </label>
+              )}
               <button
                 className="primary"
                 onClick={() =>
@@ -413,12 +458,17 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
                   </dd>
                   <dt>Object capacity</dt>
                   <dd>
-                    {ccc.fixedPointToString(BigInt(prepared.review.assetCapacity))}{" "}
+                    {ccc.fixedPointToString(
+                      BigInt(prepared.review.assetCapacity),
+                    )}{" "}
                     CKB
                   </dd>
                   <dt>Transaction fee</dt>
                   <dd>
-                    {ccc.fixedPointToString(BigInt(prepared.review.feeShannons))} CKB
+                    {ccc.fixedPointToString(
+                      BigInt(prepared.review.feeShannons),
+                    )}{" "}
+                    CKB
                   </dd>
                   <dt>Untyped change to sender</dt>
                   <dd>

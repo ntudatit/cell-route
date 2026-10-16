@@ -1,0 +1,16 @@
+{
+  "profile": "rgbpp-testnet3-ccc-1016ee9-v1",
+  "checkedOn": "2026-10-15",
+  "sdk": { "repository": "https://github.com/ckb-devrel/ccc", "branch": "rgbpp-sdk", "commit": "1016ee901cef3b1aa5d4e25ae736b109c6f2717b", "package": "@ckb-ccc/rgbpp", "sourceVersion": "1.0.0", "usage": "Read-only encoding port using existing CCC core; branch package not installed, no migration claimed" },
+  "standard": { "repository": "https://github.com/RGBPlusPlus/RGBPlusPlus-design", "commit": "5ebbf37d2dc8bd36729ba62392b2f6379b933538", "path": "docs/lockscript-design-prd-en.md" },
+  "scripts": { "repository": "https://github.com/RGBPlusPlus/rgbpp", "commit": "4abd216dbd5d25b8f59e843de39643f9b7513f9d" },
+  "spv": { "repository": "https://github.com/RGBPlusPlus/ckb-bitcoin-spv-service", "commit": "e9aa85a3e6ae3e5ac122a68c2fe4fb6d1ed69450", "method": "getTxProof(txid, tx-index, confirmations)", "status": "not verified", "reason": "No compatible SPV client/header proof verifier executed; retrieving proof bytes would not verify them" },
+  "network": {
+    "bitcoin": "testnet3", "ckb": "testnet",
+    "bitcoinGenesis": "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+    "ckbGenesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+    "bitcoinApi": "https://mempool.space/testnet/api", "ckbRpc": "https://testnet.ckb.dev",
+    "rgbppLock": { "codeHash": "0x61ca7a4796a4eb19ca4f0d065cb9b10ddcf002f10f7cbb810c706cb6bb5c3248", "hashType": "type", "deployment": { "txHash": "0xf1de59e973b85791ec32debbba08dff80c63197e895eb95d67fc1e9f6b413e00", "index": 0 } }
+  },
+  "confirmationPolicy": { "bitcoin": 6, "source": "Pinned CCC packages/rgbpp/src/constants/index.ts DEFAULT_CONFIRMATIONS; observational threshold, not finality", "ckb": "committed and canonical containing block checked; no irreversible finality claim" }
+}

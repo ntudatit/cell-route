@@ -11,10 +11,15 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:rgbpp": "playwright test --config playwright.rgbpp.config.ts",
+    "rgbpp:evidence": "node scripts/rgbpp-evidence.mjs",
+    "rgbpp:verify-source": "node scripts/rgbpp-verify-source.mjs",
     "dev:mainnet": "vite --mode mainnet",
     "build:mainnet": "tsc -b && vite build --mode mainnet",
     "check:mainnet": "node scripts/check-mainnet.mjs",
-    "test:e2e:mainnet": "npm run build:mainnet && playwright test --config=playwright.mainnet.config.ts"
+    "test:e2e:mainnet": "npm run build:mainnet && playwright test --config=playwright.mainnet.config.ts",
+    "test:e2e:labs": "playwright test --config playwright.labs.config.ts",
+    "rgbpp:live": "node scripts/rgbpp-live.mjs"
   },
   "dependencies": {
     "@ckb-ccc/connector-react": "1.1.9",
