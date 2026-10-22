@@ -7,6 +7,19 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sqlx::{FromRow, PgPool};
 
+struct IncidentUpdate<'a> {
+    fingerprint: &'a str,
+    incident_type: &'a str,
+    severity: &'a str,
+    subject_type: &'a str,
+    subject_id: &'a str,
+    title: &'a str,
+    diagnosis: &'a str,
+    recommendation: Option<&'a str>,
+    context: &'a Value,
+    network: &'a str,
+}
+
 #[derive(Clone)]
 pub struct FiberOpsService {
     pool: PgPool,
@@ -301,18 +314,18 @@ impl FiberOpsService {
         .execute(&self.pool).await?;
 
         if !consistent {
-            self.upsert_incident(
-                &format!("reconciliation:{}", payment_hash),
-                "PAYMENT_RECONCILIATION",
-                &response.severity,
-                "PAYMENT",
-                payment_hash,
-                "Fiber payment state mismatch",
-                &response.diagnosis,
-                Some(&response.recommended_action),
-                &snapshot,
+            self.upsert_incident(IncidentUpdate {
+                fingerprint: &format!("reconciliation:{}", payment_hash),
+                incident_type: "PAYMENT_RECONCILIATION",
+                severity: &response.severity,
+                subject_type: "PAYMENT",
+                subject_id: payment_hash,
+                title: "Fiber payment state mismatch",
+                diagnosis: &response.diagnosis,
+                recommendation: Some(&response.recommended_action),
+                context: &snapshot,
                 network,
-            )
+            })
             .await?;
         } else {
             self.resolve_incident(&format!("reconciliation:{}", payment_hash), network)
@@ -432,34 +445,34 @@ impl FiberOpsService {
         } else {
             "WARNING"
         };
-        self.upsert_incident(
-            &fingerprint,
-            "CHANNEL_HEALTH",
+        self.upsert_incident(IncidentUpdate {
+            fingerprint: &fingerprint,
+            incident_type: "CHANNEL_HEALTH",
             severity,
-            "CHANNEL",
-            &c.channel_id,
-            &format!("Channel {} is {}", short_id(&c.channel_id), c.health),
-            &c.diagnosis.join("; "),
-            Some(&c.recommendations.join("; ")),
-            &c.raw,
+            subject_type: "CHANNEL",
+            subject_id: &c.channel_id,
+            title: &format!("Channel {} is {}", short_id(&c.channel_id), c.health),
+            diagnosis: &c.diagnosis.join("; "),
+            recommendation: Some(&c.recommendations.join("; ")),
+            context: &c.raw,
             network,
-        )
+        })
         .await
     }
 
-    async fn upsert_incident(
-        &self,
-        fingerprint: &str,
-        incident_type: &str,
-        severity: &str,
-        subject_type: &str,
-        subject_id: &str,
-        title: &str,
-        diagnosis: &str,
-        recommendation: Option<&str>,
-        context: &Value,
-        network: &str,
-    ) -> ApiResult<()> {
+    async fn upsert_incident(&self, incident: IncidentUpdate<'_>) -> ApiResult<()> {
+        let IncidentUpdate {
+            fingerprint,
+            incident_type,
+            severity,
+            subject_type,
+            subject_id,
+            title,
+            diagnosis,
+            recommendation,
+            context,
+            network,
+        } = incident;
         sqlx::query(r#"
             INSERT INTO fiber_incidents
             (fingerprint, incident_type, severity, status, subject_type, subject_id, title, diagnosis,
@@ -523,9 +536,9 @@ fn analyze_channel(raw: &Value) -> ChannelHealth {
     let mut recommendations = Vec::new();
     let mut score = 0u8;
 
-    if failure.is_some() {
+    if let Some(failure) = failure {
         score = 3;
-        diagnosis.push(format!("Opening failure: {}", failure.unwrap()));
+        diagnosis.push(format!("Opening failure: {}", failure));
         recommendations
             .push("Inspect funding/peer state before retrying. Do not retry blindly.".into());
     }

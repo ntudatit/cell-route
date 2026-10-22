@@ -111,7 +111,7 @@ pub fn verify_ckb_secp256k1_message(
     let pubkey = secp.recover_ecdsa(&secp_message, &signature).map_err(|e| {
         ApiError::Unauthorized(format!("Unable to recover signing public key: {e}"))
     })?;
-    let lock_arg = &blake2b_256(&pubkey.serialize())[0..20];
+    let lock_arg = &blake2b_256(pubkey.serialize())[0..20];
 
     if lock_arg != expected_args.as_ref() {
         return Err(ApiError::Unauthorized(
