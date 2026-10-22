@@ -32,7 +32,9 @@ use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let config = Config::from_env().context("Invalid startup configuration; check rust-service/.env and shell environment variables")?;
+    let config = Config::from_env().context(
+        "Invalid startup configuration; check rust-service/.env and shell environment variables",
+    )?;
     init_tracing(config.log_json);
 
     let pool = PgPoolOptions::new()
@@ -193,8 +195,14 @@ async fn main() -> anyhow::Result<()> {
         .layer(TraceLayer::new_for_http())
         .with_state(state);
 
-    let listener = tokio::net::TcpListener::bind(config.bind_addr).await
-        .with_context(|| format!("Unable to listen on {}; check whether PORT is already in use", config.bind_addr))?;
+    let listener = tokio::net::TcpListener::bind(config.bind_addr)
+        .await
+        .with_context(|| {
+            format!(
+                "Unable to listen on {}; check whether PORT is already in use",
+                config.bind_addr
+            )
+        })?;
     info!(
         address = %config.bind_addr,
         network = %config.ckb_network,

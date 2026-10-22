@@ -47,10 +47,13 @@ impl Config {
             .parse::<u64>()?;
 
         let ckb_network = env::var("CKB_NETWORK")
-            .unwrap_or_else(|_| "testnet".into()).trim().to_lowercase();
+            .unwrap_or_else(|_| "testnet".into())
+            .trim()
+            .to_lowercase();
         let default_rpc = default_ckb_rpc(&ckb_network)?;
         let ckb_rpc_url = optional_env("CKB_RPC_URL").unwrap_or_else(|| default_rpc.into());
-        let ckb_indexer_url = optional_env("CKB_INDEXER_URL").unwrap_or_else(|| ckb_rpc_url.clone());
+        let ckb_indexer_url =
+            optional_env("CKB_INDEXER_URL").unwrap_or_else(|| ckb_rpc_url.clone());
 
         let jwt_secret = optional_env("JWT_SECRET").unwrap_or_else(|| "dev-only-change-me".into());
         validate_jwt_secret(&ckb_network, &jwt_secret)?;
@@ -132,8 +135,14 @@ mod network_tests {
     use super::default_ckb_rpc;
     #[test]
     fn selects_rpc_for_each_chain() {
-        assert_eq!(default_ckb_rpc("mainnet").unwrap(), "https://mainnet.ckb.dev");
-        assert_eq!(default_ckb_rpc("testnet").unwrap(), "https://testnet.ckb.dev");
+        assert_eq!(
+            default_ckb_rpc("mainnet").unwrap(),
+            "https://mainnet.ckb.dev"
+        );
+        assert_eq!(
+            default_ckb_rpc("testnet").unwrap(),
+            "https://testnet.ckb.dev"
+        );
         assert_eq!(default_ckb_rpc("devnet").unwrap(), "http://127.0.0.1:8114");
         assert!(default_ckb_rpc("mainent").is_err());
     }
@@ -141,10 +150,16 @@ mod network_tests {
 
 fn validate_jwt_secret(network: &str, secret: &str) -> anyhow::Result<()> {
     let normalized = secret.to_ascii_lowercase();
-    if network == "mainnet" && (secret.len() < 32
-        || normalized.contains("replace") || normalized.contains("change-me")
-        || normalized.contains("change_me") || normalized.contains("your-secret")) {
-        anyhow::bail!("Mainnet requires a randomly generated JWT_SECRET of at least 32 bytes; development defaults and placeholders are not allowed");
+    if network == "mainnet"
+        && (secret.len() < 32
+            || normalized.contains("replace")
+            || normalized.contains("change-me")
+            || normalized.contains("change_me")
+            || normalized.contains("your-secret"))
+    {
+        anyhow::bail!(
+            "Mainnet requires a randomly generated JWT_SECRET of at least 32 bytes; development defaults and placeholders are not allowed"
+        );
     }
     Ok(())
 }
@@ -154,7 +169,12 @@ mod mainnet_secret_tests {
     use super::validate_jwt_secret;
     #[test]
     fn rejects_development_and_placeholder_secrets() {
-        for secret in ["", "dev-only-change-me", "short", "REPLACE_WITH_A_RANDOM_SECRET_AT_LEAST_32_BYTES"] {
+        for secret in [
+            "",
+            "dev-only-change-me",
+            "short",
+            "REPLACE_WITH_A_RANDOM_SECRET_AT_LEAST_32_BYTES",
+        ] {
             assert!(validate_jwt_secret("mainnet", secret).is_err());
         }
     }

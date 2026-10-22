@@ -156,7 +156,9 @@ pub fn validate_wallet_network(wallet_address: &str, network: &str) -> ApiResult
     };
     // Devnet and Testnet both encode addresses with ckt; endpoint identity separates them.
     if address.network() != expected {
-        return Err(ApiError::BadRequest("Wallet address network does not match service network".into()));
+        return Err(ApiError::BadRequest(
+            "Wallet address network does not match service network".into(),
+        ));
     }
     Ok(())
 }

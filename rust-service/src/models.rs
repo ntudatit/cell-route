@@ -129,7 +129,10 @@ pub struct CreateAssetEventRequest {
 
 impl CreateAssetEventRequest {
     pub fn validate(&self) -> Result<(), String> {
-        if !matches!(self.asset_kind.as_str(), "SUDT" | "XUDT" | "SPORE" | "CLUSTER") {
+        if !matches!(
+            self.asset_kind.as_str(),
+            "SUDT" | "XUDT" | "SPORE" | "CLUSTER"
+        ) {
             return Err("assetKind must be SUDT, XUDT, SPORE, or CLUSTER".into());
         }
         if !matches!(
