@@ -5,7 +5,7 @@ import { inspectAsset, type AssetQuery } from "./live";
 import { profiles } from "./profiles";
 import { currentScope, setFeatureNetwork } from "../../dev-console/features";
 import { traceCall } from "../../dev-console/store";
-export function LiveAssetInspector({ onFixture }: { onFixture: () => void }) {
+export function LiveAssetInspector() {
   const [query, setQuery] = useState<AssetQuery>({
     network: configuredNetwork === "mainnet" ? "mainnet" : "testnet3",
     kind: "cell",
@@ -212,13 +212,6 @@ export function LiveAssetInspector({ onFixture }: { onFixture: () => void }) {
             </details>
           </section>
         )}
-        <details>
-          <summary>Advanced / regression tools</summary>
-          <p>Offline fixtures are isolated from live lookups.</p>
-          <button className="btn secondary" onClick={onFixture}>
-            Open offline regression lab
-          </button>
-        </details>
       </section>
     </AppLayout>
   );

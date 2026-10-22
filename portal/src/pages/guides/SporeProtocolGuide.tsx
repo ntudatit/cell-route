@@ -82,16 +82,16 @@ export function SporeProtocolGuide() {
       <section className="panel">
         <h2>DOB/0: DNA → pattern → decoder → attributes</h2>
         <p>
-          Select the pinned basic-loot pattern when creating a Cluster, then
-          select DOB/0 DNA and that Cluster ID when preparing a Spore. The
-          Studio checks the exact Cluster description. DNA is JSON in Spore
-          content; pattern and code-hash decoder reference are in Cluster
-          description.
+          Supply your DOB/0 pattern when creating a Cluster, then select DOB/0
+          DNA and that Cluster ID when preparing a Spore. The Studio checks the
+          Cluster decoder identity and validates DNA against its pattern. DNA is
+          JSON in Spore content; pattern and code-hash decoder reference are in
+          Cluster description.
         </p>
         <p>
-          The isolated Worker implements only this pinned pattern. Preview
-          renders escaped text attributes without HTML or external images.
-          Timeout, size/schema errors and disabled decoder states preserve raw
+          The bounded local decoder supports validated DOB/0 pattern modes.
+          Preview renders escaped text attributes without HTML or external
+          images. Size/schema errors and unsupported decoder states preserve raw
           metadata. It is a local reference preview, not proof of minting or
           deployed decoder execution.
         </p>

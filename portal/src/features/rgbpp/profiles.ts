@@ -1,4 +1,4 @@
-import { pins } from "./checker";
+import pins from "./pins.json";
 const env =
   import.meta.env ?? (typeof process !== "undefined" ? process.env : {});
 function endpoint(value: string | undefined, fallback: string) {

@@ -1,0 +1,1269 @@
+{
+  "status": "passed",
+  "measuredAt": "2026-10-22T14:20:41.254Z",
+  "layer": "actual CKB-VM execution of complete public mock transactions; no node consensus or broadcast",
+  "debugger": "ckb-debugger 1.1.1",
+  "vmVersion": 1,
+  "cycleLimit": 100000000,
+  "artifacts": {
+    "compiler": "riscv-none-elf-gcc.exe (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0\r",
+    "linker": "LLD 22.1.8 (https://github.com/rust-lang/llvm-project.git 52ed14fcd56afc30f9cccd8ca8ce237c2eef7e04) (compatible with GNU linkers)",
+    "commands": [
+      [
+        "$CONTRACTS_ROOTbuild\\toolchains\\xpack-riscv-none-elf-gcc-15.2.0-1\\bin\\riscv-none-elf-gcc.exe",
+        "-march=rv64imc",
+        "-mabi=lp64",
+        "-fPIC",
+        "-Os",
+        "-fno-builtin",
+        "-nostdinc",
+        "-nostdlib",
+        "-nostartfiles",
+        "-fvisibility=hidden",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-I$CONTRACTS_ROOTbuild\\week11\\ckb-c-stdlib-f2631670b655d23630de384245062cf6e121710d",
+        "-I$CONTRACTS_ROOTbuild\\week11\\ckb-c-stdlib-f2631670b655d23630de384245062cf6e121710d\\libc",
+        "-I$CONTRACTS_ROOTbuild\\week11\\ckb-c-stdlib-f2631670b655d23630de384245062cf6e121710d\\molecule",
+        "-I$CONTRACTS_ROOTbuild\\week11\\ckb-production-scripts-abdcb117b512e35910fa8e30241a7a354e5cacf0\\c",
+        "-D__SHARED_LIBRARY__",
+        "-c",
+        "-o",
+        "build/week11/marker.o",
+        "xudt-extension-lab/marker.c"
+      ],
+      [
+        "$USERPROFILE\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\bin\\rust-lld.exe",
+        "-flavor",
+        "gnu",
+        "-m",
+        "elf64lriscv",
+        "-shared",
+        "-Bsymbolic",
+        "--no-rosegment",
+        "-e",
+        "_start",
+        "--gc-sections",
+        "--dynamic-list=xudt-extension-lab/validate.syms",
+        "--build-id=none",
+        "-z",
+        "max-page-size=4096",
+        "-o",
+        "build/week11/marker",
+        "build/week11/marker.o"
+      ]
+    ],
+    "xudt": {
+      "sha256": "e9b92e5783f692f6ee99ca20eeda5f3da282e0f4010eb4fbd3db4e3058239349",
+      "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "hashType": "data1",
+      "retrievedFrom": "https://mainnet.ckb.dev",
+      "outPoint": {
+        "txHash": "0xc07844ce21b38e4b071dd0e1ee3b0e27afd8d7532491327f39b786343f558ab7",
+        "index": 0
+      }
+    },
+    "extension": {
+      "sha256": "c965be4ab0733f9c4786a0785e2e26d0bba1383c34fda7a23025afbdb6996a73",
+      "codeHash": "0x1b05cec41fb93461a1cd3bd7951ab7d700f4111c8bc2802cf111c3c6043a81c2",
+      "hashType": "data1",
+      "bytes": 8448,
+      "sourceSha256": "82c709e2f18c8d8b96f258e96c3fd79a548b0d851180d2b21fc4b1a0ca5e2977"
+    }
+  },
+  "pairedFixtureInvariant": "pass/wrong-marker differ only in witnesses",
+  "results": [
+    {
+      "name": "basic-zero-extension",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/basic-zero-extension.json",
+      "fixtureSha256": "f6ff451f128782043832b7e42eec462114b7c65189a794deb9f1b3441f26faf0",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 19383,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 19383(18.9K)\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 19383(18.9K)\nActual run: start\nRun result: 0\nAll cycles: 11001(10.7K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "basic-inflation",
+      "expected": -52,
+      "actual": -52,
+      "passed": true,
+      "fixture": "fixtures/basic-inflation.json",
+      "fixtureSha256": "bd3d4b8ab5dccf746be45c566eb180e1a83df608006dbd7ea2e3c1db7ddd539d",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": -52,
+          "cycles": 19377,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: -52\nAll cycles: 19377(18.9K)\nPre gather: collect syscalls\nRun result: -52\nAll cycles: 19377(18.9K)\nActual run: start\nRun result: -52\nAll cycles: 10995(10.7K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "extension-pass",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/extension-pass.json",
+      "fixtureSha256": "cb37abf8a7fca385245d633745d15ae624811e28c56df864176f6b6a8f25f22f",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 36753,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:normal\nRun result: 0\nAll cycles: 36753(35.9K)\nPre gather: collect syscalls\nScript log: marker:normal\nRun result: 0\nAll cycles: 36753(35.9K)\nActual run: start\nScript log: marker:normal\nRun result: 0\nAll cycles: 26885(26.3K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "extension-wrong-marker",
+      "expected": 94,
+      "actual": 94,
+      "passed": true,
+      "fixture": "fixtures/extension-wrong-marker.json",
+      "fixtureSha256": "880a9927945f15824a518c0ebbdb3d5cb65e8c2620e51fd60405eaab6f2ac6e3",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 94,
+          "cycles": 36753,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:normal\nRun result: 94\nAll cycles: 36753(35.9K)\nPre gather: collect syscalls\nScript log: marker:normal\nRun result: 94\nAll cycles: 36753(35.9K)\nActual run: start\nScript log: marker:normal\nRun result: 94\nAll cycles: 26885(26.3K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "extension-missing-witness",
+      "expected": 92,
+      "actual": 92,
+      "passed": true,
+      "fixture": "fixtures/extension-missing-witness.json",
+      "fixtureSha256": "62997e080358b33c07ba895d1d6b611d6deff495d62b9061181f9f2609aab598",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 92,
+          "cycles": 32029,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:normal\nRun result: 92\nAll cycles: 32029(31.3K)\nPre gather: collect syscalls\nScript log: marker:normal\nRun result: 92\nAll cycles: 32029(31.3K)\nActual run: start\nScript log: marker:normal\nRun result: 92\nAll cycles: 22207(21.7K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "extension-malformed-witness",
+      "expected": 7,
+      "actual": 7,
+      "passed": true,
+      "fixture": "fixtures/extension-malformed-witness.json",
+      "fixtureSha256": "c097dffeff4228f2e058bfbbe220a41f59843753fc5e40f78680253b7a4a4863",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 7,
+          "cycles": 16381,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: 7\nAll cycles: 16381(16.0K)\nPre gather: collect syscalls\nRun result: 7\nAll cycles: 16381(16.0K)\nActual run: start\nRun result: 7\nAll cycles: 8006(7.8K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "extension-wrong-args",
+      "expected": 91,
+      "actual": 91,
+      "passed": true,
+      "fixture": "fixtures/extension-wrong-args.json",
+      "fixtureSha256": "4a563ee71fcec9ffa5b1577f2aa0167abee69fbd1910e6fb0ca80e45b2fe3a0b",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 91,
+          "cycles": 33792,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: 91\nAll cycles: 33792(33.0K)\nPre gather: collect syscalls\nRun result: 91\nAll cycles: 33792(33.0K)\nActual run: start\nRun result: 91\nAll cycles: 23943(23.4K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "extension-inflation",
+      "expected": -52,
+      "actual": -52,
+      "passed": true,
+      "fixture": "fixtures/extension-inflation.json",
+      "fixtureSha256": "d12726fe09cc41f1fe638a4ab18e7b388a7a8fe2a846514f8c4149a535b60c50",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": -52,
+          "cycles": 19457,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: -52\nAll cycles: 19457(19.0K)\nPre gather: collect syscalls\nRun result: -52\nAll cycles: 19457(19.0K)\nActual run: start\nRun result: -52\nAll cycles: 11060(10.8K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "extension-burn",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/extension-burn.json",
+      "fixtureSha256": "958a929cf3db7b64d0b551ad393ca461700b63c60191e4c52be4c7c4419a0272",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 36753,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:normal\nRun result: 0\nAll cycles: 36753(35.9K)\nPre gather: collect syscalls\nScript log: marker:normal\nRun result: 0\nAll cycles: 36753(35.9K)\nActual run: start\nScript log: marker:normal\nRun result: 0\nAll cycles: 26885(26.3K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-input-lock-mint",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/owner-input-lock-mint.json",
+      "fixtureSha256": "9917b38e6f48b418075b9b29732962c11072115ccd0318aef91d65cf318d5fc7",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 30366,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:owner\nRun result: 0\nAll cycles: 30366(29.7K)\nPre gather: collect syscalls\nScript log: marker:owner\nRun result: 0\nAll cycles: 30366(29.7K)\nActual run: start\nScript log: marker:owner\nRun result: 0\nAll cycles: 20548(20.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-input-lock-invalid-marker",
+      "expected": 94,
+      "actual": 94,
+      "passed": true,
+      "fixture": "fixtures/owner-input-lock-invalid-marker.json",
+      "fixtureSha256": "794ab9856baddc1bb746b1c5edfd3d67eb27bba0085e487364d7d88454760dfd",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 94,
+          "cycles": 30366,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:owner\nRun result: 94\nAll cycles: 30366(29.7K)\nPre gather: collect syscalls\nScript log: marker:owner\nRun result: 94\nAll cycles: 30366(29.7K)\nActual run: start\nScript log: marker:owner\nRun result: 94\nAll cycles: 20548(20.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-input-lock-disabled",
+      "expected": -52,
+      "actual": -52,
+      "passed": true,
+      "fixture": "fixtures/owner-input-lock-disabled.json",
+      "fixtureSha256": "2067e25a6c3d5f3d92c5cc79283ec1794a2f9a3d7e45d7230844f78ddfedc33b",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": -52,
+          "cycles": 17810,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: -52\nAll cycles: 17810(17.4K)\nPre gather: collect syscalls\nRun result: -52\nAll cycles: 17810(17.4K)\nActual run: start\nRun result: -52\nAll cycles: 9429(9.2K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-input-type-mint",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/owner-input-type-mint.json",
+      "fixtureSha256": "af0672884a872e1d4e35ec8b5c2c139be78fe61fdae6b1bc0912ca107bb55656",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.0.type",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 32019,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:owner\nRun result: 0\nAll cycles: 32019(31.3K)\nPre gather: collect syscalls\nScript log: marker:owner\nRun result: 0\nAll cycles: 32019(31.3K)\nActual run: start\nScript log: marker:owner\nRun result: 0\nAll cycles: 22185(21.7K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-output-type-mint",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/owner-output-type-mint.json",
+      "fixtureSha256": "8f827f95ac6bcd2933cfbe14adde2ea31ee3c31ba261b913ae7d0d0ac3b0b77e",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "output.1.type",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 32562,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:owner\nRun result: 0\nAll cycles: 32562(31.8K)\nPre gather: collect syscalls\nScript log: marker:owner\nRun result: 0\nAll cycles: 32562(31.8K)\nActual run: start\nScript log: marker:owner\nRun result: 0\nAll cycles: 22720(22.2K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-witness-mint",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/owner-witness-mint.json",
+      "fixtureSha256": "5213ad967c33633bedf2f9583241432657fb81b87a210748d46a86b633aa97ab",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 53402,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:normal\nScript log: marker:owner\nRun result: 0\nAll cycles: 53402(52.2K)\nPre gather: collect syscalls\nScript log: marker:normal\nScript log: marker:owner\nRun result: 0\nAll cycles: 53402(52.2K)\nActual run: start\nScript log: marker:normal\nScript log: marker:owner\nRun result: 0\nAll cycles: 41990(41.0K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-output-only-mint",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/owner-output-only-mint.json",
+      "fixtureSha256": "316f45c65a3f7c50ac0793d9dc1feec1a517c3ffe884b9612c3b484175522bcb",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "output.0.type",
+          "scriptResult": 0,
+          "cycles": 30197,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:owner\nRun result: 0\nAll cycles: 30197(29.5K)\nPre gather: collect syscalls\nScript log: marker:owner\nRun result: 0\nAll cycles: 30197(29.5K)\nActual run: start\nScript log: marker:owner\nRun result: 0\nAll cycles: 20387(19.9K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-input-type-invalid-marker",
+      "expected": 94,
+      "actual": 94,
+      "passed": true,
+      "fixture": "fixtures/owner-input-type-invalid-marker.json",
+      "fixtureSha256": "026cfde24c44f111289396616c148a21b18e6c852437ea48411f8aac6fec3ca6",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.0.type",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 94,
+          "cycles": 32019,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:owner\nRun result: 94\nAll cycles: 32019(31.3K)\nPre gather: collect syscalls\nScript log: marker:owner\nRun result: 94\nAll cycles: 32019(31.3K)\nActual run: start\nScript log: marker:owner\nRun result: 94\nAll cycles: 22185(21.7K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-output-type-invalid-marker",
+      "expected": 94,
+      "actual": 94,
+      "passed": true,
+      "fixture": "fixtures/owner-output-type-invalid-marker.json",
+      "fixtureSha256": "71a74f3f8bd3d52306e3800244523bd32809a6921cd14743771b43c6f9d07fea",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "output.1.type",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 94,
+          "cycles": 32562,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:owner\nRun result: 94\nAll cycles: 32562(31.8K)\nPre gather: collect syscalls\nScript log: marker:owner\nRun result: 94\nAll cycles: 32562(31.8K)\nActual run: start\nScript log: marker:owner\nRun result: 94\nAll cycles: 22720(22.2K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-input-type-disabled",
+      "expected": -52,
+      "actual": -52,
+      "passed": true,
+      "fixture": "fixtures/owner-input-type-disabled.json",
+      "fixtureSha256": "084f1099a30e66c474a3cb3fc3710b092da6d39d4669ca761d4a0ecf6550a53a",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.0.type",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": -52,
+          "cycles": 19457,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: -52\nAll cycles: 19457(19.0K)\nPre gather: collect syscalls\nRun result: -52\nAll cycles: 19457(19.0K)\nActual run: start\nRun result: -52\nAll cycles: 11060(10.8K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-output-type-disabled",
+      "expected": -52,
+      "actual": -52,
+      "passed": true,
+      "fixture": "fixtures/owner-output-type-disabled.json",
+      "fixtureSha256": "453903d1168bf905de2474492da81fa0c2beafe694fcbb82e2cd1b7539a2788b",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "output.1.type",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": -52,
+          "cycles": 19457,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: -52\nAll cycles: 19457(19.0K)\nPre gather: collect syscalls\nRun result: -52\nAll cycles: 19457(19.0K)\nActual run: start\nRun result: -52\nAll cycles: 11060(10.8K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "owner-witness-invalid-marker",
+      "expected": -52,
+      "actual": -52,
+      "passed": true,
+      "fixture": "fixtures/owner-witness-invalid-marker.json",
+      "fixtureSha256": "2bb5ba0f1799303f30e4fedfe212f7f6464d1b04d284a367e845e94fd89def5e",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": -52,
+          "cycles": 37977,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:normal\nRun result: -52\nAll cycles: 37977(37.1K)\nPre gather: collect syscalls\nScript log: marker:normal\nRun result: -52\nAll cycles: 37977(37.1K)\nActual run: start\nScript log: marker:normal\nRun result: -52\nAll cycles: 28039(27.4K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "input-lock-shortcut",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/input-lock-shortcut.json",
+      "fixtureSha256": "ea1ac50f661abe0c0a8c3d76c14c890e7d6ddc8b72af0cafa0f6a6f0294153fb",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 1320,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 1320(1.3K)\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 1320(1.3K)\nActual run: start\nRun result: 0\nAll cycles: 527\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 1320,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 1320(1.3K)\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 1320(1.3K)\nActual run: start\nRun result: 0\nAll cycles: 527\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 34119,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 34119(33.3K)\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 34119(33.3K)\nActual run: start\nRun result: 0\nAll cycles: 24270(23.7K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "trailing-cell-data",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/trailing-cell-data.json",
+      "fixtureSha256": "0a75ac6676889dff6756d86da4d4bb325518686dd2864fb9c9ed32f08105e34a",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 36753,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:normal\nRun result: 0\nAll cycles: 36753(35.9K)\nPre gather: collect syscalls\nScript log: marker:normal\nRun result: 0\nAll cycles: 36753(35.9K)\nActual run: start\nScript log: marker:normal\nRun result: 0\nAll cycles: 26885(26.3K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "p2sh-pass",
+      "expected": 0,
+      "actual": 0,
+      "passed": true,
+      "fixture": "fixtures/p2sh-pass.json",
+      "fixtureSha256": "8206c13ad9281ebc7c6e62364f00f08c6ca8b6630f7abd3e1059f5a054dead05",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 0,
+          "cycles": 45428,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nScript log: marker:normal\nRun result: 0\nAll cycles: 45428(44.4K)\nPre gather: collect syscalls\nScript log: marker:normal\nRun result: 0\nAll cycles: 45428(44.4K)\nActual run: start\nScript log: marker:normal\nRun result: 0\nAll cycles: 35490(34.7K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "p2sh-hash-mismatch",
+      "expected": 49,
+      "actual": 49,
+      "passed": true,
+      "fixture": "fixtures/p2sh-hash-mismatch.json",
+      "fixtureSha256": "bf0745db79b4e010c6f5fd9ed83a0f7460acd28daff7e15706633a8446c4c732",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 49,
+          "cycles": 21501,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: 49\nAll cycles: 21501(21.0K)\nPre gather: collect syscalls\nRun result: 49\nAll cycles: 21501(21.0K)\nActual run: start\nRun result: 49\nAll cycles: 13120(12.8K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "missing-dependency",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "fixture": "fixtures/missing-dependency.json",
+      "fixtureSha256": "18578a27db7f88826f53e44600226e235563cf8fa2a24060c99e45fbcd09972a",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 1,
+          "cycles": 22796,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: 1\nAll cycles: 22796(22.3K)\nPre gather: collect syscalls\nRun result: 1\nAll cycles: 22796(22.3K)\nActual run: start\nRun result: 1\nAll cycles: 14380(14.0K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "wrong-dependency",
+      "expected": 1,
+      "actual": 1,
+      "passed": true,
+      "fixture": "fixtures/wrong-dependency.json",
+      "fixtureSha256": "537235ccff3c62885a28be381f684274a780d0dfd459bfaf8f6c58a4fba3cdfb",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 1,
+          "cycles": 23333,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: 1\nAll cycles: 23333(22.8K)\nPre gather: collect syscalls\nRun result: 1\nAll cycles: 23333(22.8K)\nActual run: start\nRun result: 1\nAll cycles: 14909(14.6K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "malformed-scriptvec",
+      "expected": 47,
+      "actual": 47,
+      "passed": true,
+      "fixture": "fixtures/malformed-scriptvec.json",
+      "fixtureSha256": "1ee17ea8813bc985bace1077e363a56bb8acf0c98bb55cf84c799f4206fdfdf6",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 47,
+          "cycles": 13582,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: 47\nAll cycles: 13582(13.3K)\nPre gather: collect syscalls\nRun result: 47\nAll cycles: 13582(13.3K)\nActual run: start\nRun result: 47\nAll cycles: 5242(5.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "unknown-flags",
+      "expected": 44,
+      "actual": 44,
+      "passed": true,
+      "fixture": "fixtures/unknown-flags.json",
+      "fixtureSha256": "4dfe60561bd71df1d48440e4e54456995b8426dbbe2d082b0ec7972f6eaf672a",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": 44,
+          "cycles": 13578,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: 44\nAll cycles: 13578(13.3K)\nPre gather: collect syscalls\nRun result: 44\nAll cycles: 13578(13.3K)\nActual run: start\nRun result: 44\nAll cycles: 5223(5.1K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "short-args",
+      "expected": -1,
+      "actual": -1,
+      "passed": true,
+      "fixture": "fixtures/short-args.json",
+      "fixtureSha256": "e16eb082971dfc05b8c755eae9161bb0939a37c2746b12ef21b9c78b1f5148e9",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": -1,
+          "cycles": 9972,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: -1\nAll cycles: 9972(9.7K)\nPre gather: collect syscalls\nRun result: -1\nAll cycles: 9972(9.7K)\nActual run: start\nRun result: -1\nAll cycles: 1673(1.6K)\n",
+          "stderr": ""
+        }
+      ]
+    },
+    {
+      "name": "short-token-data",
+      "expected": -2,
+      "actual": -2,
+      "passed": true,
+      "fixture": "fixtures/short-token-data.json",
+      "fixtureSha256": "84ee5c10045a75c036bb8934f0e5e716196b8934eb99c4ad1eddc5d6c2eaa6d0",
+      "executions": [
+        {
+          "script": "input.0.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.lock",
+          "scriptResult": 0,
+          "cycles": 539,
+          "processExitStatus": 0,
+          "processStatus": 0,
+          "stdout": "Pre gather: collect vm creation\nRun result: 0\nAll cycles: 539\nPre gather: collect syscalls\nRun result: 0\nAll cycles: 539\nActual run: start\nRun result: 0\nAll cycles: 502\n",
+          "stderr": ""
+        },
+        {
+          "script": "input.1.type",
+          "scriptResult": -2,
+          "cycles": 17828,
+          "processExitStatus": 254,
+          "processStatus": 254,
+          "stdout": "Pre gather: collect vm creation\nRun result: -2\nAll cycles: 17828(17.4K)\nPre gather: collect syscalls\nRun result: -2\nAll cycles: 17828(17.4K)\nActual run: start\nRun result: -2\nAll cycles: 9440(9.2K)\n",
+          "stderr": ""
+        }
+      ]
+    }
+  ]
+}

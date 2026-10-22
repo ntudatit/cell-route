@@ -10,6 +10,8 @@ Scalable payment infrastructure and operations tooling built on Nervos Fiber and
 
 ## Development
 
+CKBuilder Advanced work plans: [Week 9–12 roadmap](docs/advanced-weeks-9-12.md), covering [SSRI](docs/week-9-work-plan.md), [RGB++](docs/week-10-work-plan.md), [xUDT extensions](docs/week-11-work-plan.md), and [iCKB](docs/week-12-work-plan.md). These are plans with reviewer checks and evidence requirements, not completion reports.
+
 See [portal/README.md](portal/README.md) and [rust-service/README.md](rust-service/README.md).
 
 Each portal feature has a live Dev Console with isolated history, filtering, pause and JSONL export. See [developer console usage and instrumentation](docs/dev-console.md).
@@ -32,4 +34,12 @@ Run the portal with `npm run dev:mainnet` or build with `npm run build:mainnet` 
 
 Open `/fungible-token` for sUDT/xUDT mint, transfer, explicit burn and transaction review. See [Token Lab configuration and development](docs/token-lab.md).
 
-See the [Week 6 report](README-WEEK-6.md) for implementation and recorded Devnet results, and the [response-check guide](docs/week-6-response-check.md) for demo commands and expected responses.
+See the [Week 6 report](README-WEEK-6.md) for implementation and recorded Devnet results, and the [Token Lab guide](docs/token-lab.md) for current wallet workflows and validation commands.
+
+SSRI: [Readonly inspector and local reproduction](docs/ssri-inspector.md). See the [Week 9 report](README-WEEK-9.md) for source versions, implementation, recorded results and audit scope.
+
+RGB++: [Readonly Bitcoin/CKB inspector](docs/rgbpp-inspector.md) and [Week 10 report](README-WEEK-10.md).
+
+Live Labs: [operator configuration, supported workflows and validation](docs/live-labs.md).
+
+xUDT extensions: [local VM lab, owner-mode behavior and reproduction](docs/xudt-extension-lab.md). Basic Token Lab support remains unchanged.

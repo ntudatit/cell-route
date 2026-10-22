@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { inspectAsset, validateQuery, verifyInclusion } from "./live";
 import { profiles } from "./profiles";
-import { encodeBinding } from "./checker";
-import vector from "./merkle-vector.json";
-import deployment from "./deployment-type.json";
+import { encodeBinding } from "./encoding";
+import vector from "../../../tests/rgbpp/merkle-vector.json";
+import deployment from "../../../tests/rgbpp/deployment-type.json";
 const txid = "aa".repeat(32),
   point = "0x" + "bb".repeat(32),
   tip = "cc".repeat(32);

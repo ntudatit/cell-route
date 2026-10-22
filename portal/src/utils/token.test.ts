@@ -119,3 +119,64 @@ it("blocks changed wallets and mutated previews before signing", async () => {
   );
   expect(send).not.toHaveBeenCalled();
 });
+it("keeps extension flags and unknown trailing args out of the basic xUDT builder", () => {
+  const deployment = {
+    network: "test",
+    genesisHash: "0x",
+    script: { ...script, cellDeps: [] },
+  };
+  const owner = script.hash();
+  for (const suffix of [
+    "01000000",
+    "02000000",
+    "03000000",
+    "01000020",
+    "00000000aa",
+  ])
+    expect(() => tokenType("XUDT", owner + suffix, deployment)).toThrow(
+      "basic xUDT",
+    );
+  expect(tokenType("XUDT", owner + "00000000", deployment).args).toBe(
+    owner + "00000000",
+  );
+});
+it.each(["extension", "owner-args", "dependency"])(
+  "invalidates a reviewed transaction after %s mutation",
+  async (variant) => {
+    const send = vi.fn();
+    const signer = {
+      getRecommendedAddress: async () => "sender",
+      sendTransaction: send,
+    } as unknown as ccc.Signer;
+    const tx = ccc.Transaction.default();
+    tx.outputs.push(
+      ccc.CellOutput.from({
+        capacity: 20000000000n,
+        lock: script,
+        type: script.clone(),
+      }),
+    );
+    tx.outputsData.push(encodeAmount(1n));
+    const review = {
+      signer,
+      sender: "sender",
+      tx,
+      fingerprint: ccc.hexFrom(tx.toBytes()),
+    } as TokenReview;
+    if (variant === "dependency")
+      tx.cellDeps.push(
+        ccc.CellDep.from({
+          outPoint: { txHash: "0x" + "22".repeat(32), index: 0 },
+          depType: "code",
+        }),
+      );
+    else
+      tx.outputs[0].type!.args = ccc.hexFrom(
+        script.hash() + (variant === "extension" ? "01000000" : "00000000"),
+      );
+    await expect(submitToken(review, signer)).rejects.toThrow(
+      "changed after preview",
+    );
+    expect(send).not.toHaveBeenCalled();
+  },
+);

@@ -6,14 +6,14 @@ import {
   hex,
   hash256,
   RgbppError,
-} from "./checker";
+} from "./encoding";
 import {
   object,
   request,
   confirmationState,
   type Options,
   type RawResponse,
-} from "./observer";
+} from "./http";
 import { profiles, type ProfileName } from "./profiles";
 export type AssetQuery = {
   network: ProfileName;

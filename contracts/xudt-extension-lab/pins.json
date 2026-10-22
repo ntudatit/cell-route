@@ -1,0 +1,28 @@
+{
+  "implementation": {
+    "repository": "https://github.com/nervosnetwork/ckb-production-scripts",
+    "revision": "abdcb117b512e35910fa8e30241a7a354e5cacf0",
+    "archiveSha256": "8d5fc3dec3fc570f794dd08eddd49053ae869cf18e20d863128f04e7febe457c"
+  },
+  "stdlib": {
+    "repository": "https://github.com/nervosnetwork/ckb-c-stdlib",
+    "revision": "f2631670b655d23630de384245062cf6e121710d",
+    "archiveSha256": "01e657b9703f81efb8424d18758b82765c8a1c75bfca975277104f4e4850565f"
+  },
+  "rfc": {
+    "repository": "https://github.com/nervosnetwork/rfcs",
+    "revision": "53b2c5eb7dd82968327999534be74d7975865b9d",
+    "path": "rfcs/0052-extensible-udt/0052-extensible-udt.md"
+  },
+  "xudt": {
+    "sha256": "e9b92e5783f692f6ee99ca20eeda5f3da282e0f4010eb4fbd3db4e3058239349",
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1",
+    "retrievedFrom": "https://mainnet.ckb.dev",
+    "outPoint": {
+      "txHash": "0xc07844ce21b38e4b071dd0e1ee3b0e27afd8d7532491327f39b786343f558ab7",
+      "index": 0
+    }
+  },
+  "scope": "Local complete mock transactions using the deployed xUDT binary. No network deployment or signing. Source revision is the RFC build reference; xUDT itself is not rebuilt locally."
+}

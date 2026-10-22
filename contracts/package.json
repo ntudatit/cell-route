@@ -22,14 +22,17 @@
     "week6:build": "node scripts/week6/build.mjs",
     "week6:export": "node scripts/week6/export.mjs",
     "week6:test": "jest --runInBand --testPathPattern=sudt.mock",
-    "week6:demo": "node scripts/week6/demo.mjs",
     "runtime:setup": "node scripts/runtime-setup.mjs",
     "runtime:build": "node scripts/runtime-build.mjs",
     "runtime:verify": "node --test tests/runtime-tools.test.mjs && node scripts/runtime-verify.mjs",
     "runtime:debug": "node scripts/runtime-gdb.mjs",
     "runtime:test": "run-s runtime:build runtime:verify runtime:debug",
     "runtime:benchmark": "node scripts/runtime-benchmark.mjs",
-    "runtime:inspect": "node scripts/runtime-inspect.mjs"
+    "runtime:inspect": "node scripts/runtime-inspect.mjs",
+    "xudt:setup": "node scripts/xudt-extension/setup.mjs",
+    "xudt:build": "node scripts/xudt-extension/build.mjs",
+    "xudt:test": "node scripts/xudt-extension/verify.mjs",
+    "xudt:evidence": "node scripts/xudt-extension/export.mjs"
   },
   "dependencies": {
     "@ckb-js-std/bindings": "~1.0.0",

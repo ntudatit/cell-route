@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { checkSample, officialSample, pins, type Sample } from '../src/features/rgbpp/checker';
-import { confirmationState, observe } from '../src/features/rgbpp/observer';
+import { checkSample, officialSample, pins, type Sample } from '../tests/rgbpp/checker';
+import { confirmationState, observe } from '../tests/rgbpp/observer';
 const directory='../docs/evidence/week-10'; mkdirSync(directory,{recursive:true});
 const write=(name:string,value:unknown)=>writeFileSync(`${directory}/${name}`,JSON.stringify(value,null,2)+'\n');
 const hashFile=(path:string)=>createHash('sha256').update(readFileSync(path)).digest('hex');
@@ -30,6 +30,6 @@ write('negative-cases.json',negatives);
 const live=process.argv.includes('--live');
 if(live){const observed=await observe(officialSample);write('observations.json',observed);console.log(JSON.stringify({bitcoin:observed.bitcoin,ckb:observed.ckb,proof:observed.proof},null,2));}
 const pkg=JSON.parse(readFileSync('package.json','utf8'));
-write('environment.json',{recordedAt:new Date().toISOString(),dateTimezone:'Asia/Bangkok',pins,sampleProvenance:officialSample.provenance,node:process.version,cccCore:pkg.dependencies['@ckb-ccc/core'],hashes:{sampleSha256:hashFile('src/features/rgbpp/sample.json'),pinsSha256:hashFile('src/features/rgbpp/pins.json'),portalLockSha256:hashFile('package-lock.json')},runMode:live?'offline checks plus requested live API observations':'offline fixture checks only; existing observations.json is a separate dated capture',proof:'not verified',transfer:'not performed'});
+write('environment.json',{recordedAt:new Date().toISOString(),dateTimezone:'Asia/Bangkok',pins,sampleProvenance:officialSample.provenance,node:process.version,cccCore:pkg.dependencies['@ckb-ccc/core'],hashes:{sampleSha256:hashFile('tests/rgbpp/binding-vector.json'),pinsSha256:hashFile('src/features/rgbpp/pins.json'),portalLockSha256:hashFile('package-lock.json')},runMode:live?'offline checks plus requested live API observations':'offline fixture checks only; existing observations.json is a separate dated capture',proof:'not verified',transfer:'not performed'});
 console.log(`PASS: ${linkage.checks.length} linkage checks, ${negatives.length} negative/policy cases. Proof not verified; transfer not performed.`);
 

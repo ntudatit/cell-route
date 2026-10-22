@@ -1,6 +1,6 @@
 # Live Labs — operator setup and verification
 
-The portal's Labs now accept actual deployment, asset and wallet inputs. Regression fixtures remain available only as explicit test tools; they are not the default RGB++ or DOB workflow. Configuration readiness is separate from evidence that a funded transaction has committed.
+The portal's Labs now accept actual deployment, asset and wallet inputs. Protocol regression vectors are isolated under `portal/tests/rgbpp/` and are not imported by the live application. The old example screens, fixed-pattern DOB Worker and ephemeral-wallet demo runner have been removed. Configuration readiness is separate from evidence that a funded transaction has committed.
 
 ## Supported workflows
 
@@ -55,7 +55,7 @@ Public defaults can be supplied with `VITE_SSRI_NODE_URL` and `VITE_SSRI_SERVER_
 
 Token names, symbols and decimals are display metadata; real contract args and live Cells determine the asset. New operations start with empty user input instead of a Week6 token name/amount. Existing prepared-transaction fingerprint, account and live-input checks remain in place.
 
-Spore content and Cluster name/description start empty. Standard Spore and Cluster signing flows remain unchanged. The optional supported DOB/0 creation template accepts user DNA or generates fresh eight-byte DNA. On-chain DOB preview loads the Spore and Cluster, rechecks both through the node, checks the decoder identity and supports bounded options/range/raw-number traits. Unsupported decoders/modes are reported instead of returning sample attributes. The deployed RISC-V DOB decoder is not executed by this local reference preview.
+Spore content and Cluster name/description start empty. Standard Spore and Cluster signing flows remain unchanged. DOB/0 creation accepts a user-defined pattern and user DNA, or generates fresh eight-byte DNA. On-chain DOB preview loads the Spore and Cluster, rechecks both through the node, checks the decoder identity and supports bounded options/range/raw-number traits. Unsupported decoders/modes are reported instead of returning sample attributes. The deployed RISC-V DOB decoder is not executed by this local reference preview.
 
 ## Fiber and Runtime
 
@@ -79,3 +79,5 @@ This change is verified through unit tests, browser tests, actual public RGB++ q
 The update does not claim a newly funded Simple Lock/Token/Spore transaction, SSRI execution on an operator's unconfigured service, a funded Fiber payment or full RGB++ SPV verification. Those require the user's deployment/service/wallet/funds and their own resulting receipts. No private key, seed phrase or generated wallet secret is stored in these public evidence files.
 
 RGB++ provider URLs can be configured with VITE_RGBPP_TESTNET_CKB_RPC, VITE_RGBPP_TESTNET_BTC_API, VITE_RGBPP_MAINNET_CKB_RPC and VITE_RGBPP_MAINNET_BTC_API. Use public HTTP endpoints without embedded credentials; genesis and deployment identity checks still apply when changing providers.
+
+DOB/0 Cluster creation accepts a compact pattern JSON array. Each row contains the trait name, String/Number type, DNA byte offset, byte length, mode (options/range/rawNumber), and mode arguments. The form starts empty; the selected Cluster's decoder identity and pattern are checked before creating a linked Spore.

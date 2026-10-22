@@ -24,10 +24,9 @@ From `contracts`, use the existing package commands:
 npm run week6:build
 npm run week6:export
 npm run week6:test
-npm run week6:demo
 ```
 
-These command names are retained for compatibility. The demo uses ephemeral in-memory wallets and local Devnet funds to exercise mint, transfer, burn and unauthorized mint rejection. Set `OFFCKB_CLI` to the CLI's `build/index.js` if it is outside the default Windows npm installation; set `CKB_DEBUGGER` for a custom debugger path.
+The contract build/export and regression checks remain supported. The former example-wallet runner has been removed; use your connected wallet in Token Lab.
 
 In `portal`, set `VITE_CKB_NETWORK=devnet`, then run `npm run dev`. Run `npm test` and `npm run build` for frontend validation. The feature's Dev Console exposes operation and wallet/RPC logs.
 

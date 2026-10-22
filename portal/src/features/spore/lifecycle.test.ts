@@ -28,8 +28,8 @@ const cell = ccc.Cell.from({
   outputData: "0x010203",
 });
 describe("Spore transaction safety", () => {
-  it("counts UTF-8 bytes and hashes original Vietnamese content", () => {
-    const text = "Xin chào Việt Nam";
+  it("counts UTF-8 bytes and hashes original multibyte content", () => {
+    const text = "Hello, world 🌍";
     const bytes = new TextEncoder().encode(text);
     expect(bytes.length).toBeGreaterThan(text.length);
     expect(new TextDecoder().decode(bytes)).toBe(text);

@@ -1,0 +1,99 @@
+{
+  "recordedAt": "2026-10-22T14:20:41.254Z",
+  "scope": "Local complete mock transactions using the deployed xUDT binary. No network deployment or signing. Source revision is the RFC build reference; xUDT itself is not rebuilt locally.",
+  "node": "v24.19.0",
+  "ccc": "1.12.2",
+  "testtool": "1.0.5",
+  "implementation": {
+    "repository": "https://github.com/nervosnetwork/ckb-production-scripts",
+    "revision": "abdcb117b512e35910fa8e30241a7a354e5cacf0",
+    "archiveSha256": "8d5fc3dec3fc570f794dd08eddd49053ae869cf18e20d863128f04e7febe457c"
+  },
+  "stdlib": {
+    "repository": "https://github.com/nervosnetwork/ckb-c-stdlib",
+    "revision": "f2631670b655d23630de384245062cf6e121710d",
+    "archiveSha256": "01e657b9703f81efb8424d18758b82765c8a1c75bfca975277104f4e4850565f"
+  },
+  "rfc": {
+    "repository": "https://github.com/nervosnetwork/rfcs",
+    "revision": "53b2c5eb7dd82968327999534be74d7975865b9d",
+    "path": "rfcs/0052-extensible-udt/0052-extensible-udt.md"
+  },
+  "xudt": {
+    "sha256": "e9b92e5783f692f6ee99ca20eeda5f3da282e0f4010eb4fbd3db4e3058239349",
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1",
+    "retrievedFrom": "https://mainnet.ckb.dev",
+    "outPoint": {
+      "txHash": "0xc07844ce21b38e4b071dd0e1ee3b0e27afd8d7532491327f39b786343f558ab7",
+      "index": 0
+    }
+  },
+  "artifacts": {
+    "compiler": "riscv-none-elf-gcc.exe (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0\r",
+    "linker": "LLD 22.1.8 (https://github.com/rust-lang/llvm-project.git 52ed14fcd56afc30f9cccd8ca8ce237c2eef7e04) (compatible with GNU linkers)",
+    "commands": [
+      [
+        "$CONTRACTS_ROOTbuild\\toolchains\\xpack-riscv-none-elf-gcc-15.2.0-1\\bin\\riscv-none-elf-gcc.exe",
+        "-march=rv64imc",
+        "-mabi=lp64",
+        "-fPIC",
+        "-Os",
+        "-fno-builtin",
+        "-nostdinc",
+        "-nostdlib",
+        "-nostartfiles",
+        "-fvisibility=hidden",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-I$CONTRACTS_ROOTbuild\\week11\\ckb-c-stdlib-f2631670b655d23630de384245062cf6e121710d",
+        "-I$CONTRACTS_ROOTbuild\\week11\\ckb-c-stdlib-f2631670b655d23630de384245062cf6e121710d\\libc",
+        "-I$CONTRACTS_ROOTbuild\\week11\\ckb-c-stdlib-f2631670b655d23630de384245062cf6e121710d\\molecule",
+        "-I$CONTRACTS_ROOTbuild\\week11\\ckb-production-scripts-abdcb117b512e35910fa8e30241a7a354e5cacf0\\c",
+        "-D__SHARED_LIBRARY__",
+        "-c",
+        "-o",
+        "build/week11/marker.o",
+        "xudt-extension-lab/marker.c"
+      ],
+      [
+        "$USERPROFILE\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\x86_64-pc-windows-msvc\\bin\\rust-lld.exe",
+        "-flavor",
+        "gnu",
+        "-m",
+        "elf64lriscv",
+        "-shared",
+        "-Bsymbolic",
+        "--no-rosegment",
+        "-e",
+        "_start",
+        "--gc-sections",
+        "--dynamic-list=xudt-extension-lab/validate.syms",
+        "--build-id=none",
+        "-z",
+        "max-page-size=4096",
+        "-o",
+        "build/week11/marker",
+        "build/week11/marker.o"
+      ]
+    ],
+    "xudt": {
+      "sha256": "e9b92e5783f692f6ee99ca20eeda5f3da282e0f4010eb4fbd3db4e3058239349",
+      "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "hashType": "data1",
+      "retrievedFrom": "https://mainnet.ckb.dev",
+      "outPoint": {
+        "txHash": "0xc07844ce21b38e4b071dd0e1ee3b0e27afd8d7532491327f39b786343f558ab7",
+        "index": 0
+      }
+    },
+    "extension": {
+      "sha256": "c965be4ab0733f9c4786a0785e2e26d0bba1383c34fda7a23025afbdb6996a73",
+      "codeHash": "0x1b05cec41fb93461a1cd3bd7951ab7d700f4111c8bc2802cf111c3c6043a81c2",
+      "hashType": "data1",
+      "bytes": 8448,
+      "sourceSha256": "82c709e2f18c8d8b96f258e96c3fd79a548b0d851180d2b21fc4b1a0ca5e2977"
+    }
+  },
+  "verification": "Every input lock, auxiliary authority type, and xUDT type group executed. No node consensus, wallet or signature lifecycle claim."
+}

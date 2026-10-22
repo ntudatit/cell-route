@@ -18,7 +18,7 @@ import {
   verifyNetwork,
 } from "./lifecycle";
 import { DobPreview } from "./dob/Preview";
-import { clusterDescription } from "./dob/fixture";
+import { clusterDescription } from "./dob/clusterProfile";
 import { recordSubmittedAsset } from "../../utils/submission";
 import "./studio.css";
 
@@ -44,6 +44,7 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
   const [clusterId, setClusterId] = useState("");
   const [recipient, setRecipient] = useState("");
   const [dobMode, setDobMode] = useState(false);
+  const [dobPattern, setDobPattern] = useState("");
   const [dna, setDna] = useState("");
   const [prepared, setPrepared] = useState<Prepared>();
   const [meltConfirmed, setMeltConfirmed] = useState(false);
@@ -98,7 +99,7 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
         throw Error("File exceeds the 16 KiB Studio limit.");
       if (dobMode && !cluster && !clusterId.trim())
         throw Error(
-          "DOB/0 requires the Cluster created with the pinned pattern.",
+          "DOB/0 requires the Cluster created with the selected pattern.",
         );
       if (dobMode && !cluster && !/^[0-9a-f]{16}$/i.test(dna))
         throw Error("Enter your8-byte DNA as16 hex characters.");
@@ -113,9 +114,12 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
           id,
           clusterId,
           recipient,
-          pinnedDob: dobMode,
+          dob0: dobMode,
           name,
-          description: dobMode ? clusterDescription(client) : description,
+          description:
+            dobMode && cluster
+              ? clusterDescription(client, description, dobPattern)
+              : description,
           content: bytes,
           contentType: dobMode
             ? "dob/0"
@@ -339,9 +343,17 @@ export function SporeStudio({ cluster = false }: { cluster?: boolean }) {
                   checked={dobMode}
                   onChange={(e) => setDobMode(e.target.checked)}
                 />{" "}
-                Use pinned DOB/0 basic-loot{" "}
-                {cluster ? "Cluster pattern" : "DNA"}
+                Use DOB/0 {cluster ? "Cluster pattern" : "DNA"}
               </label>
+              {dobMode && cluster && (
+                <label>
+                  DOB/0 pattern JSON
+                  <textarea
+                    value={dobPattern}
+                    onChange={(e) => setDobPattern(e.target.value)}
+                  />
+                </label>
+              )}
               {dobMode && !cluster && (
                 <label>
                   DOB DNA (8 bytes hex)

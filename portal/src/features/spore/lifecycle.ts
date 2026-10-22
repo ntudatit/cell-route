@@ -16,7 +16,7 @@ import {
   configuredNetwork,
   MAINNET_GENESIS,
 } from "../../utils/network";
-import { clusterDescription } from "./dob/fixture";
+import { validateCluster } from "./dob/clusterProfile";
 
 export const CONTENT_LIMIT = 16 * 1024;
 export const TESTNET_GENESIS =
@@ -98,7 +98,7 @@ export interface Request {
   recipient?: string;
   name?: string;
   description?: string;
-  pinnedDob?: boolean;
+  dob0?: boolean;
 }
 export async function ownedCell(signer: ccc.Signer, cell: ccc.Cell) {
   const addresses = await signer.getAddresses();
@@ -168,18 +168,12 @@ export async function prepare(
         throw Error(
           "Unknown Cluster ID. The requested link will not be dropped.",
         );
-      if (
-        request.pinnedDob &&
-        cluster.clusterData.description !== clusterDescription(client)
-      )
-        throw Error(
-          "Selected Cluster does not contain the pinned DOB/0 pattern and decoder.",
-        );
+      if (request.dob0)
+        validateCluster(client, cluster.clusterData.description, content!);
       await ownedCell(signer, cluster.cell);
       clusterBefore = cluster.cell;
     }
-    if (request.pinnedDob && !clusterId)
-      throw Error("Pinned DOB requires a Cluster.");
+    if (request.dob0 && !clusterId) throw Error("DOB/0 requires a Cluster.");
     built = await createSpore({
       signer,
       data: { contentType, content: content!, clusterId },
