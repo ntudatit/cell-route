@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "measuredAt": "2026-10-31T09:58:04.436Z",
+  "network": "testnet",
+  "runtime": "v26.13.0",
+  "sdk": {
+    "package": "@ickb/sdk",
+    "version": "9001.0.0",
+    "revision": "5d00050d53f450951d40c8a564535b63a599bc76",
+    "repository": "https://github.com/ickb/stack",
+    "integrity": "sha512-nSdMqKItvQVkaw4tzBsD2M9+CW5qQwgizaM7FQ7SbYfkzQRR2ZyEA5pXVCqEuBxg7EvmBfjzXM6eqXWfzaWI5A==",
+    "node": "26.13.0",
+    "ccc": "1.23.0"
+  },
+  "migration": {
+    "handbookUrl": "https://github.com/ickb/sdk",
+    "outcome": "404 on 2026-10-31",
+    "officialSource": "https://ickb.org/",
+    "currentRepository": "https://github.com/ickb/stack/tree/master/sdk"
+  },
+  "sdkModuleHashes": {
+    "udt.js": "1cbac3ad2f8870453f91b39226a918412aa8ec3a282705f3fdfd0f868756ee15",
+    "constants.js": "44b89a3868a097f0b9d9a15edb7bb0fb0f5d2fefd4553598738cd0c81d8657bf",
+    "logic.js": "8f18007a666d951e198fa245a21ec9281ac61fd8bd614cfe715c25008f2bce79",
+    "dao.js": "fb7cb20a8c7d6264dd225d01ffe28be44811c3c1886991c059abfd91221ca7e0",
+    "order/conversion.js": "e25d5bacfae9e070ebda460e505e052cd31929f7a5eac5ebd9817f488754aef4"
+  },
+  "lockSha256": "246725e6c35f64777ac566d6ec62e81555e6a53728b393657a85d60cff9e0e03",
+  "snapshot": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321",
+  "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "codeChecks": [
+    {
+      "codeHash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+      "outPoint": {
+        "txHash": "0x9ac989b3355764f76cdce02c69dedb819fdfbcbda49a7db1a2c9facdfdb9a7fe",
+        "index": 0
+      }
+    },
+    {
+      "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+      "outPoint": {
+        "txHash": "0x9ac989b3355764f76cdce02c69dedb819fdfbcbda49a7db1a2c9facdfdb9a7fe",
+        "index": 1
+      }
+    },
+    {
+      "codeHash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+      "outPoint": {
+        "txHash": "0x9ac989b3355764f76cdce02c69dedb819fdfbcbda49a7db1a2c9facdfdb9a7fe",
+        "index": 2
+      }
+    },
+    {
+      "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "outPoint": {
+        "txHash": "0xbf6fb538763efec2a70a6a3dcb7242787087e1030c4e7d86585bc63a9d337f5f",
+        "index": 0
+      }
+    }
+  ],
+  "layers": [
+    "actual public RPC observation",
+    "actual SDK pure arithmetic and construction",
+    "independent integer arithmetic",
+    "SDK public builder rejection guards"
+  ],
+  "notPerformed": [
+    "funded wallet preparation",
+    "VM validation of the deposit construction",
+    "signing",
+    "broadcast",
+    "commitment",
+    "deposit/redeem lifecycle"
+  ]
+}

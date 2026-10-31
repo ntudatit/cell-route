@@ -6,6 +6,7 @@ export default defineConfig({
     "simple-lock.spec.ts",
     "spore-week8.spec.ts",
     "live-labs.spec.ts",
+    "ickb.spec.ts",
   ],
   reporter: "line",
   use: { baseURL: "http://127.0.0.1:4190", trace: "retain-on-failure" },

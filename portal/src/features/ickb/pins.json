@@ -1,0 +1,54 @@
+{
+  "sdk": {
+    "package": "@ickb/sdk",
+    "version": "9001.0.0",
+    "revision": "5d00050d53f450951d40c8a564535b63a599bc76",
+    "repository": "https://github.com/ickb/stack",
+    "integrity": "sha512-nSdMqKItvQVkaw4tzBsD2M9+CW5qQwgizaM7FQ7SbYfkzQRR2ZyEA5pXVCqEuBxg7EvmBfjzXM6eqXWfzaWI5A==",
+    "node": "26.13.0",
+    "ccc": "1.23.0"
+  },
+  "migration": {
+    "handbookUrl": "https://github.com/ickb/sdk",
+    "outcome": "404 on 2026-10-31",
+    "officialSource": "https://ickb.org/",
+    "currentRepository": "https://github.com/ickb/stack/tree/master/sdk"
+  },
+  "logic": {
+    "codeHash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+    "hashType": "data1",
+    "args": "0x"
+  },
+  "dao": {
+    "codeHash": "0x82d76d1b75fe2fd9a27dfbaa65a039221a380d76c926f378d3f81cf3e7e13f2e",
+    "hashType": "type",
+    "args": "0x"
+  },
+  "xudtCodeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+  "ownedOwnerCodeHash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+  "orderCodeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+  "networks": {
+    "testnet": {
+      "rpc": "https://testnet.ckb.dev",
+      "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+      "depGroup": {
+        "txHash": "0xf7ece4fb33d8378344cab11fcd6a4c6f382fd4207ac921cf5821f30712dcd311",
+        "index": 0
+      }
+    },
+    "mainnet": {
+      "rpc": "https://mainnet.ckb.dev",
+      "genesis": "0x92b197aa1fba0f63633922c61c92375c9c074a93e85963554f5499fe1450d0e5",
+      "depGroup": {
+        "txHash": "0x621a6f38de3b9f453016780edac3b26bfcbfa3e2ecb47c2da275471a5d3ed165",
+        "index": 0
+      }
+    }
+  },
+  "review": {
+    "repository": "https://github.com/ickb/contracts",
+    "revision": "c951927e35fb5d4a13e28c5e55687d49cea7ca05",
+    "path": "ICKB-Audit-Report.md",
+    "contractRevision": "454cfa966052a621c4e8b67001718c29ee8191a2"
+  }
+}

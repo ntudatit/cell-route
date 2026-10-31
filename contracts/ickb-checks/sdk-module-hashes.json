@@ -1,0 +1,7 @@
+{
+  "udt.js": "1cbac3ad2f8870453f91b39226a918412aa8ec3a282705f3fdfd0f868756ee15",
+  "constants.js": "44b89a3868a097f0b9d9a15edb7bb0fb0f5d2fefd4553598738cd0c81d8657bf",
+  "logic.js": "8f18007a666d951e198fa245a21ec9281ac61fd8bd614cfe715c25008f2bce79",
+  "dao.js": "fb7cb20a8c7d6264dd225d01ffe28be44811c3c1886991c059abfd91221ca7e0",
+  "order/conversion.js": "e25d5bacfae9e070ebda460e505e052cd31929f7a5eac5ebd9817f488754aef4"
+}

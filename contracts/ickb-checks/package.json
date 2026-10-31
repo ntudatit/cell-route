@@ -1,0 +1,18 @@
+{
+  "name": "cellroute-ickb-checks",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "verify": "node verify.mjs"
+  },
+  "dependencies": {
+    "@ickb/sdk": "9001.0.0",
+    "@ckb-ccc/core": "1.23.0"
+  },
+  "overrides": {
+    "@ckb-ccc/core": "1.23.0"
+  }
+}

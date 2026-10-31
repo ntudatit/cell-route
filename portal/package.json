@@ -19,7 +19,8 @@
     "check:mainnet": "node scripts/check-mainnet.mjs",
     "test:e2e:mainnet": "npm run build:mainnet && playwright test --config=playwright.mainnet.config.ts",
     "test:e2e:labs": "playwright test --config playwright.labs.config.ts",
-    "rgbpp:live": "node scripts/rgbpp-live.mjs"
+    "rgbpp:live": "node scripts/rgbpp-live.mjs",
+    "ickb:bridge": "node scripts/ickb-bridge.mjs"
   },
   "dependencies": {
     "@ckb-ccc/connector-react": "1.1.9",

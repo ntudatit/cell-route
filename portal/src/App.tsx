@@ -1,3 +1,4 @@
+import { IckbInspectorPage } from './pages/features/IckbInspectorPage';
 import { RgbppInspectorPage } from './pages/features/RgbppInspectorPage';
 import { SsriInspectorPage } from './pages/features/SsriInspectorPage';
 import { FeatureDevConsole } from "./dev-console/FeatureDevConsole";
@@ -59,6 +60,7 @@ export default function App() {
       <Route path="/wallet" element={<Protected><WalletPage /></Protected>} />
       <Route path="/cells" element={<Protected><CellsPage /></Protected>} />
       <Route path="/transfer-ckb" element={<Protected><TransferCkbPage /></Protected>} />
+      <Route path="/ickb" element={<IckbInspectorPage />} />
       <Route path="/rgbpp" element={<RgbppInspectorPage />} />
       <Route path="/ssri" element={<SsriInspectorPage />} />
       <Route path="/simple-lock" element={<SimpleLockLabPage />} />

@@ -1,0 +1,474 @@
+{
+  "status": "passed",
+  "measuredAt": "2026-10-31T09:58:04.436Z",
+  "anchor": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321",
+  "network": "testnet",
+  "records": [
+    {
+      "name": "exchange ratio",
+      "layer": "SDK public API",
+      "input": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321",
+      "expected": {
+        "ckbScale": "10000000000000000",
+        "udtScale": "11952265912622031"
+      },
+      "actual": {
+        "ckbScale": "10000000000000000",
+        "udtScale": "11952265912622031"
+      },
+      "status": "passed"
+    },
+    {
+      "name": "receipt-0",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "0",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "0",
+      "actual": "0",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-1",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "1",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "0",
+      "actual": "0",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-8200000000",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "8200000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "6865333848",
+      "actual": "6865333848",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-100000000000",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "100000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "83723583519",
+      "actual": "83723583519",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-9999999999999",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "9999999999999",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "8372358351967",
+      "actual": "8372358351967",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-10000000000000",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "10000000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "8372358351968",
+      "actual": "8372358351968",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-11944065912622",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "11944065912622",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "9999999999999",
+      "actual": "9999999999999",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-11944065912623",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "11944065912623",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "10000000000000",
+      "actual": "10000000000000",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-11944065912624",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "11944065912624",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "10000000000001",
+      "actual": "10000000000001",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-11944065912723",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "11944065912723",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "10000000000076",
+      "actual": "10000000000076",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-23888131825246",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "23888131825246",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "19000000000001",
+      "actual": "19000000000001",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-100000000000000",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "100000000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "76351225167714",
+      "actual": "76351225167714",
+      "status": "passed"
+    },
+    {
+      "name": "receipt-18446744073709551615",
+      "layer": "pinned internal SDK arithmetic",
+      "input": {
+        "freeShannons": "18446744073709551615",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "13899848663092821385",
+      "actual": "13899848663092821385",
+      "status": "passed"
+    },
+    {
+      "name": "quote-ckb-to-ickb-1",
+      "layer": "SDK public quote; not an order fill",
+      "input": {
+        "amount": "1",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "1",
+      "actual": "1",
+      "status": "passed"
+    },
+    {
+      "name": "quote-ckb-to-ickb-100000000000",
+      "layer": "SDK public quote; not an order fill",
+      "input": {
+        "amount": "100000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "83657777305",
+      "actual": "83657777305",
+      "status": "passed"
+    },
+    {
+      "name": "quote-ckb-to-ickb-10000000000000",
+      "layer": "SDK public quote; not an order fill",
+      "input": {
+        "amount": "10000000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "8365777730431",
+      "actual": "8365777730431",
+      "status": "passed"
+    },
+    {
+      "name": "quote-ckb-to-ickb-100000000000000",
+      "layer": "SDK public quote; not an order fill",
+      "input": {
+        "amount": "100000000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "83657777304308",
+      "actual": "83657777304308",
+      "status": "passed"
+    },
+    {
+      "name": "quote-ickb-to-ckb-1",
+      "layer": "SDK public quote; not an order fill",
+      "input": {
+        "amount": "1",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "2",
+      "actual": "2",
+      "status": "passed"
+    },
+    {
+      "name": "quote-ickb-to-ckb-100000000000",
+      "layer": "SDK public quote; not an order fill",
+      "input": {
+        "amount": "100000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "119510706861",
+      "actual": "119510706861",
+      "status": "passed"
+    },
+    {
+      "name": "quote-ickb-to-ckb-10000000000000",
+      "layer": "SDK public quote; not an order fill",
+      "input": {
+        "amount": "10000000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "11951070686031",
+      "actual": "11951070686031",
+      "status": "passed"
+    },
+    {
+      "name": "quote-ickb-to-ckb-100000000000000",
+      "layer": "SDK public quote; not an order fill",
+      "input": {
+        "amount": "100000000000000",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "119510706860308",
+      "actual": "119510706860308",
+      "status": "passed"
+    },
+    {
+      "name": "default order fee",
+      "layer": "SDK public constants",
+      "input": null,
+      "expected": {
+        "fee": "10",
+        "base": "100000"
+      },
+      "actual": {
+        "fee": "10",
+        "base": "100000"
+      },
+      "status": "passed"
+    },
+    {
+      "name": "deployment logic",
+      "layer": "pinned SDK configuration",
+      "input": "testnet",
+      "expected": "0x350000001000000030000000310000002a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd30200000000",
+      "actual": "0x350000001000000030000000310000002a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd30200000000",
+      "status": "passed"
+    },
+    {
+      "name": "deployment group",
+      "layer": "pinned SDK configuration",
+      "input": "testnet",
+      "expected": "0xf7ece4fb33d8378344cab11fcd6a4c6f382fd4207ac921cf5821f30712dcd31100000000",
+      "actual": "0xf7ece4fb33d8378344cab11fcd6a4c6f382fd4207ac921cf5821f30712dcd31100000000",
+      "status": "passed"
+    },
+    {
+      "name": "deposit construction",
+      "layer": "pinned internal SDK construction; UNFUNDED",
+      "input": {
+        "freeShannons": "100000000000",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x0000000000000000000000000000000000000000"
+        },
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": "0xad0100000c000000a90100009d0100001c00000020000000490000004d00000051000000750100000000000001000000f7ece4fb33d8378344cab11fcd6a4c6f382fd4207ac921cf5821f30712dcd31100000000010000000000000000240100000c0000008e0000008200000010000000180000004d00000000fa383119000000350000001000000030000000310000002a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd302000000003500000010000000300000003100000082d76d1b75fe2fd9a27dfbaa65a039221a380d76c926f378d3f81cf3e7e13f2e01000000009600000010000000180000006100000000d0c6d704000000490000001000000030000000310000009bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce801140000000000000000000000000000000000000000000000350000001000000030000000310000002a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd30200000000280000000c000000180000000800000000000000000000000c0000000100000000e876481700000004000000",
+      "actual": "0xad0100000c000000a90100009d0100001c00000020000000490000004d00000051000000750100000000000001000000f7ece4fb33d8378344cab11fcd6a4c6f382fd4207ac921cf5821f30712dcd31100000000010000000000000000240100000c0000008e0000008200000010000000180000004d00000000fa383119000000350000001000000030000000310000002a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd302000000003500000010000000300000003100000082d76d1b75fe2fd9a27dfbaa65a039221a380d76c926f378d3f81cf3e7e13f2e01000000009600000010000000180000006100000000d0c6d704000000490000001000000030000000310000009bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce801140000000000000000000000000000000000000000000000350000001000000030000000310000002a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd30200000000280000000c000000180000000800000000000000000000000c0000000100000000e876481700000004000000",
+      "status": "passed"
+    },
+    {
+      "name": "negative amount",
+      "layer": "SDK public builder early guard only",
+      "input": {
+        "amount": "-1",
+        "direction": "ckb-to-ickb"
+      },
+      "expected": "amount-negative",
+      "actual": "amount-negative",
+      "status": "passed"
+    },
+    {
+      "name": "insufficient CKB",
+      "layer": "SDK public builder early guard only",
+      "input": {
+        "amount": "1",
+        "direction": "ckb-to-ickb"
+      },
+      "expected": "insufficient-ckb",
+      "actual": "insufficient-ckb",
+      "status": "passed"
+    },
+    {
+      "name": "insufficient iCKB",
+      "layer": "SDK public builder early guard only",
+      "input": {
+        "amount": "1",
+        "direction": "ickb-to-ckb"
+      },
+      "expected": "insufficient-ickb",
+      "actual": "insufficient-ickb",
+      "status": "passed"
+    },
+    {
+      "name": "withdrawal-window-1/4",
+      "layer": "pinned SDK timing policy; not spendability",
+      "input": {
+        "offsetQuarters": "1",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": false,
+      "actual": false,
+      "status": "passed"
+    },
+    {
+      "name": "withdrawal-window-8/4",
+      "layer": "pinned SDK timing policy; not spendability",
+      "input": {
+        "offsetQuarters": "8",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": true,
+      "actual": true,
+      "status": "passed"
+    },
+    {
+      "name": "withdrawal-window-72/4",
+      "layer": "pinned SDK timing policy; not spendability",
+      "input": {
+        "offsetQuarters": "72",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": false,
+      "actual": false,
+      "status": "passed"
+    },
+    {
+      "name": "withdrawal-window-120/4",
+      "layer": "pinned SDK timing policy; not spendability",
+      "input": {
+        "offsetQuarters": "120",
+        "header": "0xc81960cdc1169df82496ad826d26529ae006a4fc25a65296af64fedbc52ad321"
+      },
+      "expected": false,
+      "actual": false,
+      "status": "passed"
+    },
+    {
+      "name": "negative user amount",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Use an unsigned amount with at most 8 decimal places.",
+      "status": "passed"
+    },
+    {
+      "name": "too many decimals",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Use an unsigned amount with at most 8 decimal places.",
+      "status": "passed"
+    },
+    {
+      "name": "uint64 overflow",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Amount exceeds the supported integer range.",
+      "status": "passed"
+    },
+    {
+      "name": "uint128 overflow",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Amount outside the supported range.",
+      "status": "passed"
+    },
+    {
+      "name": "invalid AR",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Invalid DAO accumulated rate.",
+      "status": "passed"
+    },
+    {
+      "name": "network mismatch",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Snapshot network/genesis mismatch.",
+      "status": "passed"
+    },
+    {
+      "name": "stale quote",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Snapshot is stale or future-dated. Refresh before preview.",
+      "status": "passed"
+    },
+    {
+      "name": "missing dependency identity",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Unverified iCKB code dependencies.",
+      "status": "passed"
+    },
+    {
+      "name": "bad group encoding",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Unsupported dep group encoding/size.",
+      "status": "passed"
+    },
+    {
+      "name": "header corruption",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Header content hash mismatch.",
+      "status": "passed"
+    },
+    {
+      "name": "deposit below minimum",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "iCKB deposit minimum is 1000 CKB free capacity (1082 CKB total capacity)",
+      "status": "passed"
+    },
+    {
+      "name": "deposit above maximum",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "iCKB deposit maximum is 1000000 CKB free capacity (1000082 CKB total capacity)",
+      "status": "passed"
+    },
+    {
+      "name": "zero deposit quantity",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "iCKB deposit quantity must be a positive safe integer",
+      "status": "passed"
+    },
+    {
+      "name": "invalid order fee",
+      "layer": "local validation negative case",
+      "expected": "reject",
+      "actual": "Fee too big relative to feeBase",
+      "status": "passed"
+    }
+  ]
+}

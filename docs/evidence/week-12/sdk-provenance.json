@@ -1,0 +1,51 @@
+{
+  "scope": "Registry provenance metadata inspected; no independent Sigstore signature verification. Package integrity is enforced by the npm lockfile.",
+  "source": "https://registry.npmjs.org/-/npm/v1/attestations/@ickb%2fsdk@9001.0.0",
+  "statement": {
+    "_type": "https://in-toto.io/Statement/v1",
+    "subject": [
+      {
+        "name": "pkg:npm/%40ickb/sdk@9001.0.0",
+        "digest": {
+          "sha512": "9d274ca8a22dbd05646b0e2dcc1b03d8cf7e096e6a430822cda33b150ed26d87e4cd0451d99c84039a57542a84b81c60ec4be605f8f35cce9ea9759fcda588e4"
+        }
+      }
+    ],
+    "predicateType": "https://slsa.dev/provenance/v1",
+    "predicate": {
+      "buildDefinition": {
+        "buildType": "https://slsa-framework.github.io/github-actions-buildtypes/workflow/v1",
+        "externalParameters": {
+          "workflow": {
+            "ref": "refs/heads/master",
+            "repository": "https://github.com/ickb/stack",
+            "path": ".github/workflows/ci.yaml"
+          }
+        },
+        "internalParameters": {
+          "github": {
+            "event_name": "push",
+            "repository_id": "1069876216",
+            "repository_owner_id": "110417619"
+          }
+        },
+        "resolvedDependencies": [
+          {
+            "uri": "git+https://github.com/ickb/stack@refs/heads/master",
+            "digest": {
+              "gitCommit": "5d00050d53f450951d40c8a564535b63a599bc76"
+            }
+          }
+        ]
+      },
+      "runDetails": {
+        "builder": {
+          "id": "https://github.com/actions/runner/github-hosted"
+        },
+        "metadata": {
+          "invocationId": "https://github.com/ickb/stack/actions/runs/41187348761/attempts/1"
+        }
+      }
+    }
+  }
+}

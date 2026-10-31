@@ -60,6 +60,7 @@ const fiberOps = [
 ];
 
 const tools = [
+  { to: '/ickb', label: 'iCKB Inspector', icon: Coins },
   { to: '/rgbpp', label: 'RGB++ Inspector', icon: FileCode2 },
   { to: '/ssri', label: 'SSRI Inspector', icon: FileCode2 },
   { to: "/simple-lock", label: "Simple Lock Lab", icon: FileCode2 },

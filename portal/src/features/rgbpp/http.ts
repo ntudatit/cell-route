@@ -4,6 +4,7 @@ export interface Options {
   signal?: AbortSignal;
   fetcher?: typeof fetch;
   timeoutMs?: number;
+  maxResponseBytes?: number;
 }
 export interface RawResponse {
   source: string;
@@ -22,6 +23,9 @@ export async function request(
   options: Options = {},
 ) {
   const timeout = options.timeoutMs ?? 12000;
+  const limit = options.maxResponseBytes ?? 1048576;
+  if (!Number.isSafeInteger(limit) || limit < 1 || limit > 8 * 1048576)
+    throw new RgbppError("Invalid response size limit.");
   if (!Number.isFinite(timeout) || timeout < 1 || timeout > 30000)
     throw new RgbppError("Invalid timeout.");
   const controller = new AbortController();
@@ -45,7 +49,7 @@ export async function request(
       throw new RgbppError(`HTTP ${response.status}; state is unknown.`);
     if (
       !response.body ||
-      Number(response.headers.get("content-length")) > 1048576
+      Number(response.headers.get("content-length")) > limit
     )
       throw new RgbppError("Missing or oversized API response.");
     reader = response.body.getReader();
@@ -55,7 +59,8 @@ export async function request(
       const next = await reader.read();
       if (next.done) break;
       size += next.value.length;
-      if (size > 1048576) throw new RgbppError("API response exceeds 1 MiB.");
+      if (size > limit)
+        throw new RgbppError(`API response exceeds ${limit} bytes.`);
       parts.push(next.value);
     }
     const data = new Uint8Array(size);

@@ -1,7 +1,7 @@
 export const FEATURES: Record<string, string> = {
  '/': 'Home', '/platform': 'Platform Overview', '/checkout': 'Checkout', '/merchant': 'Merchant Console',
  '/dashboard': 'Dashboard', '/wallet': 'Wallet', '/cells': 'Live Cells', '/transfer-ckb': 'Transfer CKB',
- '/rgbpp': 'RGB++ Inspector', '/ssri': 'SSRI Inspector', '/simple-lock': 'Simple Lock Lab', '/store-data': 'Store Data', '/fungible-token': 'Fungible Token',
+ '/ickb': 'iCKB Inspector', '/rgbpp': 'RGB++ Inspector', '/ssri': 'SSRI Inspector', '/simple-lock': 'Simple Lock Lab', '/store-data': 'Store Data', '/fungible-token': 'Fungible Token',
  '/dob-spore': 'DOB / Spore', '/spore-clusters': 'Spore Clusters', '/sign-message': 'Sign Message',
  '/activity-log': 'Activity Log', '/assets': 'Asset Portfolio', '/explorer': 'Explorer', '/faucet': 'Faucet',
  '/docs': 'API Documentation', '/playground': 'Playground', '/connect-wallets': 'Connect Wallets Guide',

@@ -1,0 +1,12 @@
+{
+  "daoRfc": {
+    "revision": "37d0c2537bfb7bc9285b1715632c7ffbd785dfa9",
+    "path": "rfcs/0023-dao-deposit-withdraw/0023-dao-deposit-withdraw.md",
+    "repository": "https://github.com/nervosnetwork/rfcs"
+  },
+  "whitepaper": {
+    "revision": "3e0ffbdc1a776150439ab322018d61da03c27481",
+    "sha256": "50365cec4943dc922b28b8a69015868200c12b5d23d30f37e96842589c765e74",
+    "repository": "https://github.com/ickb/whitepaper"
+  }
+}
