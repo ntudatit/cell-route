@@ -12,6 +12,21 @@ I added `/ickb` to CellRoute with public snapshot checks, exact amount handling,
 
 The reference SDK is isolated from the React application. `@ickb/sdk` 9001.0.0 requires Node 26 and CCC 1.23.0, while the existing portal keeps its current toolchain. The handbook SDK URL returned 404; the official iCKB website points to the stack repository. Registry provenance metadata identifies stack commit `5d00050d53f450951d40c8a564535b63a599bc76`, which is pinned alongside package integrity and comparison-module hashes.
 
+## Source versions
+
+| Component | Pinned version / revision |
+| --- | --- |
+| iCKB SDK | `@ickb/sdk` 9001.0.0 |
+| SDK source (`ickb/stack`) | `5d00050d53f450951d40c8a564535b63a599bc76` |
+| Isolated verification runtime | Node 26.13.0, CCC 1.23.0 |
+| Portal CCC | 1.19.1; not upgraded for the SDK checks |
+| iCKB whitepaper | `3e0ffbdc1a776150439ab322018d61da03c27481` |
+| DAO RFC 0023 | `37d0c2537bfb7bc9285b1715632c7ffbd785dfa9` |
+| Contract review snapshot | `c951927e35fb5d4a13e28c5e55687d49cea7ca05` |
+| Contract revision identified by the reviews | `454cfa966052a621c4e8b67001718c29ee8191a2` |
+
+See [protocol sources](evidence/week-12/protocol-sources.json), [SDK provenance](evidence/week-12/sdk-provenance.json) and [environment](evidence/week-12/environment.json). Inspecting registry provenance metadata is not independent verification of its Sigstore signatures.
+
 ## Protocol understanding
 
 An iCKB receipt represents deposits with a value tied to their commitment block's DAO accumulated rate. Accounting uses free capacity after the 82 CKB occupied portion. It applies floor division and a per-deposit discount above the soft cap. This is different from the SDK's gross exchange ratio and ceiling-rounded order pricing.
@@ -53,6 +68,19 @@ I reviewed the ScaleBit report's version, scope, findings and limitations, inclu
 This integration excludes limit-order execution and signing. It uses pinned internal SDK helpers only as test oracles; those helpers are not imported into the portal and are not presented as stable public APIs. The public SDK's builder experiments exercise rejection guards without accessing a wallet.
 
 ## Reproduce and next steps
+
+From the repository root, install dependencies and build the independent comparison bridge:
+
+```powershell
+npm --prefix portal ci
+npm --prefix contracts/ickb-checks ci --ignore-scripts
+npm --prefix portal run ickb:bridge
+npm exec --yes --package=node@26.13.0 -- node contracts/ickb-checks/verify.mjs testnet --replay
+npm --prefix portal test
+npm --prefix portal run build
+```
+
+The SDK verification must execute under Node 26. The `--replay` command uses the recorded snapshot and writes historical replay results into ignored build storage; it neither refreshes the chain observation nor overwrites its public evidence. Omit `--replay` only when deliberately collecting a new live Testnet snapshot.
 
 Follow the [iCKB guide](ickb-inspector.md) for exact setup, source references, formulas and commands. It documents live collection and historical replay separately.
 
