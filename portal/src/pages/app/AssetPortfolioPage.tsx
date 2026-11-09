@@ -25,6 +25,7 @@ export function AssetPortfolioPage() {
   const version = ++generation.current;
   setEvents([]); setOnChain([]); setAddress(''); setSyncing(false);
   if (!signer) { setStatus('Connect a wallet to load assets.'); return; }
+  if (!auth.authenticated) { setStatus('Authenticate the API to view your asset records.'); return; }
   setStatus('Loading asset state...');
   void (async () => {
    try {
@@ -39,7 +40,7 @@ export function AssetPortfolioPage() {
    }
   })();
   return () => { generation.current++; };
- }, [signer]);
+ }, [signer, auth.authenticated, auth.walletAddress]);
 
  async function sync() {
  const featureOperation = beginOperation(featureConsoleScope, 'action', 'sync');

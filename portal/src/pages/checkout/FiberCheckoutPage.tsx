@@ -55,7 +55,9 @@ export function FiberCheckoutPage() {
       <div className="checkout-tabs"><button className={mode === "receive" ? "active" : ""} onClick={() => setMode("receive")}>Receive</button><button className={mode === "pay" ? "active" : ""} onClick={() => setMode("pay")}>Pay invoice</button></div>
       {mode === "receive" ? <div className="checkout-form"><label>Amount (raw asset units)</label><input inputMode="numeric" value={amount} onChange={event => setAmount(event.target.value.replace(/\D/g, ""))}/><label>Order description</label><input value={description} onChange={event => setDescription(event.target.value)}/><button className="btn primary" disabled={busy || runtime.loading || !runtime.node} onClick={() => void createInvoice()}><CreditCard size={16}/>{busy ? "Creating…" : "Create invoice"}</button>{invoice && <div className="checkout-result"><CheckCircle2/><div><b>Invoice created</b><textarea readOnly value={invoice}/><button className="btn secondary" onClick={() => void navigator.clipboard.writeText(invoice)}><Copy size={14}/>Copy invoice</button></div></div>}</div>
       : <div className="checkout-form"><label>Fiber invoice</label><textarea rows={6} value={paymentInvoice} onChange={event => setPaymentInvoice(event.target.value)} placeholder="fibt…"/><button className="btn primary" disabled={busy || runtime.loading || !runtime.node || !paymentInvoice.trim()} onClick={() => void pay()}><Zap size={16}/>{busy ? "Checking route…" : "Check & pay"}</button>{paymentHash && <code className="checkout-hash">{paymentHash}</code>}</div>}
-      {(result || runtime.error) && <div className="checkout-message" role="status">{result || runtime.error}</div>}
+      {(result || runtime.error || runtime.loading) && <div className="checkout-message" role="status">
+        {result || runtime.error || "Connecting the browser Fiber node. Payment becomes available when the node is ready."}
+      </div>}
     </div>
   </AppLayout>;
 }

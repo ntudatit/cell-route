@@ -2,10 +2,17 @@ use crate::{
     error::{ApiError, ApiResult},
     models::TransactionStatusResponse,
 };
-use ckb_sdk::rpc::CkbRpcClient;
 use serde_json::{Value, json};
 use std::{sync::Arc, time::Duration};
-use tokio::{task, time::sleep};
+use tokio::time::sleep;
+
+pub fn public_genesis(network: &str) -> Option<&'static str> {
+    match network {
+        "mainnet" => Some("0x92b197aa1fba0f63633922c61c92375c9c074a93e85963554f5499fe1450d0e5"),
+        "testnet" => Some("0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606"),
+        _ => None,
+    }
+}
 
 #[derive(Clone)]
 pub struct CkbRpcService {
@@ -29,16 +36,29 @@ impl CkbRpcService {
     }
 
     pub async fn tip_block_number(&self) -> ApiResult<u64> {
-        let url = self.rpc_url.to_string();
-        task::spawn_blocking(move || {
-            let client = CkbRpcClient::new(&url);
-            client
-                .get_tip_block_number()
-                .map(|value| value.value())
-                .map_err(|e| ApiError::Upstream(format!("CKB RPC: {e}")))
-        })
-        .await
-        .map_err(|e| ApiError::Internal(format!("RPC task failed: {e}")))?
+        let result = self
+            .call(self.rpc_url.as_str(), "get_tip_block_number", json!([]))
+            .await?;
+        result
+            .as_str()
+            .and_then(|value| value.strip_prefix("0x"))
+            .and_then(|value| u64::from_str_radix(value, 16).ok())
+            .ok_or_else(|| ApiError::Upstream("Invalid CKB tip block number".into()))
+    }
+
+    pub async fn check_chain(&self, network: &str) -> ApiResult<()> {
+        let Some(expected) = public_genesis(network) else {
+            return Ok(());
+        };
+        let genesis = self
+            .call(self.rpc_url.as_str(), "get_block_hash", json!(["0x0"]))
+            .await?;
+        if genesis.as_str() != Some(expected) {
+            return Err(ApiError::Unavailable(
+                "CKB RPC genesis does not match CKB_NETWORK".into(),
+            ));
+        }
+        Ok(())
     }
 
     pub async fn transaction(&self, tx_hash: &str) -> ApiResult<Value> {
@@ -106,7 +126,7 @@ impl CkbRpcService {
             match result {
                 Ok(response) if response.status().is_success() => {
                     let body: Value = response.json().await.map_err(|e| {
-                        ApiError::Upstream(format!("Invalid CKB RPC response: {e}"))
+                        ApiError::Upstream(format!("Invalid CKB RPC response: {}", e.without_url()))
                     })?;
                     if let Some(error) = body.get("error").filter(|v| !v.is_null()) {
                         return Err(ApiError::Upstream(format!("CKB RPC error: {error}")));
@@ -117,7 +137,7 @@ impl CkbRpcService {
                     last_error = Some(format!("CKB RPC HTTP {}", response.status()));
                 }
                 Err(error) => {
-                    last_error = Some(format!("CKB RPC request failed: {error}"));
+                    last_error = Some(format!("CKB RPC request failed: {}", error.without_url()));
                 }
             }
 

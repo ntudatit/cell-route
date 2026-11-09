@@ -1,5 +1,5 @@
 target
 .git
 .github
-.env
+.env*
 *.log

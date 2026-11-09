@@ -6,6 +6,7 @@ import { ArrowDownLeft, ArrowUpRight, RefreshCw } from "lucide-react";
 import { backendApi, type TrackedTransaction } from "../../api/backend";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
 import { LoadingBlock, LoadingSpinner } from "../../components/Loading";
+import { useBackendAuth } from "../../auth/AuthProvider";
 import { useWallet } from "../../hooks/useWallet";
 
 const isPending = (status: string) =>
@@ -13,6 +14,7 @@ const isPending = (status: string) =>
 
 export function TransactionsPage() {
   const wallet = useWallet();
+  const auth = useBackendAuth();
   const { client } = useFeatureCcc();
   const [rows, setRows] = useState<TrackedTransaction[]>([]);
   const [loading, setLoading] = useState(false);
@@ -24,6 +26,11 @@ export function TransactionsPage() {
       return;
     }
 
+    if (!auth.authenticated || auth.walletAddress !== wallet.address) {
+      setRows([]);
+      setError("Authenticate the API to view wallet activity.");
+      return;
+    }
     if (!quiet) setLoading(true);
     try {
       setError("");
@@ -36,7 +43,7 @@ export function TransactionsPage() {
     } finally {
       if (!quiet) setLoading(false);
     }
-  }, [wallet.address, client]);
+  }, [wallet.address, client, auth.authenticated, auth.walletAddress]);
 
   useEffect(() => { void load(); }, [load]);
 

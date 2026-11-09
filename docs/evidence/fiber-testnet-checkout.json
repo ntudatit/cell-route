@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-11-09T09:29:13.902Z",
+  "network": "CKB Testnet (Pudge)",
+  "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "channelId": "0xd16b75d7c9d6e19828baedf6df81839f80956fa138516b79ad24bdadbe26067f",
+  "fundingTxHash": "0x0ad53f05d81006117514083ac1f77b31c67c0fe6373608abb58a4d49a5907fa1",
+  "fundingTxStatus": "committed",
+  "nodeVersions": [
+    "0.9.1",
+    "0.9.1"
+  ],
+  "payerPubkey": "0343a1ee8b61aaaea89f9dda8602930065360b8e18714e8c2711568be1b6ee57eb",
+  "receiverPubkey": "020d5cfe019c2f9391670621f987475d559338df0f5f4595999a0435b93cfc9680",
+  "channelState": [
+    "ChannelReady",
+    "ChannelReady"
+  ],
+  "balancesBefore": {
+    "payerOutboundRaw": "20100000000",
+    "receiverInboundRaw": "20100000000"
+  },
+  "balancesAfter": {
+    "payerOutboundRaw": "20000000000",
+    "receiverOutboundRaw": "100000000"
+  },
+  "orderId": "ddac0695-68a7-48f3-be70-111067a58ff6",
+  "amountRaw": "100000000",
+  "paymentHash": "0xa3ae1803e7d319ef33636830635a84c0f98cbe4c19a991ffbbeb8823a64bf6b7",
+  "payerStatus": "Success",
+  "receiverStatus": "Paid",
+  "backendStatus": "PAID",
+  "paidAt": "2026-11-09T09:29:13.883204Z",
+  "database": {
+    "status": "PAID",
+    "paid_at": "2026-11-09T16:29:13.883204+07:00",
+    "audit_count": 1,
+    "settlement_verified_at": "2026-11-09T16:29:13.883204+07:00"
+  },
+  "payerInterface": "Native Fiber RPC",
+  "apiInterface": "Authenticated local CellRoute merchant API",
+  "faucetCkbPerNode": 10000,
+  "readiness": {
+    "network": "testnet",
+    "otlpConfigured": false,
+    "service": "ckb-asset-studio-rust-service",
+    "status": "READY",
+    "tipBlockNumber": "23006305"
+  }
+}

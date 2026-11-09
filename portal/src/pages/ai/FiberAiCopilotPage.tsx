@@ -5,6 +5,9 @@ import { Bot, BrainCircuit, DatabaseZap, Send, ShieldCheck, Sparkles, TerminalSq
 import { AppLayout } from "../../components/layout/AppLayout";
 import { aiApi, fiberOpsApi, type AiChatResponse } from "../../api/backend";
 
+import { BackendAuthButton } from "../../components/BackendAuthButton";
+import { useBackendAuth } from "../../auth/AuthProvider";
+
 type Message = { role: "user" | "assistant"; text: string; response?: AiChatResponse };
 
 const prompts = [
@@ -17,6 +20,7 @@ const prompts = [
 export function FiberAiCopilotPage() {
  const featureConsoleScope = currentScope();
 
+  const auth = useBackendAuth();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", text: "FiberOps AI is ready. I use Browser WASM telemetry + the FiberOps knowledge base. I am read-only: I will not send payments, close channels, or expose keys." },
@@ -32,6 +36,10 @@ export function FiberAiCopilotPage() {
 
     const question = text.trim();
     if (!question || loading) return;
+    if (!auth.authenticated) {
+      setError("Authenticate an operator wallet to use the copilot.");
+      return;
+    }
     setInput(""); setError(""); setLoading(true);
     setMessages((prev) => [...prev, { role: "user", text: question }]);
     try {
@@ -63,6 +71,7 @@ export function FiberAiCopilotPage() {
           <h1>AI Operations Copilot</h1>
           <p>RAG-assisted diagnosis over live Fiber WASM telemetry, incidents and operational knowledge.</p>
         </div>
+        <BackendAuthButton />
         <div className="ai-safety-pill"><ShieldCheck size={15}/> READ-ONLY AI</div>
       </section>
 

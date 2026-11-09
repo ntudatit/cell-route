@@ -44,6 +44,8 @@ pub struct MerchantOrderResponse {
     pub invoice_address: Option<String>,
     pub network: String,
     pub paid_at: Option<DateTime<Utc>>,
+    #[serde(skip_serializing)]
+    pub fiber_receiver_pubkey: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }

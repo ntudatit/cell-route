@@ -10,7 +10,7 @@ export const authTokenStore = {
  clear: () => localStorage.removeItem(TOKEN_KEY),
 };
 
-export type NetworkResponse = { network: string; rpcUrl: string; indexerUrl?: string };
+export type NetworkResponse = { network: string };
 export type TipResponse = { hex: string; decimal: string };
 export type TransactionStatus = { txHash: string; status: string; blockHash?: string | null; reason?: unknown };
 export type TrackedTransaction = {
@@ -103,11 +103,11 @@ export const indexerApi = instrument({
 }, 'api', 'indexerApi');
 
 export type FiberNodeSummary = {
- endpoint: string; version?: string | null; commitHash?: string | null; nodeName?: string | null; pubkey?: string | null;
+ version?: string | null; commitHash?: string | null; nodeName?: string | null; pubkey?: string | null;
  features: string[]; addresses: string[]; chainHash?: string | null; reachable: boolean;
 };
 export type FiberCompatibility = {
- reachable: boolean; expectedVersion: string; actualVersion?: string | null; compatible: boolean; rpcEndpoint: string; notes: string[];
+ reachable: boolean; expectedVersion: string; actualVersion?: string | null; compatible: boolean; notes: string[];
 };
 export type FiberInvoiceResult = {
  invoiceAddress?: string | null; paymentHash?: string | null; amountRaw: string; fiber: unknown;
@@ -219,10 +219,10 @@ export type MerchantOrder = {
   invoiceAddress?: string | null; network: string; paidAt?: string | null; createdAt: string; updatedAt: string;
 };
 export const merchantOrderApi = instrument({
-  create: (body: { customerReference?: string; amountRaw: string; assetKind?: string; description?: string; paymentHash?: string | null; invoiceAddress?: string | null }, idempotencyKey?: string) =>
-    request<MerchantOrder>("/merchant/orders", { method: "POST", headers: idempotencyKey ? { "Idempotency-Key": idempotencyKey } : undefined, body: JSON.stringify(body) }),
+  create: (body: { customerReference?: string; amountRaw: string; description?: string }, idempotencyKey: string) =>
+    request<MerchantOrder>("/merchant/orders", { method: "POST", headers: { "Idempotency-Key": idempotencyKey }, body: JSON.stringify(body) }),
   list: () => request<MerchantOrder[]>("/merchant/orders"),
-  updateStatus: (orderId: string, status: string) => request<MerchantOrder>(`/merchant/orders/${encodeURIComponent(orderId)}`, { method: "POST", body: JSON.stringify({ status }) }),
+  reconcile: (orderId: string) => request<MerchantOrder>(`/merchant/orders/${encodeURIComponent(orderId)}/reconcile`, { method: "POST" }),
   recordAttempt: (orderId: string, body: { paymentHash?: string; status: string; feeRaw?: string; routeParts?: number; failure?: string; raw?: unknown }) =>
     request<{ id: number; orderId: string; status: string }>(`/merchant/orders/${encodeURIComponent(orderId)}/attempts`, { method: "POST", body: JSON.stringify(body) }),
 }, 'api', 'merchantOrderApi');

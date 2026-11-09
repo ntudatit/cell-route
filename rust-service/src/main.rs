@@ -1,4 +1,5 @@
 mod ai;
+mod api_limits;
 mod auth;
 mod config;
 mod error;
@@ -7,6 +8,7 @@ mod fiber_ops;
 mod handlers;
 mod indexer;
 mod mcp;
+mod merchant;
 mod models;
 mod repository;
 mod rpc;
@@ -58,6 +60,7 @@ async fn main() -> anyhow::Result<()> {
         fiber: FiberRpcService::new(
             config.fiber_rpc_url.clone(),
             config.fiber_biscuit_token.clone(),
+            config.fiber_merchant_node_pubkey.clone(),
             config.rpc_timeout,
         ),
         fiber_ops: FiberOpsService::new(pool.clone()),
@@ -70,6 +73,7 @@ async fn main() -> anyhow::Result<()> {
             config.ai_timeout,
         ),
         config: config.clone(),
+        stream_permits: std::sync::Arc::new(tokio::sync::Semaphore::new(64)),
     };
 
     if config.fiber_runtime.eq_ignore_ascii_case("native") {
@@ -105,8 +109,12 @@ async fn main() -> anyhow::Result<()> {
         .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
         .allow_headers(tower_http::cors::Any);
 
-    let app = Router::new()
-        .route("/api/health", get(handlers::health))
+    let operators = Router::new()
+        .route("/api/fiber/node", get(handlers::fiber_node))
+        .route(
+            "/api/fiber/compatibility",
+            get(handlers::fiber_compatibility),
+        )
         .route("/api/ai/chat", post(handlers::ai_chat))
         .route(
             "/api/ai/knowledge/search",
@@ -121,42 +129,6 @@ async fn main() -> anyhow::Result<()> {
             post(handlers::fiber_network_resources_store)
                 .get(handlers::fiber_network_resources_latest),
         )
-        .route("/mcp", post(mcp::endpoint))
-        .route("/api/ready", get(handlers::readiness))
-        .route("/api/auth/challenge", post(handlers::auth_challenge))
-        .route("/api/auth/verify", post(handlers::auth_verify))
-        .route("/api/auth/me", get(handlers::auth_me))
-        .route("/api/ckb/network", get(handlers::network))
-        .route("/api/fiber/node", get(handlers::fiber_node))
-        .route(
-            "/api/fiber/compatibility",
-            get(handlers::fiber_compatibility),
-        )
-        .route(
-            "/api/fiber/merchant/invoices",
-            post(handlers::fiber_create_invoice),
-        )
-        .route(
-            "/api/fiber/merchant/invoices/{payment_hash}",
-            get(handlers::fiber_get_invoice),
-        )
-        .route("/api/fiber/payments", post(handlers::fiber_send_payment))
-        .route(
-            "/api/merchant/orders",
-            post(handlers::merchant_order_create).get(handlers::merchant_orders_list),
-        )
-        .route(
-            "/api/merchant/orders/{order_id}",
-            post(handlers::merchant_order_update),
-        )
-        .route(
-            "/api/merchant/orders/{order_id}/attempts",
-            post(handlers::merchant_payment_attempt_create),
-        )
-        .route(
-            "/api/fiber/payments/{payment_hash}",
-            get(handlers::fiber_get_payment),
-        )
         .route("/api/fiber/ops/overview", get(handlers::fiber_ops_overview))
         .route(
             "/api/fiber/ops/channels/health",
@@ -169,6 +141,32 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/fiber/ops/reconcile", post(handlers::fiber_reconcile))
         .route("/api/fiber/ops/incidents", get(handlers::fiber_incidents))
         .route("/api/fiber/ops/events", get(handlers::fiber_ops_events))
+        .route_layer(axum::middleware::from_fn_with_state(
+            state.clone(),
+            require_operator,
+        ));
+    let app = Router::new()
+        .merge(operators)
+        .route("/api/health", get(handlers::health))
+        .route("/mcp", post(mcp::endpoint))
+        .route("/api/ready", get(handlers::readiness))
+        .route("/api/auth/challenge", post(handlers::auth_challenge))
+        .route("/api/auth/verify", post(handlers::auth_verify))
+        .route("/api/auth/me", get(handlers::auth_me))
+        .route("/api/ckb/network", get(handlers::network))
+        .route(
+            "/api/merchant/orders",
+            post(merchant::create).get(handlers::merchant_orders_list),
+        )
+        .route("/api/merchant/orders/{order_id}", post(merchant::update))
+        .route(
+            "/api/merchant/orders/{order_id}/reconcile",
+            post(merchant::reconcile),
+        )
+        .route(
+            "/api/merchant/orders/{order_id}/attempts",
+            post(handlers::merchant_payment_attempt_create),
+        )
         .route("/api/ckb/tip", get(handlers::tip))
         .route(
             "/api/ckb/transactions/{tx_hash}",
@@ -191,6 +189,10 @@ async fn main() -> anyhow::Result<()> {
             get(handlers::indexed_assets),
         )
         .route("/api/dashboard/{address}", get(handlers::dashboard))
+        .layer(axum::middleware::from_fn_with_state(
+            api_limits::ApiLimits::new(config.trusted_proxy_ip),
+            api_limits::limit,
+        ))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state);
@@ -206,13 +208,25 @@ async fn main() -> anyhow::Result<()> {
     info!(
         address = %config.bind_addr,
         network = %config.ckb_network,
-        rpc = %config.ckb_rpc_url,
-        indexer = %config.ckb_indexer_url,
         service = %config.otel_service_name,
         "CKB Asset Studio API started"
     );
-    axum::serve(listener, app).await?;
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<std::net::SocketAddr>(),
+    )
+    .await?;
     Ok(())
+}
+
+async fn require_operator(
+    axum::extract::State(state): axum::extract::State<AppState>,
+    mut request: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> error::ApiResult<axum::response::Response> {
+    let claims = auth::authorize_operator(&state, request.headers())?;
+    request.extensions_mut().insert(claims);
+    Ok(next.run(request).await)
 }
 
 fn init_tracing(json_logs: bool) {

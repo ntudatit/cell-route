@@ -4,11 +4,10 @@ use crate::{
     indexer,
     models::{
         AssetEventResponse, AuthChallengeRequest, AuthChallengeResponse, AuthTokenResponse,
-        AuthVerifyRequest, CreateAssetEventRequest, CreateMerchantOrderRequest,
-        CreatePaymentAttemptRequest, DashboardResponse, IndexedAssetResponse, IndexerSyncRequest,
-        IndexerSyncResponse, MerchantOrderResponse, TrackTransactionRequest,
-        TrackedTransactionResponse, TransactionLifecycleEvent, TransactionStatusResponse,
-        UpdateMerchantOrderRequest,
+        AuthVerifyRequest, CreateAssetEventRequest, CreatePaymentAttemptRequest, DashboardResponse,
+        IndexedAssetResponse, IndexerSyncRequest, IndexerSyncResponse, MerchantOrderResponse,
+        TrackTransactionRequest, TrackedTransactionResponse, TransactionLifecycleEvent,
+        TransactionStatusResponse,
     },
     state::AppState,
 };
@@ -28,7 +27,25 @@ pub async fn health() -> Json<Value> {
 }
 
 pub async fn readiness(State(state): State<AppState>) -> ApiResult<Json<Value>> {
-    let tip = state.rpc.tip_block_number().await?;
+    let check_database = async {
+        sqlx::query("SELECT 1")
+            .execute(state.indexer.pool())
+            .await?;
+        Ok(())
+    };
+    let (_, _, tip) = tokio::time::timeout(Duration::from_secs(5), async {
+        tokio::try_join!(
+            check_database,
+            state.rpc.check_chain(&state.config.ckb_network),
+            state.rpc.tip_block_number()
+        )
+    })
+    .await
+    .map_err(|_| ApiError::Unavailable("Readiness check timed out".into()))?
+    .map_err(|error| match error {
+        ApiError::Unavailable(_) => error,
+        _ => ApiError::Unavailable("Database or CKB RPC is unavailable".into()),
+    })?;
     Ok(Json(json!({
         "status": "READY",
         "network": state.config.ckb_network,
@@ -40,9 +57,7 @@ pub async fn readiness(State(state): State<AppState>) -> ApiResult<Json<Value>> 
 
 pub async fn network(State(state): State<AppState>) -> Json<Value> {
     Json(json!({
-        "network": state.config.ckb_network,
-        "rpcUrl": state.config.ckb_rpc_url,
-        "indexerUrl": state.config.ckb_indexer_url
+        "network": state.config.ckb_network
     }))
 }
 
@@ -138,8 +153,9 @@ pub async fn create_asset_event(
 pub async fn asset_events(
     State(state): State<AppState>,
     Path(address): Path<String>,
+    headers: HeaderMap,
 ) -> ApiResult<Json<Vec<AssetEventResponse>>> {
-    auth::validate_wallet_network(&address, &state.config.ckb_network)?;
+    auth::authorize_wallet(&state, &headers, &address)?;
     if address.trim().is_empty() {
         return Err(ApiError::BadRequest("address is required".into()));
     }
@@ -167,8 +183,9 @@ pub async fn sync_indexer(
 pub async fn indexed_assets(
     State(state): State<AppState>,
     Path(address): Path<String>,
+    headers: HeaderMap,
 ) -> ApiResult<Json<Vec<IndexedAssetResponse>>> {
-    auth::validate_wallet_network(&address, &state.config.ckb_network)?;
+    auth::authorize_wallet(&state, &headers, &address)?;
     if address.trim().is_empty() {
         return Err(ApiError::BadRequest("address is required".into()));
     }
@@ -241,9 +258,15 @@ pub async fn transaction_events(
     let max_polls = state.config.sse_max_polls;
     let state_for_stream = state.clone();
     let tx_hash_for_stream = tx_hash.clone();
+    let permit = state
+        .stream_permits
+        .clone()
+        .try_acquire_owned()
+        .map_err(|_| ApiError::Unavailable("Too many active event streams".into()))?;
 
     let stream = async_stream::stream! {
         let mut previous = String::new();
+        let _permit = permit;
         for _ in 0..max_polls {
             let chain_status = state_for_stream.rpc.transaction_status(&tx_hash_for_stream).await;
             match chain_status {
@@ -267,11 +290,11 @@ pub async fn transaction_events(
                         break;
                     }
                 }
-                Err(error) => {
+                Err(_) => {
                     let payload = json!({
                         "txHash": tx_hash_for_stream.clone(),
                         "status": "rpc_error",
-                        "message": error.to_string(),
+                        "message": "CKB RPC could not read transaction status",
                         "observedAt": Utc::now()
                     }).to_string();
                     yield Ok(Event::default().event("transaction-error").data(payload));
@@ -291,8 +314,9 @@ pub async fn transaction_events(
 pub async fn dashboard(
     State(state): State<AppState>,
     Path(address): Path<String>,
+    headers: HeaderMap,
 ) -> ApiResult<Json<DashboardResponse>> {
-    auth::validate_wallet_network(&address, &state.config.ckb_network)?;
+    auth::authorize_wallet(&state, &headers, &address)?;
     if address.trim().is_empty() {
         return Err(ApiError::BadRequest("address is required".into()));
     }
@@ -348,22 +372,6 @@ fn is_final(status: &str) -> bool {
     )
 }
 
-#[derive(serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct FiberCreateInvoiceRequest {
-    pub merchant_wallet: String,
-    pub amount_raw: String,
-    pub description: Option<String>,
-    pub expiry_seconds: Option<u64>,
-}
-
-#[derive(serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct FiberSendPaymentRequest {
-    pub wallet_address: String,
-    pub invoice: String,
-}
-
 pub async fn fiber_node(State(state): State<AppState>) -> Json<crate::fiber::FiberNodeSummary> {
     Json(state.fiber.node_summary().await)
 }
@@ -379,227 +387,15 @@ pub async fn fiber_compatibility(
     )
 }
 
-pub async fn fiber_create_invoice(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Json(request): Json<FiberCreateInvoiceRequest>,
-) -> ApiResult<Json<Value>> {
-    let claims = auth::authorize(&state, &headers)?;
-    if claims.sub != request.merchant_wallet {
-        return Err(ApiError::Unauthorized(
-            "JWT wallet does not match merchantWallet".into(),
-        ));
-    }
-    let amount = request
-        .amount_raw
-        .parse::<u128>()
-        .map_err(|_| ApiError::BadRequest("amountRaw must be an unsigned integer".into()))?;
-    if amount == 0 {
-        return Err(ApiError::BadRequest(
-            "amountRaw must be greater than zero".into(),
-        ));
-    }
-    let currency = match state.config.ckb_network.to_ascii_lowercase().as_str() {
-        "mainnet" => "Fibb",
-        "testnet" => "Fibt",
-        _ => "Fibd",
-    };
-    let result = state
-        .fiber
-        .new_invoice(
-            amount,
-            request.description.clone(),
-            request.expiry_seconds,
-            currency,
-        )
-        .await?;
-    let invoice_address = result
-        .get("invoice_address")
-        .and_then(Value::as_str)
-        .map(str::to_owned);
-    let payment_hash = result
-        .pointer("/invoice/data/payment_hash")
-        .and_then(Value::as_str)
-        .or_else(|| {
-            result
-                .pointer("/invoice/payment_hash")
-                .and_then(Value::as_str)
-        })
-        .map(str::to_owned);
-    let node = state.fiber.node_summary().await;
-    sqlx::query(r#"INSERT INTO fiber_payment_records
-        (merchant_wallet,direction,payment_hash,invoice_address,amount_raw,description,status,network,fiber_node_pubkey,raw_json)
-        VALUES ($1,'INCOMING',$2,$3,$4,$5,'OPEN',$6,$7,$8)
-        ON CONFLICT (payment_hash) WHERE payment_hash IS NOT NULL DO UPDATE SET raw_json=EXCLUDED.raw_json, updated_at=NOW()"#)
-        .bind(&request.merchant_wallet).bind(&payment_hash).bind(&invoice_address)
-        .bind(amount.to_string()).bind(&request.description).bind(&state.config.ckb_network)
-        .bind(node.pubkey).bind(&result).execute(state.indexer.pool()).await?;
-    Ok(Json(
-        json!({"invoiceAddress": invoice_address, "paymentHash": payment_hash, "amountRaw": amount.to_string(), "fiber": result}),
-    ))
-}
-
-pub async fn fiber_get_invoice(
-    State(state): State<AppState>,
-    Path(payment_hash): Path<String>,
-) -> ApiResult<Json<Value>> {
-    let result = state.fiber.get_invoice(&payment_hash).await?;
-    let status = result
-        .get("status")
-        .and_then(Value::as_str)
-        .unwrap_or("UNKNOWN");
-    let _ = sqlx::query("UPDATE fiber_payment_records SET status=$2, raw_json=$3, updated_at=NOW() WHERE payment_hash=$1")
-        .bind(&payment_hash).bind(status).bind(&result).execute(state.indexer.pool()).await;
-    Ok(Json(result))
-}
-
-pub async fn fiber_send_payment(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Json(request): Json<FiberSendPaymentRequest>,
-) -> ApiResult<Json<Value>> {
-    let claims = auth::authorize(&state, &headers)?;
-    if claims.sub != request.wallet_address {
-        return Err(ApiError::Unauthorized(
-            "JWT wallet does not match walletAddress".into(),
-        ));
-    }
-    if request.invoice.trim().is_empty() {
-        return Err(ApiError::BadRequest("invoice is required".into()));
-    }
-    Ok(Json(
-        state
-            .fiber
-            .send_invoice_payment(request.invoice.trim())
-            .await?,
-    ))
-}
-
-pub async fn fiber_get_payment(
-    State(state): State<AppState>,
-    Path(payment_hash): Path<String>,
-) -> ApiResult<Json<Value>> {
-    Ok(Json(state.fiber.get_payment(&payment_hash).await?))
-}
-
-pub async fn merchant_order_create(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Json(request): Json<CreateMerchantOrderRequest>,
-) -> ApiResult<Json<MerchantOrderResponse>> {
-    let claims = auth::authorize(&state, &headers)?;
-    let idempotency_key = headers
-        .get("idempotency-key")
-        .and_then(|value| value.to_str().ok())
-        .map(str::trim)
-        .filter(|value| !value.is_empty())
-        .map(str::to_owned);
-    if idempotency_key.as_ref().is_some_and(|key| key.len() > 128) {
-        return Err(ApiError::BadRequest(
-            "Idempotency-Key must not exceed 128 characters".into(),
-        ));
-    }
-    if let Some(key) = &idempotency_key {
-        if let Some(existing) = sqlx::query_as::<_, MerchantOrderResponse>(r#"SELECT id,merchant_wallet,customer_reference,amount_raw,asset_kind,description,status,payment_hash,invoice_address,network,paid_at,created_at,updated_at
-            FROM merchant_orders WHERE merchant_wallet=$1 AND network=$2 AND idempotency_key=$3"#)
-            .bind(&claims.sub).bind(&state.config.ckb_network).bind(key)
-            .fetch_optional(state.indexer.pool()).await? {
-            return Ok(Json(existing));
-        }
-    }
-    let amount = request
-        .amount_raw
-        .parse::<u128>()
-        .map_err(|_| ApiError::BadRequest("amountRaw must be an unsigned integer".into()))?;
-    if amount == 0 {
-        return Err(ApiError::BadRequest(
-            "amountRaw must be greater than zero".into(),
-        ));
-    }
-    if let Some(hash) = &request.payment_hash {
-        if !is_payment_hash(hash) {
-            return Err(ApiError::BadRequest(
-                "paymentHash must be a 32-byte 0x-prefixed hash".into(),
-            ));
-        }
-    }
-    let id = uuid::Uuid::new_v4();
-    let order = sqlx::query_as::<_, MerchantOrderResponse>(r#"INSERT INTO merchant_orders
-        (id,merchant_wallet,customer_reference,amount_raw,asset_kind,description,status,payment_hash,invoice_address,network,idempotency_key)
-        VALUES($1,$2,$3,$4,$5,$6,'PAYMENT_PENDING',$7,$8,$9,$10)
-        RETURNING id,merchant_wallet,customer_reference,amount_raw,asset_kind,description,status,payment_hash,invoice_address,network,paid_at,created_at,updated_at"#)
-        .bind(id).bind(&claims.sub).bind(&request.customer_reference).bind(amount.to_string())
-        .bind(request.asset_kind.as_deref().unwrap_or("CKB")).bind(&request.description)
-        .bind(&request.payment_hash).bind(&request.invoice_address).bind(&state.config.ckb_network).bind(&idempotency_key)
-        .fetch_one(state.indexer.pool()).await?;
-    write_audit(
-        &state,
-        &claims.sub,
-        "ORDER_CREATED",
-        "MERCHANT_ORDER",
-        &id.to_string(),
-        json!({"paymentHash":request.payment_hash,"amountRaw":amount.to_string()}),
-    )
-    .await?;
-    Ok(Json(order))
-}
-
 pub async fn merchant_orders_list(
     State(state): State<AppState>,
     headers: HeaderMap,
 ) -> ApiResult<Json<Vec<MerchantOrderResponse>>> {
-    let claims = auth::authorize(&state, &headers)?;
-    let orders = sqlx::query_as::<_, MerchantOrderResponse>(r#"SELECT id,merchant_wallet,customer_reference,amount_raw,asset_kind,description,status,payment_hash,invoice_address,network,paid_at,created_at,updated_at
+    let claims = crate::merchant::merchant(&state, &headers)?;
+    let orders = sqlx::query_as::<_, MerchantOrderResponse>(r#"SELECT *
         FROM merchant_orders WHERE merchant_wallet=$1 AND network=$2 ORDER BY created_at DESC LIMIT 100"#)
         .bind(&claims.sub).bind(&state.config.ckb_network).fetch_all(state.indexer.pool()).await?;
     Ok(Json(orders))
-}
-
-pub async fn merchant_order_update(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Path(order_id): Path<uuid::Uuid>,
-    Json(request): Json<UpdateMerchantOrderRequest>,
-) -> ApiResult<Json<MerchantOrderResponse>> {
-    let claims = auth::authorize(&state, &headers)?;
-    let status = request.status.to_ascii_uppercase();
-    let current: Option<String> =
-        sqlx::query_scalar("SELECT status FROM merchant_orders WHERE id=$1 AND merchant_wallet=$2")
-            .bind(order_id)
-            .bind(&claims.sub)
-            .fetch_optional(state.indexer.pool())
-            .await?;
-    let current = current.ok_or_else(|| ApiError::NotFound("Merchant order not found".into()))?;
-    if !valid_order_transition(&current, &status) {
-        return Err(ApiError::BadRequest("Unsupported order status".into()));
-    }
-    let order = sqlx::query_as::<_, MerchantOrderResponse>(r#"UPDATE merchant_orders SET status=$3,paid_at=CASE WHEN $3='PAID' THEN COALESCE(paid_at,NOW()) ELSE paid_at END,updated_at=NOW()
-        WHERE id=$1 AND merchant_wallet=$2 RETURNING id,merchant_wallet,customer_reference,amount_raw,asset_kind,description,status,payment_hash,invoice_address,network,paid_at,created_at,updated_at"#)
-        .bind(order_id).bind(&claims.sub).bind(&status).fetch_optional(state.indexer.pool()).await?
-        .ok_or_else(|| ApiError::NotFound("Merchant order not found".into()))?;
-    write_audit(
-        &state,
-        &claims.sub,
-        "ORDER_STATUS_CHANGED",
-        "MERCHANT_ORDER",
-        &order_id.to_string(),
-        json!({"status":status}),
-    )
-    .await?;
-    Ok(Json(order))
-}
-
-fn valid_order_transition(from: &str, to: &str) -> bool {
-    from == to
-        || matches!(
-            (from, to),
-            ("ORDER_CREATED", "PAYMENT_PENDING")
-                | ("PAYMENT_PENDING", "PAID")
-                | ("PAYMENT_PENDING", "CANCELLED")
-                | ("PAYMENT_PENDING", "EXPIRED")
-                | ("PAID", "FULFILLMENT_PENDING")
-                | ("FULFILLMENT_PENDING", "COMPLETED")
-        )
 }
 
 pub async fn merchant_payment_attempt_create(
@@ -608,12 +404,13 @@ pub async fn merchant_payment_attempt_create(
     Path(order_id): Path<uuid::Uuid>,
     Json(request): Json<CreatePaymentAttemptRequest>,
 ) -> ApiResult<Json<Value>> {
-    let claims = auth::authorize(&state, &headers)?;
+    let claims = crate::merchant::merchant(&state, &headers)?;
     let owns: bool = sqlx::query_scalar(
-        "SELECT EXISTS(SELECT 1 FROM merchant_orders WHERE id=$1 AND merchant_wallet=$2)",
+        "SELECT EXISTS(SELECT 1 FROM merchant_orders WHERE id=$1 AND merchant_wallet=$2 AND network=$3)",
     )
     .bind(order_id)
     .bind(&claims.sub)
+    .bind(&state.config.ckb_network)
     .fetch_one(state.indexer.pool())
     .await?;
     if !owns {
@@ -636,11 +433,6 @@ pub async fn merchant_payment_attempt_create(
     ))
 }
 
-fn is_payment_hash(value: &str) -> bool {
-    value.len() == 66
-        && value.starts_with("0x")
-        && value[2..].chars().all(|c| c.is_ascii_hexdigit())
-}
 async fn write_audit(
     state: &AppState,
     actor: &str,
@@ -719,9 +511,15 @@ pub async fn fiber_ops_events(
     State(state): State<AppState>,
 ) -> ApiResult<Sse<impl Stream<Item = Result<Event, Infallible>>>> {
     let state_for_stream = state.clone();
+    let permit = state
+        .stream_permits
+        .clone()
+        .try_acquire_owned()
+        .map_err(|_| ApiError::Unavailable("Too many active event streams".into()))?;
     let stream = async_stream::stream! {
+        let _permit = permit;
         let mut previous = String::new();
-        loop {
+        for _ in 0..30 {
             match state_for_stream.fiber_ops.overview(&state_for_stream.fiber, &state_for_stream.config.ckb_network).await {
                 Ok(overview) => {
                     let payload = serde_json::to_string(&overview).unwrap_or_else(|_| "{}".into());
@@ -730,9 +528,9 @@ pub async fn fiber_ops_events(
                         previous = payload;
                     }
                 }
-                Err(error) => {
+                Err(_) => {
                     yield Ok(Event::default().event("fiber-ops-error").data(json!({
-                        "message": error.to_string(), "observedAt": Utc::now()
+                        "message": "Fiber operations data unavailable", "observedAt": Utc::now()
                     }).to_string()));
                 }
             }
@@ -754,8 +552,10 @@ pub struct AiKnowledgeQuery {
 
 pub async fn ai_chat(
     State(state): State<AppState>,
-    Json(request): Json<crate::ai::AiChatRequest>,
+    axum::Extension(claims): axum::Extension<auth::Claims>,
+    Json(mut request): Json<crate::ai::AiChatRequest>,
 ) -> ApiResult<Json<crate::ai::AiChatResponse>> {
+    request.wallet_address = Some(claims.sub);
     Ok(Json(
         state.ai.chat(&state.config.ckb_network, &request).await?,
     ))

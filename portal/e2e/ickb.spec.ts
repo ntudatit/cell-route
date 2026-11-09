@@ -11,7 +11,7 @@ const snapshot = JSON.parse(
 );
 test("iCKB reads public identities and clears stale conversion reviews", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.clock.setFixedTime(
     new Date(Date.parse(snapshot.observedAt) + 1000),
   );
@@ -67,7 +67,7 @@ test("iCKB reads public identities and clears stale conversion reviews", async (
   await expect(page.locator(".project-loading")).toHaveCSS("opacity", "0");
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({
-    path: "../docs/evidence/week-12/inspector.png",
+    path: testInfo.outputPath("inspector.png"),
     fullPage: true,
   });
   await page.getByLabel("iCKB network").selectOption("mainnet");

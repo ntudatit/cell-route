@@ -1,6 +1,6 @@
 import { currentScope } from '../../dev-console/features';
 import { beginOperation } from '../../dev-console/store';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Copy, RefreshCw, Store, Zap, Search, XCircle, ShoppingBag } from "lucide-react";
 import { AppLayout, PageHero } from "../../components/layout/AppLayout";
 import { fiberApi } from "../../api/backend";
@@ -42,6 +42,8 @@ export function FiberMerchantPage() {
 
  useEffect(() => { void refreshOrders(); }, [auth.authenticated]);
 
+ const orderRequest = useRef<{ fingerprint: string; key: string } | null>(null);
+
  async function createInvoice() {
  const featureOperation = beginOperation(featureConsoleScope, 'action', 'createInvoice');
  try {
@@ -49,13 +51,23 @@ export function FiberMerchantPage() {
   if (!/^\d+$/.test(amount) || BigInt(amount) <= 0n) return setStatus("Enter a valid invoice amount.");
   setBusy(true);
   try {
+   if (auth.authenticated) {
+    const body = { customerReference, amountRaw: amount, description };
+    const fingerprint = JSON.stringify([auth.walletAddress, body]);
+    if (orderRequest.current?.fingerprint !== fingerprint) {
+     orderRequest.current = { fingerprint, key: crypto.randomUUID() };
+    }
+    const order = await merchantOrderApi.create(body, orderRequest.current.key);
+    orderRequest.current = null;
+    setInvoice(order.invoiceAddress ?? "");
+    setInvoiceHash(order.paymentHash ?? "");
+    await refreshOrders();
+    setStatus("Merchant invoice issued by the configured receiver node.");
+    return;
+   }
    const result = await fiberApi.createInvoice({ amountRaw: amount, description, expirySeconds: 900 });
    setInvoice(result.invoiceAddress ?? ""); setInvoiceHash(result.paymentHash ?? "");
-   if (auth.authenticated) {
-    await merchantOrderApi.create({ customerReference, amountRaw: amount, assetKind: "CKB", description, paymentHash: result.paymentHash, invoiceAddress: result.invoiceAddress }, `order:${customerReference}:${result.paymentHash ?? result.invoiceAddress}`);
-    await refreshOrders();
-    setStatus("Fiber invoice and merchant order created.");
-   } else setStatus("Fiber invoice created locally. Authenticate the API to persist merchant orders and audit history.");
+   setStatus("Browser invoice created. Backend order verification requires a merchant invoice.");
   } catch (e) { featureOperation.fail(e);  setStatus(fiberErrorMessage(e)); }
   finally { setBusy(false); }
 
@@ -107,7 +119,17 @@ export function FiberMerchantPage() {
  try {
 
   if (!invoiceHash) return;
-  try { const result = await fiberApi.getInvoice(invoiceHash); const invoiceStatus = String(result.status ?? "UNKNOWN"); const order = orders.find(item => item.paymentHash === invoiceHash); if (order && auth.authenticated) { const status = /paid|received/i.test(invoiceStatus) ? "PAID" : /cancel/i.test(invoiceStatus) ? "CANCELLED" : /expir/i.test(invoiceStatus) ? "EXPIRED" : null; if (status) { await merchantOrderApi.updateStatus(order.id, status); await refreshOrders(); } } setStatus(`Invoice status: ${invoiceStatus}`); }
+  try {
+   const order = orders.find(item => item.paymentHash === invoiceHash);
+   if (order && auth.authenticated) {
+    const checked = await merchantOrderApi.reconcile(order.id);
+    await refreshOrders();
+    setStatus(`Merchant order: ${checked.status}`);
+   } else {
+    const result = await fiberApi.getInvoice(invoiceHash);
+    setStatus(`Browser invoice status: ${String(result.status ?? "UNKNOWN")}`);
+   }
+  }
   catch (e) { featureOperation.fail(e);  setStatus(fiberErrorMessage(e)); }
 
  } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
@@ -135,6 +157,19 @@ export function FiberMerchantPage() {
  } catch (featureError) { featureOperation.fail(featureError); throw featureError; } finally { featureOperation.complete(); }
 }
 
+ async function verifyOrder(id: string) {
+  setBusy(true);
+  try {
+   const order = await merchantOrderApi.reconcile(id);
+   setStatus(`Merchant order: ${order.status}`);
+   await refreshOrders();
+  } catch (error) {
+   setStatus(fiberErrorMessage(error));
+  } finally {
+   setBusy(false);
+  }
+ }
+
  return <AppLayout>
   <PageHero eyebrow="Fiber Commerce" title="Merchant Gateway" description="Manage orders, Fiber invoices, payment lifecycle and auditable commerce state." actions={<><BackendAuthButton/><button className="btn secondary" disabled={runtime.loading} onClick={() => { void runtime.refresh(); void refreshOrders(); }}><RefreshCw className={runtime.loading ? "spin" : ""} size={15}/> Refresh</button></>} />
 
@@ -156,7 +191,7 @@ export function FiberMerchantPage() {
     <input value={description} onChange={e => setDescription(e.target.value)} placeholder="Order #1001" />
     <label>Customer reference</label>
     <input value={customerReference} onChange={e => setCustomerReference(e.target.value)} placeholder="customer-1001" />
-    <button className="btn primary" disabled={busy || runtime.loading || !nodeOnline} onClick={() => void createInvoice()}>Create Fiber invoice</button>
+    <button className="btn primary" disabled={busy || (!auth.authenticated && (runtime.loading || !nodeOnline))} onClick={() => void createInvoice()}>{auth.authenticated ? "Create merchant invoice" : "Create browser invoice"}</button>
     {invoice && <div className="fiber-result"><span>Invoice</span><textarea readOnly value={invoice}/><div className="fiber-result-actions"><button className="btn secondary" onClick={() => void navigator.clipboard.writeText(invoice)}><Copy size={14}/> Copy</button><button className="btn secondary" onClick={() => void checkCreatedInvoice()}><Search size={14}/> Status</button><button className="btn secondary" onClick={() => void cancelCreatedInvoice()}><XCircle size={14}/> Cancel</button></div></div>}
    </section>
 
@@ -176,7 +211,12 @@ export function FiberMerchantPage() {
    <div className="ops-panel-head"><div><span className="ops-kicker">COMMERCE DATA</span><h2><ShoppingBag size={19}/> Merchant orders</h2></div><button className="btn secondary" disabled={!auth.authenticated} onClick={() => void refreshOrders()}><RefreshCw size={14}/> Load orders</button></div>
    {!auth.authenticated && <div className="empty-state">Authenticate the backend API to persist and view order history.</div>}
    {auth.authenticated && orders.length === 0 && <div className="empty-state">No persisted merchant orders.</div>}
-   {orders.length > 0 && <div className="ops-table-wrap"><table className="ops-table merchant-orders-table"><thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Payment hash</th><th>Status</th><th>Updated</th></tr></thead><tbody>{orders.map(order => <tr key={order.id}><td><code>{order.id.slice(0, 8)}</code><small>{order.description}</small></td><td>{order.customerReference || "—"}</td><td>{order.amountRaw} <small>{order.assetKind}</small></td><td><code>{order.paymentHash ? `${order.paymentHash.slice(0, 10)}…` : "—"}</code></td><td><span className={`ops-badge ${order.status === "PAID" ? "healthy" : order.status === "FAILED" ? "critical" : "warning"}`}>{order.status}</span></td><td>{new Date(order.updatedAt).toLocaleString()}</td></tr>)}</tbody></table></div>}
+   {orders.length > 0 && <div className="ops-table-wrap"><table className="ops-table merchant-orders-table"><thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Payment hash</th><th>Status</th><th>Updated</th></tr></thead><tbody>{orders.map(order => <tr key={order.id}><td><code>{order.id.slice(0, 8)}</code><small>{order.description}</small></td><td>{order.customerReference || "—"}</td><td>{order.amountRaw} <small>{order.assetKind}</small></td><td><code>{order.paymentHash ? `${order.paymentHash.slice(0, 10)}…` : "—"}</code></td><td><span className={`ops-badge ${order.status === "PAID" ? "healthy" : order.status === "FAILED" ? "critical" : "warning"}`}>{order.status}</span></td><td>{new Date(order.updatedAt).toLocaleString()}
+     {order.status === "PAYMENT_PENDING" && order.invoiceAddress && <>
+      <button className="btn secondary" onClick={() => void navigator.clipboard.writeText(order.invoiceAddress!)}>Copy invoice</button>
+      <button className="btn secondary" disabled={busy} onClick={() => void verifyOrder(order.id)}>Verify settlement</button>
+     </>}
+    </td></tr>)}</tbody></table></div>}
   </section>
 
  </AppLayout>;

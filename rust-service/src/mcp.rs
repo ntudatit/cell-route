@@ -7,7 +7,7 @@ use serde_json::{Value, json};
 
 fn authorized(state: &AppState, headers: &HeaderMap) -> bool {
     let Some(expected) = state.config.mcp_api_key.as_deref() else {
-        return true;
+        return false;
     };
     headers
         .get("x-api-key")
@@ -78,6 +78,7 @@ pub async fn endpoint(
                     state
                         .ai
                         .list_open_incidents(
+                            &state.config.ckb_network,
                             args.get("limit").and_then(Value::as_i64).unwrap_or(20),
                         )
                         .await?

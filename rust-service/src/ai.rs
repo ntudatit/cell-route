@@ -90,8 +90,8 @@ impl AiService {
         snapshot: &RuntimeSnapshotRequest,
     ) -> ApiResult<()> {
         sqlx::query(
-            r#"INSERT INTO fiber_runtime_snapshots(network,runtime,overview,channels,incidents)
-               VALUES($1,'wasm',$2,$3,$4)"#,
+            r#"INSERT INTO fiber_runtime_snapshots(network,runtime,overview,channels,incidents,operator_submitted)
+               VALUES($1,'wasm',$2,$3,$4,TRUE)"#,
         )
         .bind(network)
         .bind(&snapshot.overview)
@@ -114,7 +114,7 @@ impl AiService {
 
     pub async fn latest_snapshot(&self, network: &str) -> ApiResult<Option<Value>> {
         let row = sqlx::query(
-            "SELECT overview,channels,incidents,captured_at FROM fiber_runtime_snapshots WHERE network=$1 ORDER BY captured_at DESC LIMIT 1",
+            "SELECT overview,channels,incidents,captured_at FROM fiber_runtime_snapshots WHERE network=$1 AND operator_submitted ORDER BY captured_at DESC LIMIT 1",
         )
         .bind(network)
         .fetch_optional(&self.pool)
@@ -130,7 +130,7 @@ impl AiService {
     }
 
     pub async fn save_network_resources(&self, network: &str, resources: &Value) -> ApiResult<()> {
-        sqlx::query("INSERT INTO fiber_network_resource_snapshots(network,runtime,resources) VALUES($1,'wasm',$2)")
+        sqlx::query("INSERT INTO fiber_network_resource_snapshots(network,runtime,resources,operator_submitted) VALUES($1,'wasm',$2,TRUE)")
             .bind(network)
             .bind(resources)
             .execute(&self.pool)
@@ -149,7 +149,7 @@ impl AiService {
 
     pub async fn latest_network_resources(&self, network: &str) -> ApiResult<Option<Value>> {
         let row = sqlx::query(
-            "SELECT resources,captured_at FROM fiber_network_resource_snapshots WHERE network=$1 ORDER BY captured_at DESC LIMIT 1",
+            "SELECT resources,captured_at FROM fiber_network_resource_snapshots WHERE network=$1 AND operator_submitted ORDER BY captured_at DESC LIMIT 1",
         )
         .bind(network)
         .fetch_optional(&self.pool)
@@ -200,15 +200,16 @@ impl AiService {
             .collect())
     }
 
-    pub async fn list_open_incidents(&self, limit: i64) -> ApiResult<Value> {
+    pub async fn list_open_incidents(&self, network: &str, limit: i64) -> ApiResult<Value> {
         let rows = sqlx::query(
             r#"SELECT id, incident_type, severity, status, subject_type, subject_id,
                title, diagnosis, recommendation, context_json, last_seen_at
-               FROM fiber_incidents WHERE status='OPEN'
+               FROM fiber_incidents WHERE status='OPEN' AND network=$2
                ORDER BY CASE severity WHEN 'CRITICAL' THEN 0 WHEN 'HIGH' THEN 1 WHEN 'WARNING' THEN 2 ELSE 3 END,
                         last_seen_at DESC LIMIT $1"#,
         )
         .bind(limit.clamp(1, 100))
+        .bind(network)
         .fetch_all(&self.pool)
         .await?;
         let values: Vec<Value> = rows

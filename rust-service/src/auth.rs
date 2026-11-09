@@ -70,6 +70,21 @@ pub fn authorize(state: &AppState, headers: &HeaderMap) -> ApiResult<Claims> {
     Ok(data.claims)
 }
 
+pub fn authorize_operator(state: &AppState, headers: &HeaderMap) -> ApiResult<Claims> {
+    let claims = authorize(state, headers)?;
+    if !state.config.operator_wallets.contains(&claims.sub) {
+        return Err(ApiError::Forbidden("Operator access is required".into()));
+    }
+    Ok(claims)
+}
+
+pub fn authorize_wallet(state: &AppState, headers: &HeaderMap, wallet: &str) -> ApiResult<()> {
+    if authorize(state, headers)?.sub != wallet {
+        return Err(ApiError::Forbidden("Wallet access is required".into()));
+    }
+    Ok(())
+}
+
 pub fn verify_ckb_secp256k1_message(
     wallet_address: &str,
     message: &str,

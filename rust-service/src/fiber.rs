@@ -9,12 +9,12 @@ pub struct FiberRpcService {
     client: Client,
     endpoint: String,
     biscuit_token: Option<String>,
+    receiver_pubkey: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FiberNodeSummary {
-    pub endpoint: String,
     pub version: Option<String>,
     pub commit_hash: Option<String>,
     pub node_name: Option<String>,
@@ -32,13 +32,18 @@ pub struct FiberCompatibility {
     pub expected_version: String,
     pub actual_version: Option<String>,
     pub compatible: bool,
-    pub rpc_endpoint: String,
     pub notes: Vec<String>,
 }
 
 impl FiberRpcService {
-    pub fn new(endpoint: String, biscuit_token: Option<String>, timeout: Duration) -> Self {
+    pub fn new(
+        endpoint: String,
+        biscuit_token: Option<String>,
+        receiver_pubkey: Option<String>,
+        timeout: Duration,
+    ) -> Self {
         let client = Client::builder()
+            .redirect(reqwest::redirect::Policy::none())
             .timeout(timeout)
             .build()
             .expect("reqwest client");
@@ -46,6 +51,7 @@ impl FiberRpcService {
             client,
             endpoint,
             biscuit_token,
+            receiver_pubkey,
         }
     }
 
@@ -59,21 +65,19 @@ impl FiberRpcService {
         if let Some(token) = &self.biscuit_token {
             req = req.bearer_auth(token);
         }
-        let response = req.send().await.map_err(|e| {
-            ApiError::Upstream(format!("Fiber RPC unavailable at {}: {e}", self.endpoint))
+        let response = req.send().await.map_err(|error| {
+            ApiError::Upstream(format!("Fiber RPC unavailable: {}", error.without_url()))
         })?;
         let status = response.status();
-        let body: Value = response.json().await.map_err(|e| {
+        if !status.is_success() {
+            return Err(ApiError::Upstream(format!("Fiber RPC HTTP {status}")));
+        }
+        let body: Value = response.json().await.map_err(|error| {
             ApiError::Upstream(format!(
-                "Invalid Fiber RPC response from {}: {e}",
-                self.endpoint
+                "Invalid Fiber RPC response: {}",
+                error.without_url()
             ))
         })?;
-        if !status.is_success() {
-            return Err(ApiError::Upstream(format!(
-                "Fiber RPC HTTP {status}: {body}"
-            )));
-        }
         if let Some(error) = body.get("error") {
             return Err(ApiError::Upstream(format!(
                 "Fiber RPC method {method} failed: {error}"
@@ -85,7 +89,6 @@ impl FiberRpcService {
     pub async fn node_summary(&self) -> FiberNodeSummary {
         match self.call("node_info", json!([])).await {
             Ok(v) => FiberNodeSummary {
-                endpoint: self.endpoint.clone(),
                 version: str_field(&v, "version"),
                 commit_hash: str_field(&v, "commit_hash"),
                 node_name: str_field(&v, "node_name"),
@@ -96,7 +99,6 @@ impl FiberRpcService {
                 reachable: true,
             },
             Err(_) => FiberNodeSummary {
-                endpoint: self.endpoint.clone(),
                 version: None,
                 commit_hash: None,
                 node_name: None,
@@ -137,9 +139,30 @@ impl FiberRpcService {
             expected_version: expected_version.into(),
             actual_version: actual,
             compatible,
-            rpc_endpoint: self.endpoint.clone(),
             notes,
         }
+    }
+
+    pub fn receiver_pubkey(&self) -> ApiResult<&str> {
+        self.receiver_pubkey
+            .as_deref()
+            .ok_or_else(|| ApiError::Unavailable("Fiber receiver is not configured".into()))
+    }
+
+    pub async fn check_receiver(&self, network: &str) -> ApiResult<&'static str> {
+        let receiver = self.receiver_pubkey()?;
+        let genesis = crate::rpc::public_genesis(network).ok_or_else(|| {
+            ApiError::Unavailable("Merchant checkout requires CKB Testnet or Mainnet".into())
+        })?;
+        let node = self.call("node_info", json!([])).await?;
+        if node.get("chain_hash").and_then(Value::as_str) != Some(genesis)
+            || node.get("pubkey").and_then(Value::as_str) != Some(receiver)
+        {
+            return Err(ApiError::Unavailable(
+                "Fiber receiver identity or chain mismatch".into(),
+            ));
+        }
+        Ok(if network == "testnet" { "Fibt" } else { "Fibb" })
     }
 
     pub async fn new_invoice(
@@ -166,11 +189,6 @@ impl FiberRpcService {
             .await
     }
 
-    pub async fn send_invoice_payment(&self, invoice: &str) -> ApiResult<Value> {
-        self.call("send_payment", json!([{ "invoice": invoice }]))
-            .await
-    }
-
     pub async fn dry_run_invoice_payment(&self, invoice: &str) -> ApiResult<Value> {
         self.call(
             "send_payment",
@@ -194,6 +212,80 @@ impl FiberRpcService {
 
     pub async fn list_peers(&self) -> ApiResult<Value> {
         self.call("list_peers", json!([])).await
+    }
+}
+
+pub fn invoice_hash(result: &Value) -> Option<&str> {
+    result
+        .pointer("/invoice/data/payment_hash")
+        .and_then(Value::as_str)
+        .filter(|hash| {
+            hash.strip_prefix("0x").is_some_and(|hex| {
+                hex.len() == 64
+                    && hex
+                        .bytes()
+                        .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
+            })
+        })
+}
+
+pub fn check_invoice(
+    result: &Value,
+    hash: &str,
+    address: &str,
+    amount: u128,
+    currency: &str,
+    receiver: &str,
+) -> ApiResult<()> {
+    let actual_amount = result
+        .pointer("/invoice/amount")
+        .and_then(Value::as_str)
+        .and_then(|v| v.strip_prefix("0x"))
+        .and_then(|v| u128::from_str_radix(v, 16).ok());
+    let attrs = result
+        .pointer("/invoice/data/attrs")
+        .and_then(Value::as_array)
+        .ok_or_else(|| ApiError::Upstream("Invalid Fiber invoice attributes".into()))?;
+    let mut payees = attrs
+        .iter()
+        .filter_map(|attribute| attribute.get("payee_public_key"));
+    if invoice_hash(result) != Some(hash)
+        || result.get("invoice_address").and_then(Value::as_str) != Some(address)
+        || actual_amount != Some(amount)
+        || result.pointer("/invoice/currency").and_then(Value::as_str) != Some(currency)
+        || attrs.iter().any(|attr| {
+            !attr.is_object()
+                || attr.get("udt_script").is_some()
+                || attr.get("udt_type_script").is_some()
+        })
+        || payees.next().and_then(Value::as_str) != Some(receiver)
+        || payees.next().is_some()
+    {
+        return Err(ApiError::Upstream(
+            "Fiber invoice does not match bound order".into(),
+        ));
+    }
+    Ok(())
+}
+
+pub enum InvoiceStatus {
+    Open,
+    Received,
+    Paid,
+    Cancelled,
+    Expired,
+}
+
+impl InvoiceStatus {
+    pub fn read(result: &Value) -> ApiResult<Self> {
+        match result.get("status").and_then(Value::as_str) {
+            Some("Open") => Ok(Self::Open),
+            Some("Received") => Ok(Self::Received),
+            Some("Paid") => Ok(Self::Paid),
+            Some("Cancelled") => Ok(Self::Cancelled),
+            Some("Expired") => Ok(Self::Expired),
+            _ => Err(ApiError::Upstream("Invalid Fiber invoice status".into())),
+        }
     }
 }
 

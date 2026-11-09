@@ -40,6 +40,16 @@ test("Network Operations Overview runs on its isolated portal route", async ({ p
  await expect.poll(() => page.evaluate(() => window.crossOriginIsolated)).toBe(true);
 });
 
+test("checkout shows the payer flow without confirming settlement", async ({ page }) => {
+ const response = await page.goto("/checkout");
+ expect(response?.ok()).toBe(true);
+ await expect.poll(() => page.evaluate(() => window.crossOriginIsolated)).toBe(true);
+ await page.getByRole("button", { name: "Pay invoice", exact: true }).click();
+ await expect(page.getByPlaceholder("fibt…")).toBeVisible();
+ await expect(page.getByRole("button", { name: "Check & pay", exact: true })).toBeDisabled();
+ await expect(page.getByText("Payment paid.", { exact: true })).toHaveCount(0);
+});
+
 test("external funding signing route remains wallet-popup compatible", async ({ page }) => {
  const response = await page.goto("/fiber-funding");
 

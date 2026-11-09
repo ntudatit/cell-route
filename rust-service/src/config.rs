@@ -1,8 +1,9 @@
 use std::{env, net::SocketAddr, time::Duration};
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Config {
     pub bind_addr: SocketAddr,
+    pub trusted_proxy_ip: Option<std::net::IpAddr>,
     pub database_url: String,
     pub cors_origin: String,
     pub ckb_network: String,
@@ -24,6 +25,9 @@ pub struct Config {
     pub fiber_runtime: String,
     pub fiber_rpc_url: String,
     pub fiber_biscuit_token: Option<String>,
+    pub fiber_merchant_wallet: Option<String>,
+    pub fiber_merchant_node_pubkey: Option<String>,
+    pub operator_wallets: Vec<String>,
     pub fiber_ops_scan_interval_seconds: u64,
     pub fiber_expected_version: String,
     pub ai_provider: String,
@@ -55,11 +59,55 @@ impl Config {
         let ckb_indexer_url =
             optional_env("CKB_INDEXER_URL").unwrap_or_else(|| ckb_rpc_url.clone());
 
+        let environment = env::var("APP_ENV").unwrap_or_else(|_| "development".into());
         let jwt_secret = optional_env("JWT_SECRET").unwrap_or_else(|| "dev-only-change-me".into());
-        validate_jwt_secret(&ckb_network, &jwt_secret)?;
+        validate_jwt_secret(&environment, &ckb_network, &jwt_secret)?;
+
+        let fiber_merchant_wallet = optional_env("FIBER_MERCHANT_WALLET");
+        let fiber_merchant_node_pubkey = optional_env("FIBER_MERCHANT_NODE_PUBKEY");
+        anyhow::ensure!(
+            fiber_merchant_wallet.is_some() == fiber_merchant_node_pubkey.is_some(),
+            "Configure both FIBER_MERCHANT_WALLET and FIBER_MERCHANT_NODE_PUBKEY"
+        );
+        if let Some(pubkey) = &fiber_merchant_node_pubkey {
+            anyhow::ensure!(
+                matches!(ckb_network.as_str(), "testnet" | "mainnet"),
+                "The merchant receiver requires CKB Testnet or Mainnet"
+            );
+            anyhow::ensure!(
+                pubkey.len() == 66
+                    && pubkey == &pubkey.to_ascii_lowercase()
+                    && pubkey.parse::<secp256k1::PublicKey>().is_ok(),
+                "Invalid compressed merchant node public key"
+            );
+        }
+        let operator_wallets: Vec<String> = optional_env("OPERATOR_WALLETS")
+            .unwrap_or_default()
+            .split(',')
+            .map(str::trim)
+            .filter(|v| !v.is_empty())
+            .map(str::to_owned)
+            .collect();
+        for wallet in operator_wallets.iter().chain(fiber_merchant_wallet.iter()) {
+            crate::auth::validate_wallet_network(wallet, &ckb_network)?;
+        }
+        if environment == "production" {
+            if let Some(key) = optional_env("MCP_API_KEY") {
+                validate_jwt_secret(&environment, &ckb_network, &key)?;
+                anyhow::ensure!(key != jwt_secret, "MCP_API_KEY must differ from JWT_SECRET");
+            }
+        }
 
         Ok(Self {
-            bind_addr: SocketAddr::from(([0, 0, 0, 0], port)),
+            bind_addr: SocketAddr::new(
+                optional_env("API_BIND_IP")
+                    .unwrap_or_else(|| "0.0.0.0".into())
+                    .parse()?,
+                port,
+            ),
+            trusted_proxy_ip: optional_env("API_TRUSTED_PROXY_IP")
+                .map(|ip| ip.parse())
+                .transpose()?,
             database_url: env::var("DATABASE_URL").unwrap_or_else(|_| {
                 format!("postgresql://postgres:postgres@localhost:5432/cellroute_{ckb_network}")
             }),
@@ -95,6 +143,9 @@ impl Config {
             fiber_rpc_url: env::var("FIBER_RPC_URL")
                 .unwrap_or_else(|_| "http://127.0.0.1:8227".into()),
             fiber_biscuit_token: optional_env("FIBER_BISCUIT_TOKEN"),
+            fiber_merchant_wallet,
+            fiber_merchant_node_pubkey,
+            operator_wallets,
             fiber_ops_scan_interval_seconds: env::var("FIBER_OPS_SCAN_INTERVAL_SECONDS")
                 .unwrap_or_else(|_| "15".into())
                 .parse::<u64>()?,
@@ -148,9 +199,14 @@ mod network_tests {
     }
 }
 
-fn validate_jwt_secret(network: &str, secret: &str) -> anyhow::Result<()> {
+fn validate_jwt_secret(environment: &str, network: &str, secret: &str) -> anyhow::Result<()> {
+    let production = match environment {
+        "production" => true,
+        "development" => false,
+        _ => anyhow::bail!("APP_ENV must be development or production"),
+    };
     let normalized = secret.to_ascii_lowercase();
-    if network == "mainnet"
+    if (production || network == "mainnet")
         && (secret.len() < 32
             || normalized.contains("replace")
             || normalized.contains("change-me")
@@ -158,14 +214,14 @@ fn validate_jwt_secret(network: &str, secret: &str) -> anyhow::Result<()> {
             || normalized.contains("your-secret"))
     {
         anyhow::bail!(
-            "Mainnet requires a randomly generated JWT_SECRET of at least 32 bytes; development defaults and placeholders are not allowed"
+            "Production and Mainnet require a randomly generated JWT_SECRET of at least 32 bytes; development defaults and placeholders are not allowed"
         );
     }
     Ok(())
 }
 
 #[cfg(test)]
-mod mainnet_secret_tests {
+mod jwt_secret_tests {
     use super::validate_jwt_secret;
     #[test]
     fn rejects_development_and_placeholder_secrets() {
@@ -175,14 +231,17 @@ mod mainnet_secret_tests {
             "short",
             "REPLACE_WITH_A_RANDOM_SECRET_AT_LEAST_32_BYTES",
         ] {
-            assert!(validate_jwt_secret("mainnet", secret).is_err());
+            assert!(validate_jwt_secret("development", "mainnet", secret).is_err());
+            assert!(validate_jwt_secret("production", "testnet", secret).is_err());
         }
     }
     #[test]
     fn allows_configured_secret_and_development_defaults() {
         // Synthetic validation fixture, never used for signing.
-        assert!(validate_jwt_secret("mainnet", &"a".repeat(32)).is_ok());
-        assert!(validate_jwt_secret("testnet", "dev-only-change-me").is_ok());
-        assert!(validate_jwt_secret("devnet", "dev-only-change-me").is_ok());
+        assert!(validate_jwt_secret("development", "mainnet", &"a".repeat(32)).is_ok());
+        assert!(validate_jwt_secret("production", "testnet", &"a".repeat(32)).is_ok());
+        assert!(validate_jwt_secret("prod", "testnet", &"a".repeat(32)).is_err());
+        assert!(validate_jwt_secret("development", "testnet", "dev-only-change-me").is_ok());
+        assert!(validate_jwt_secret("development", "devnet", "dev-only-change-me").is_ok());
     }
 }

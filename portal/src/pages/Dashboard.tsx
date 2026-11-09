@@ -21,6 +21,7 @@ import {
 import { AppLayout, PageHero } from "../components/layout/AppLayout";
 import { RecentTransactions } from "../components/RecentTransactions";
 import { LoadingSpinner } from "../components/Loading";
+import { useBackendAuth } from "../auth/AuthProvider";
 import { useWallet } from "../hooks/useWallet";
 
 const emptyDashboard: DashboardResponse = {
@@ -32,13 +33,13 @@ const emptyDashboard: DashboardResponse = {
 
 export function Dashboard() {
  const wallet = useWallet();
+ const auth = useBackendAuth();
  const signer = useFeatureSigner();
  const { client, open } = useFeatureCcc();
  const navigate = useNavigate();
 
  const [network, setNetwork] = useState<NetworkResponse>({
   network: "",
-  rpcUrl: "",
  });
  const [dashboard, setDashboard] = useState<DashboardResponse>(emptyDashboard);
  const [liveCellCount, setLiveCellCount] = useState(0);
@@ -57,15 +58,17 @@ export function Dashboard() {
     setDashboard(emptyDashboard);
     throw new Error("Activity service uses another network; connect a matching backend.");
    }
-   if (wallet.address) {
+   if (wallet.address && auth.authenticated && auth.walletAddress === wallet.address) {
     setDashboard(await backendApi.getDashboard(wallet.address));
+   } else {
+    setDashboard(emptyDashboard);
    }
   } catch (error) {
    setBackendError(error instanceof Error ? error.message : String(error));
   } finally {
    setBackendLoading(false);
   }
- }, [wallet.address, client]);
+ }, [wallet.address, client, auth.authenticated, auth.walletAddress]);
 
  const loadCells = useCallback(async () => {
   if (!signer) {

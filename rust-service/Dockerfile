@@ -20,6 +20,7 @@ COPY --from=builder /app/target/release/rust-service /app/server
 
 ENV PORT=10000
 EXPOSE 10000
+USER 10001:10001
 
 HEALTHCHECK --interval=20s --timeout=5s --start-period=20s --retries=5 \
   CMD curl --fail --silent http://127.0.0.1:${PORT}/api/health || exit 1

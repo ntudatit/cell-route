@@ -17,6 +17,8 @@ import {
   WalletCards,
   Zap,
 } from "lucide-react";
+import { BackendAuthButton } from "../../components/BackendAuthButton";
+import { useBackendAuth } from "../../auth/AuthProvider";
 import { AppLayout } from "../../components/layout/AppLayout";
 import { FiberOpsWorkspace } from "./FiberOpsWorkspace";
 import {
@@ -120,6 +122,7 @@ function FiberMesh({ channels }: { channels: ChannelHealth[] }) {
 }
 
 export function FiberOpsOverviewPage() {
+  const auth = useBackendAuth();
  const featureConsoleScope = currentScope();
 
   const [overview, setOverview] = useState<FiberOpsOverview | null>(null);
@@ -149,7 +152,7 @@ export function FiberOpsOverviewPage() {
     if (results[3].status === "fulfilled") setCompatibility(results[3].value);
 
     if (results[0].status === "fulfilled" && results[1].status === "fulfilled" && results[2].status === "fulfilled") {
-      void aiApi.syncRuntimeSnapshot({ overview: results[0].value, channels: results[1].value, incidents: results[2].value }).catch(() => undefined);
+      if (auth.authenticated) void aiApi.syncRuntimeSnapshot({ overview: results[0].value, channels: results[1].value, incidents: results[2].value }).catch(() => undefined);
     }
 
     const failed = results.filter((result) => result.status === "rejected");
@@ -188,6 +191,7 @@ export function FiberOpsOverviewPage() {
           <h1>Network Operations Overview</h1>
           <p>Payment intelligence, channel liquidity, reconciliation and incidents across your Nervos Fiber infrastructure.</p>
         </div>
+        <BackendAuthButton />
         <button className="btn secondary sync-button" onClick={() => void load()} disabled={loading}>
           <RefreshCw size={15} className={loading ? "spin" : ""} />
           {loading ? "Syncing" : "Sync telemetry"}

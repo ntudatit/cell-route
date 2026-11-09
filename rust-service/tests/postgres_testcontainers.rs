@@ -3,16 +3,27 @@ use testcontainers_modules::{
     testcontainers::{ImageExt, runners::SyncRunner},
 };
 
+#[path = "support/checkout.rs"]
+mod checkout;
+
 #[test]
 fn migrations_apply_to_clean_postgres() {
-    // Match deployment; the library default is PostgreSQL 11, which cannot parse generated columns.
-    let container = postgres::Postgres::default()
-        .with_tag("17-alpine")
-        .start()
-        .expect("start postgres testcontainer");
-    let host = container.get_host().expect("postgres host");
-    let port = container.get_host_port_ipv4(5432).expect("postgres port");
-    let url = format!("postgresql://postgres:postgres@{host}:{port}/postgres");
+    let local = std::env::var("CELLROUTE_TEST_DATABASE_URL").ok();
+    let (_container, url) = match local {
+        Some(url) => (None, url),
+        None => {
+            let container = postgres::Postgres::default()
+                .with_tag("17-alpine")
+                .start()
+                .expect("start postgres testcontainer");
+            let host = container.get_host().expect("postgres host");
+            let port = container.get_host_port_ipv4(5432).expect("postgres port");
+            (
+                Some(container),
+                format!("postgresql://postgres:postgres@{host}:{port}/postgres"),
+            )
+        }
+    };
 
     let runtime = tokio::runtime::Runtime::new().expect("tokio runtime");
     runtime.block_on(async {
@@ -22,6 +33,10 @@ fn migrations_apply_to_clean_postgres() {
             .await
             .expect("query postgres version");
         assert_eq!(version.parse::<u32>().expect("numeric postgres version") / 10000, 17);
+
+        let fresh: bool = sqlx::query_scalar("SELECT NOT EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public')")
+            .fetch_one(&pool).await.expect("check disposable database");
+        assert!(fresh, "checkout integration requires a disposable empty database");
 
         sqlx::migrate!("./migrations")
             .run(&pool)
@@ -43,5 +58,6 @@ fn migrations_apply_to_clean_postgres() {
         .await
         .expect("query generated search vector");
         assert!(searchable, "seeded knowledge must have a generated search vector");
+        checkout::verify(&pool, &url).await;
     });
 }

@@ -25,7 +25,7 @@ describe('network isolation', () => {
   await expect(ccc.Address.fromString(address, mainnet)).rejects.toThrow();
  });
  it('does not record a mainnet transaction in a testnet backend', async () => {
-  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'testnet', rpcUrl: '' });
+  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'testnet' });
   const track = vi.spyOn(backendApi, 'trackTransaction');
   expect(await recordSubmittedTransaction(mainnet, request)).toContain('another network');
   expect(track).not.toHaveBeenCalled();
@@ -35,7 +35,7 @@ describe('network isolation', () => {
   expect(await recordSubmittedTransaction(mainnet, request)).toContain('Submitted on-chain');
  });
  it('records only on the matching backend', async () => {
-  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'mainnet', rpcUrl: '' });
+  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'mainnet' });
   const track = vi.spyOn(backendApi, 'trackTransaction').mockResolvedValue({} as never);
   await recordSubmittedTransaction(mainnet, request);
   expect(track).toHaveBeenCalledWith(request);

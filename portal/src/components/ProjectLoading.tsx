@@ -47,7 +47,8 @@ export function ProjectLoading() {
     };
   }, [location.pathname, location.search]);
 
-  const connectionVisible = activity.connection > 0;
+  const isCommerceRoute = ["/checkout", "/merchant", "/fiber-merchant"].includes(location.pathname);
+  const connectionVisible = activity.connection > 0 && !isCommerceRoute;
   const visible = pageVisible || connectionVisible;
   const label = connectionVisible ? "Establishing Fiber connection" : "Synchronizing browser runtime";
 

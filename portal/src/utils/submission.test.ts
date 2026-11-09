@@ -7,14 +7,14 @@ const event: CreateAssetEventRequest = { assetKind: 'SPORE', action: 'MINT', ass
 afterEach(() => vi.restoreAllMocks());
 describe('asset audit isolation', () => {
  it('never records mainnet assets against another backend network', async () => {
-  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'testnet', rpcUrl: '' });
+  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'testnet' });
   const record = vi.spyOn(assetApi, 'record');
   await expect(requireBackendNetwork(client)).rejects.toThrow('another network');
   expect(await recordSubmittedAsset(client, event)).toContain('Transaction submitted. Asset audit not recorded');
   expect(record).not.toHaveBeenCalled();
  });
  it('reports submission separately from a failed audit write', async () => {
-  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'mainnet', rpcUrl: '' });
+  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'mainnet' });
   vi.spyOn(assetApi, 'record').mockRejectedValue(new Error('unauthenticated'));
   const status = await recordSubmittedAsset(client, event);
   expect(status).toContain('Transaction submitted. Asset audit recording failed');
@@ -27,7 +27,7 @@ describe('asset audit isolation', () => {
   expect(record).not.toHaveBeenCalled();
  });
  it('records on the matching chain without claiming commitment', async () => {
-  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'mainnet', rpcUrl: '' });
+  vi.spyOn(backendApi, 'getNetwork').mockResolvedValue({ network: 'mainnet' });
   const record = vi.spyOn(assetApi, 'record').mockResolvedValue({} as never);
   expect(await recordSubmittedAsset(client, event)).toBe('Transaction submitted and asset audit recorded. Check the on-chain status below for commitment.');
   expect(record).toHaveBeenCalledWith(event);

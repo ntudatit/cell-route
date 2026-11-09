@@ -18,4 +18,5 @@ pub struct AppState {
     pub fiber: FiberRpcService,
     pub fiber_ops: FiberOpsService,
     pub ai: AiService,
+    pub stream_permits: std::sync::Arc<tokio::sync::Semaphore>,
 }
